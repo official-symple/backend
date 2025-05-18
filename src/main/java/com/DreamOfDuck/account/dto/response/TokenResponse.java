@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
+@Schema(description = "login response")
 public class TokenResponse {
     @Schema(example="afdasfsdafdsa")
     String accessToken;
