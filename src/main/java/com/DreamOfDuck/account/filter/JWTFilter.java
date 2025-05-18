@@ -1,5 +1,6 @@
-package com.DreamOfDuck.account.jwt;
+package com.DreamOfDuck.account.filter;
 
+import com.DreamOfDuck.account.jwt.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
