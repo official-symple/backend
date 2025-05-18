@@ -33,13 +33,31 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
+    - name: Copy application.yml into runner       
+      run: |
+        echo "*****firebase.json content:*****"
+        mkdir -p ./src/main/resources
+        touch ./src/main/resources/application.yml
+        touch ./src/main/resources/application-db.yml
+        touch ./src/main/resources/application-local.yml
+        echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_DB }}" > ./src/main/resources/application-db.yml
+        echo "${{ secrets.APPLICATION_LOCAL }}" > ./src/main/resources/application-local.yml
+        
+    - name: create-json
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.3
+      with:
+        name: "firebase.json"
+        json: ${{ secrets.FIREBASE_KEY }}
+        dir: 'src/main/resources'
+        
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
       
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
       
-
     # CD
     - name: docker image build
       run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_duck .
