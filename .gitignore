@@ -38,4 +38,4 @@ out/
 .vscode/
 
 ### Info ###
-#/src/main/resources/
+/src/main/resources/
