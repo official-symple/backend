@@ -11,7 +11,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 public class TokenResponse {
+    @Schema(example="afdasfsdafdsa")
     String accessToken;
+    @Schema(example="asdfasdfasdfijojkl")
     String refreshToken;
     @Schema(example="ROLE_GUEST")
     String role;
