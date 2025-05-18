@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: db
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dreamofduck.cp8g06o4m2up.ap-northeast-2.rds.amazonaws.com:3306/DreamOfDuck
+    username: symple
+    password: symple2002!
+jwt:
+  secret: ade61f01e1af406da538b9c48d801cea9142452199ff1122b5404c8e7e98e3ff
+
+
