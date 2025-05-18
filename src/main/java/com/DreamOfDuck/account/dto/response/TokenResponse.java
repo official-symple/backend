@@ -1,5 +1,6 @@
 package com.DreamOfDuck.account.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 public class TokenResponse {
     String accessToken;
     String refreshToken;
+    @Schema(example="ROLE_GUEST")
     String role;
 
     public static TokenResponse of(String aT, String rT, String role){
