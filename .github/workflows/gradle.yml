@@ -33,6 +33,13 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
+    - name: grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build -x test
+      
+
     # CD
     - name: docker image build
       run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_duck .
