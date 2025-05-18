@@ -2,6 +2,7 @@ package com.DreamOfDuck.global.exception;
 
 import com.DreamOfDuck.talk.controller.MessageController;
 import com.DreamOfDuck.talk.controller.SessionController;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import com.DreamOfDuck.global.dto.response.ErrorResponse;
 import com.DreamOfDuck.global.dto.response.result.ExceptionResult;
@@ -19,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-//@RestControllerAdvice(annotations = {RestController.class}, basePackageClasses = {SessionController.class, MessageController.class})
+@Hidden
+@RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice {
     //등록되지 않은 에러
     @ExceptionHandler(Exception.class)
