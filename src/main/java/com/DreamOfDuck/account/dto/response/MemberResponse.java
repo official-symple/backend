@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "member response")
 public class MemberResponse {
     @Schema(example="1")
     Long memberId;
