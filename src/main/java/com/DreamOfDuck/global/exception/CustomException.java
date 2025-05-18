@@ -1,6 +1,7 @@
 package com.DreamOfDuck.global.exception;
 
 import lombok.Getter;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;

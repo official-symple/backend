@@ -18,10 +18,10 @@ public enum Cause {
     CAUSE7(6, "연인"),
     CAUSE8(7, "사별");
 
-    private final int id;
+    private final Integer id;
     private final String text;
 
-    public static Cause fromId(int id){
+    public static Cause fromId(Integer id){
         for(Cause cause : Cause.values()){
             if(cause.getId()==id){
                 return cause;
@@ -29,4 +29,5 @@ public enum Cause {
         }
         throw new CustomException(ErrorCode.NOT_FOUND_CAUSE);
     }
+
 }
