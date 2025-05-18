@@ -44,8 +44,13 @@ jobs:
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./src/main/resources/application-db.yml
         echo "${{ secrets.APPLICATION_LOCAL }}" > ./src/main/resources/application-local.yml
-        echo "${{ secrets.FIREBASE_KEY }}" > ./src/main/resources/firebase.json
-        cat ./src/main/resources/firebase.json
+        
+    - name: create-json
+      uses: jsdaniell/create-json@v1.2.2
+      with:
+        name: "firebase.json"
+        json: ${{ secrets.FIREBASE_KEY }}
+        dir: 'src/main/resources'
         
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
