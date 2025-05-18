@@ -8,6 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -21,13 +22,12 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
 
-        FileInputStream serviceAccount =
-                new FileInputStream("src/main/resources/firebase.json");
+        ClassPathResource resource = new ClassPathResource("firebase.json");
 
-        //InputStream serviceAccount = new ByteArrayInputStream(Base64.decodeBase64(serviceAccountBase64));
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                 .build();
+
 
         FirebaseApp app = FirebaseApp.initializeApp(options);
 
