@@ -48,12 +48,10 @@ jobs:
       
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
-      env:
-        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
+      
     # CD
     - name: docker image build
-      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_library .
+      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/dreaming_duck .
       
       # DockerHub 로그인
     - name: docker login
@@ -63,7 +61,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         
     - name: docker Hub push
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/dreaming_library
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/dreaming_duck
 
     - name: Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -73,11 +71,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          docker rmi ${{ secrets.DOCKER_USERNAME }}/dreaming_library || true
-          docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_library
-          docker stop dreaming_library || true
-          docker rm dreaming_library || true
-          docker run -d --name dreaming_library -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dreaming_library
+          docker rmi ${{ secrets.DOCKER_USERNAME }}/dreaming_duck || true
+          docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_duck
+          docker stop dreaming_duck || true
+          docker rm dreaming_duck || true
+          docker run -d --name dreaming_duck -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dreaming_duck
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
