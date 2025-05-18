@@ -1,14 +1,15 @@
 package com.DreamOfDuck.account.service;
 
-import com.DreamOfDuck.account.dto.request.LoginRequest;
-
 import com.DreamOfDuck.account.dto.response.OAuthResponse;
 import com.DreamOfDuck.account.dto.response.TokenResponse;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.infra.AppleApiClient;
+import com.DreamOfDuck.account.infra.GoogleApiClient;
 import com.DreamOfDuck.account.infra.KakaoApiClient;
 import com.DreamOfDuck.account.jwt.JWTProvider;
 import com.DreamOfDuck.account.repository.MemberRepository;
+import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,33 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JWTProvider jwtProvider;
     private final KakaoApiClient kakaoApiClient;
+    private final GoogleApiClient googleApiClient;
+    private final AppleApiClient appleApiClient;
+
 
     @Transactional
-    public TokenResponse kakaoLogin(LoginRequest request){
+    public TokenResponse kakaoLogin(String accessToken){
 
-        OAuthResponse response = kakaoApiClient.requestOAuthInfo(request.getAccessToken());
+        OAuthResponse response = kakaoApiClient.requestOAuthInfo(accessToken);
         Member findOne = findOrCreateMember(response);
 
         return jwtProvider.createJWT(findOne);
     }
+
+    @Transactional
+    public TokenResponse googleLogin(String accessToken) throws FirebaseAuthException {
+        OAuthResponse response = googleApiClient.requestOAuthInfo(accessToken);
+        Member findOne = findOrCreateMember(response);
+        return jwtProvider.createJWT(findOne);
+    }
+
+    @Transactional
+    public TokenResponse appleLogin(String accessToken) throws FirebaseAuthException {
+        OAuthResponse response = appleApiClient.requestOAuthInfo(accessToken);
+        Member findOne = findOrCreateMember(response);
+        return jwtProvider.createJWT(findOne);
+    }
+
     private Member findOrCreateMember(OAuthResponse response){
         return memberRepository.findByEmail(response.getEmail()).orElseGet(()->createMember(response));
     }

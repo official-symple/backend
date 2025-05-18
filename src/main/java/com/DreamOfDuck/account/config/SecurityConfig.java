@@ -1,6 +1,6 @@
-package com.DreamOfDuck.account;
+package com.DreamOfDuck.account.config;
 
-import com.DreamOfDuck.account.jwt.JWTFilter;
+import com.DreamOfDuck.account.filter.JWTFilter;
 import com.DreamOfDuck.account.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/", "/join", "/login/kakao", "/reissue", "/logout").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login", "/login/kakao", "/login/apple", "/login/google", "/reissue", "/logout").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
