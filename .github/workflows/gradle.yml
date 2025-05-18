@@ -40,13 +40,13 @@ jobs:
         touch ./src/main/resources/application.yml
         touch ./src/main/resources/application-db.yml
         touch ./src/main/resources/application-local.yml
-        touch ./src/main/resources/firebase.json
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./src/main/resources/application-db.yml
         echo "${{ secrets.APPLICATION_LOCAL }}" > ./src/main/resources/application-local.yml
         
     - name: create-json
-      uses: jsdaniell/create-json@v1.2.2
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.3
       with:
         name: "firebase.json"
         json: ${{ secrets.FIREBASE_KEY }}
