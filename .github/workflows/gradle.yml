@@ -43,7 +43,7 @@ jobs:
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./src/main/resources/application-db.yml
         echo "${{ secrets.APPLICATION_LOCAL }}" > ./src/main/resources/application-local.yml
-        echo "${{ secrets.GOOGLE_KEY }}" > ./src/main/resources/firebase.json
+        echo "${{ secrets.FIREBASE_KEY }}" > ./src/main/resources/firebase.json
         echo "firebase.json content:"
         cat ./src/main/resources/firebase.json
         
