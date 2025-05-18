@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: DreamingLibrary
+  config:
+    import: optional:application-secret.properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true

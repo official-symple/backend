@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="https://www.gstatic.com/firebasejs/8.6.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.4/firebase-auth.js"></script>
+</head>
+<body>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA8PBX7K4D2NU9eG2Q8S7EMbsEf5u-ps5Y",
+        authDomain: "duck-s-dream.firebaseapp.com",
+        projectId: "duck-s-dream",
+        storageBucket: "duck-s-dream.firebasestorage.app",
+        messagingSenderId: "550493620497",
+        appId: "1:550493620497:web:3936c3413bcf69448864b0",
+        measurementId: "G-4M5JEHCGKJ"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const handleGoogleLogin = async () => {
+        const result = await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        const idToken = await result.user.getIdToken();
+        console.log("ID Token:", idToken);
+    }
+    // Apple 로그인 처리
+    const handleAppleLogin = async () => {
+        try {
+            const provider = new firebase.auth.OAuthProvider('apple.com');
+            const result = await firebase.auth().signInWithPopup(provider);
+
+            // Firebase 인증 토큰
+            const idToken = await result.user.getIdToken();
+            console.log("ID Token:", idToken);
+        } catch (error) {
+            console.error("Error during Apple Sign-In:", error.message);
+        }
+    }
+</script>
+
+<button onclick="handleGoogleLogin();">google login</button>
+<button onClick="handleAppleLogin()">apple login</button>
+</body>
+
+
+</html>
