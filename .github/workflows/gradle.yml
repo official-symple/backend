@@ -35,7 +35,6 @@ jobs:
 
     - name: Copy application.yml into runner       
       run: |
-        echo "*****firebase.json content:*****"
         mkdir -p ./src/main/resources
         touch ./src/main/resources/application.yml
         touch ./src/main/resources/application-db.yml
@@ -50,7 +49,11 @@ jobs:
       with:
         name: "firebase.json"
         json: ${{ secrets.FIREBASE_KEY }}
-        dir: 'src/main/resources'
+        dir: './src/main/resources'
+        
+    - name: check json file
+      run: |
+        cat ./src/main/resources/firebase.json
         
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
