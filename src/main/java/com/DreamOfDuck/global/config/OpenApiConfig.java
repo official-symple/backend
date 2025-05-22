@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Dreaming Library Backend API 명세서",
+                title = "Dreaming duck Backend API 명세서",
                 description = "API 명세서",
                 version = "v1",
                 contact = @Contact(
-                        name = "정현정",
-                        email = "cathy2750@naver.com"
+                        name = "김희진",
+                        email = "gimijinn@gmail.com"
                 )
         ),
         security = @SecurityRequirement(name = "bearerAuth")
