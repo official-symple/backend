@@ -30,7 +30,8 @@ public enum ErrorCode {
     NOT_FOUND_CAUSE(-400, "해당 원인은 존재하지 않습니다.", 406),
     NOT_FOUND_EMOTION(-401, "해당 감정은 존재하지 않습니다.", 406),
     NOT_FOUND_DUCK(-402, "해당 오리는 존재하지 않습니다.", 406),
-    EMPTY_INPUT_FIELD(-403, "기타란을 입력해 주세요.", 400);
+    EMPTY_INPUT_FIELD(-403, "기타란을 입력해 주세요.", 400),
+    DIFFERENT_USER(-404, "해당 유저는 해당 session Id에 접근할 수 없습니다.",403);
     private final int errorCode;
     private final String message;
     private final int httpCode;

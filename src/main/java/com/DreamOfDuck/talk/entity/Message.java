@@ -26,7 +26,7 @@ public class Message extends TimeStamp {
     private String content;
 
     //==연관관계 메서드==//
-    public void addConversation(Session session) {
+    public void addSession(Session session) {
         session.getConversation().add(this);
         this.setSession(session);
     }

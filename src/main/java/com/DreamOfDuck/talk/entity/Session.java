@@ -1,5 +1,6 @@
 package com.DreamOfDuck.talk.entity;
 
+import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.entity.TimeStamp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,4 +42,14 @@ public class Session extends TimeStamp {
     private Cause cause;
     @OneToMany(mappedBy="session")
     private List<Message> conversation = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="memberId")
+    private Member host;
+
+    //==연관관계 메서드==//
+    public void addHost(Member member) {
+        member.getSessions().add(this);
+        this.setHost(member);
+    }
 }

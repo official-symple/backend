@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class MessageFormatF {
     @NotNull
     String role;
-
     @NotNull
     String content;
 
