@@ -69,7 +69,7 @@ public class SessionController {
             @ApiResponse(responseCode="200", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = SessionResponse.class))
             )})
     })
-    public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
+    public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.findByUser(member));
     }
