@@ -62,10 +62,11 @@ public class SessionController {
         sessionService.delete(member, id);
         return ResponseEntity.ok("성공적으로 세션을 삭제했습니다.");
     }
-    /*
-    앞으로 작업할 api
-    after generating member entity,
-    get sessions by member
-     */
+    @GetMapping("")
+    @Operation(summary = "세션 정보 불러오기", description = "유저의 모든 세션을 불러올 때 사용하는 API")
+    public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.findByUser(member));
+    }
 
 }
