@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,5 +65,11 @@ public class SessionService {
             throw new CustomException(ErrorCode.DIFFERENT_USER);
         }
         sessionRepository.deleteById(sessionId);
+    }
+    public List<SessionResponse> findByUser(Member host){
+        List<Session> sessionList = sessionRepository.findByHost(host);
+        return sessionList.stream()
+                .map(session->SessionResponse.from(session))
+                .collect(Collectors.toList());
     }
 }

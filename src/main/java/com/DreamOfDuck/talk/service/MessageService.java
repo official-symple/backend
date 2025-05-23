@@ -77,7 +77,7 @@ public class MessageService {
         try{
             ResponseEntity<MessageResponseF> res = restTemplate.exchange(endpoint, HttpMethod.POST, requestEntity, MessageResponseF.class);
             if(res.getBody()==null){
-                throw new RuntimeException("fastApi로부터 응답이 없습니다.");
+                throw new RuntimeException("fastApi로 부터 응답이 없습니다.");
             }
             return res.getBody();
         } catch(RestClientException e) {
