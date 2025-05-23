@@ -1,5 +1,6 @@
 package com.DreamOfDuck.talk.service;
 
+import com.DreamOfDuck.talk.dto.request.MessageFormatF;
 import com.DreamOfDuck.talk.dto.request.MessageRequest;
 import com.DreamOfDuck.talk.dto.request.MessageRequestF;
 import com.DreamOfDuck.talk.dto.response.MessageFormat;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly=true)
@@ -42,8 +45,9 @@ public class MessageService {
 
         /*fast api와 연동*/
         MessageRequestF requestF = MessageRequestF.builder()
-                .duckType(session.getDuckType().getValue())
-                .content(request.getContent())
+                .persona(session.getDuckType().getValue())
+                .formal(session.getIsFormal())
+                .messages(MessageFormatF.fromSession(session))
                 .build();
         MessageResponseF responseF = getMessageFromDuck(requestF);
         Message duck = Message.builder()
@@ -53,18 +57,7 @@ public class MessageService {
         duck.addConversation(session);
         messageRepository.save(duck);
         /*fast api와 연동*/
-        /*목업 데이터*/
-//        MessageResponse res = MessageResponse.builder()
-//                .request(MessageFormat.from(user))
-//                .response(MessageFormat.builder()
-//                        .messageId(0L)
-//                        .sessionId(session.getId())
-//                        .talker(session.getDuckType().getValue())
-//                        .content("꽥")
-//                        .time(user.getCreatedAt())
-//                        .build())
-//                .build();
-        /*목업 데이터*/
+
         MessageResponse res = MessageResponse.builder()
                 .request(MessageFormat.from(user))
                 .response(MessageFormat.from(duck))

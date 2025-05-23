@@ -21,6 +21,12 @@ public class SessionCreateRequest {
     )
     @NotNull(message="duckType은 필수 입력 값입니다.")
     Integer duckType;
+    @Schema(
+            example="true",
+            description = "true or false"
+    )
+    @NotNull
+    Boolean isFormal;
     @Schema(example="[1,10, 30]")
     @NotNull(message="emotion은 필수 입력 값입니다.")
     List<Integer> emotion;

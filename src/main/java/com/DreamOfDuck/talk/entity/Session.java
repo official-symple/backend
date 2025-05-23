@@ -26,6 +26,9 @@ public class Session extends TimeStamp {
 
     @Enumerated(EnumType.STRING)
     private Talker duckType;
+
+    private Boolean isFormal;
+
     @ElementCollection
     @CollectionTable(name = "session_emotion", joinColumns = @JoinColumn(name = "session_id"))
     @Column(name = "emotion")
