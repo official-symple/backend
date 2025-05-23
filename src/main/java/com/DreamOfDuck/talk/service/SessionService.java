@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,10 +39,12 @@ public class SessionService {
     }
     @Transactional
     public SessionResponse update(Member host, SessionUpdateRequest request){
-        Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(EntityNotFoundException::new);
-       if(session.getHost()!=host){
-           throw new CustomException(ErrorCode.DIFFERENT_USER);
-       }
+        Session session = sessionRepository.findById(request.getSessionId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
+        if(session.getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER);
+        }
 
         session.setLast_emotion(LastEmotion.fromId(request.getLast_emotion()));
         if(session.getLast_emotion() == LastEmotion.OPTION4){
@@ -52,7 +55,9 @@ public class SessionService {
         return SessionResponse.from(session);
     }
     public SessionResponse findById(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId).orElseThrow(EntityNotFoundException::new);
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER);
         }
@@ -60,7 +65,9 @@ public class SessionService {
     }
     @Transactional
     public void delete(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId).orElseThrow(EntityNotFoundException::new);
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER);
         }
