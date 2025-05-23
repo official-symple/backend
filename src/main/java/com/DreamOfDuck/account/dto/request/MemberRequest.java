@@ -18,7 +18,10 @@ public class MemberRequest {
     @Schema(example="2002-01-4")
     @NotNull
     LocalDate birthday;
-    @Schema(example="female or male")
+    @Schema(
+            example = "female",
+            description = "female or male"
+    )
     @NotNull
     String gender;
     @Schema(example="1")

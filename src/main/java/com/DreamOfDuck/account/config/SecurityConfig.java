@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login", "/login/kakao", "/login/apple", "/login/google", "/reissue", "/logout").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/member/signup").hasAnyRole("GUEST", "USER")
+                        .anyRequest().hasRole("USER"))
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
