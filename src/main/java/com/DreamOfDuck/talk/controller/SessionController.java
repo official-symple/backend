@@ -8,6 +8,7 @@ import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.SessionResponse;
 import com.DreamOfDuck.talk.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,6 +65,10 @@ public class SessionController {
     }
     @GetMapping("")
     @Operation(summary = "세션 정보 불러오기", description = "유저의 모든 세션을 불러올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = SessionResponse.class))
+            )})
+    })
     public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.findByUser(member));
