@@ -2,6 +2,7 @@ package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
 import com.DreamOfDuck.talk.entity.Cause;
+import com.DreamOfDuck.talk.entity.Session;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,7 +22,7 @@ import java.time.LocalDate;
 public class Member extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="member_id")
+    @Column(name="memberId")
     private Long id;
 
     private String email;
@@ -35,5 +38,8 @@ public class Member extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Cause concern;
     private Integer blue;
+
+    @OneToMany(mappedBy = "host")
+    List<Session> sessions = new ArrayList<>();
 
 }

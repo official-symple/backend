@@ -1,5 +1,8 @@
 package com.DreamOfDuck.talk.service;
 
+import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.MessageFormatF;
 import com.DreamOfDuck.talk.dto.request.MessageRequest;
 import com.DreamOfDuck.talk.dto.request.MessageRequestF;
@@ -33,14 +36,17 @@ public class MessageService {
     private String endpoint;
 
     @Transactional
-    public MessageResponse save(MessageRequest request) {
+    public MessageResponse save(Member host, MessageRequest request) {
         Session session = sessionRepository.findById(request.getSessionId()).orElseThrow(EntityNotFoundException::new);
+        if(session.getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER);
+        }
         //유저 메시지 저장
         Message user = Message.builder()
                 .talker(Talker.USER)
                 .content(request.getContent())
                 .build();
-        user.addConversation(session);
+        user.addSession(session);
         messageRepository.save(user);
 
         /*fast api와 연동*/
@@ -54,7 +60,7 @@ public class MessageService {
                 .talker(session.getDuckType())
                 .content(responseF.getContent())
                 .build();
-        duck.addConversation(session);
+        duck.addSession(session);
         messageRepository.save(duck);
         /*fast api와 연동*/
 
@@ -78,11 +84,20 @@ public class MessageService {
             throw new RuntimeException("fastApi와 통신 실패");
         }
     }
-    public MessageFormat findById(Long messageId) {
-        return MessageFormat.from(messageRepository.findById(messageId).orElseThrow(EntityNotFoundException::new));
+
+    public MessageFormat findById(Member host, Long messageId) {
+        Message message = messageRepository.findById(messageId).orElseThrow(EntityNotFoundException::new);
+        if(message.getSession().getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER);
+        }
+        return MessageFormat.from(message);
     }
     @Transactional
-    public void delete(Long messageId){
+    public void delete(Member host, Long messageId){
+        Message message = messageRepository.findById(messageId).orElseThrow(EntityNotFoundException::new);
+        if(message.getSession().getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER);
+        }
         messageRepository.deleteById(messageId);
     }
 }
