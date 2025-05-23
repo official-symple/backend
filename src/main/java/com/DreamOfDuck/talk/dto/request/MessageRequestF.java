@@ -9,16 +9,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "message create request")
 public class MessageRequestF {
-    @Schema(example="1")
+
     @NotNull()
-    Integer duckType;
-    @Schema(example="오리 ㅎㅇ")
-    @NotNull(message="content는 필수 입력 값입니다.")
-    String content;
+    Integer persona;
+
+    @NotNull
+    Boolean formal;
+
+    @NotNull()
+    List<MessageFormatF> messages;
 }

@@ -25,6 +25,7 @@ public class SessionService {
 
         Session session = Session.builder()
                 .duckType(Talker.fromValue(request.getDuckType()))
+                .isFormal(request.getIsFormal())
                 .emotion(request.getEmotion().stream()
                         .map(Emotion::fromId)
                         .collect(Collectors.toList()))
