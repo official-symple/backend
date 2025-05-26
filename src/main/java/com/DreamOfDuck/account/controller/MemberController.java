@@ -32,4 +32,15 @@ public class MemberController {
         return memberService.join(member, request);
     }
 
+    @GetMapping("")
+    @Operation(summary = "개인정보 받기", description = "개인정보를 받을 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
+            )})
+    })
+    public MemberResponse getInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return MemberResponse.from(member);
+    }
+
 }
