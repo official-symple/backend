@@ -39,7 +39,7 @@ public class Member extends TimeStamp {
     private Cause concern;
     private Integer blue;
 
-    @OneToMany(mappedBy = "host")
+    @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
 
 }
