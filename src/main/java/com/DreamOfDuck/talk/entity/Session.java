@@ -40,7 +40,7 @@ public class Session extends TimeStamp {
     private String input_field; //last_emotion 4(기타)선택 시
 
     private Cause cause;
-    @OneToMany(mappedBy="session")
+    @OneToMany(mappedBy="session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> conversation = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
