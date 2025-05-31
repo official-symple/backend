@@ -20,6 +20,7 @@ public enum ErrorCode {
     JWT_EXPIRE_TOKEN(-203, "만료된 토큰입니다.", 401),
     AUTHORIZED_ERROR(-204, "인증 과정 중 에러가 발생했습니다.", 500),
     JWT_UNMATCHED_CLAIMS(-206, "토큰 인증 정보가 일치하지 않습니다", 401),
+    NOT_REFRESH_TOKEN(-207, "리프레시 토큰이 아닙니다.", 401),
 
     // User
     USER_ALREADY_EXIST(-300, "이미 회원가입된 유저입니다.", 400),
