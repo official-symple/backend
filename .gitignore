@@ -38,4 +38,5 @@ out/
 .vscode/
 
 ### Info ###
-/src/main/resources/
+.env
+firebase.json
