@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: db
+jwt:
+  secret: ${JWT_SECRET}
+fastApi:
+  talk:
+    endpoint: http://${AI_HOST}:${AI_PORT}/chat

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Login Example</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8PBX7K4D2NU9eG2Q8S7EMbsEf5u-ps5Y",
+            authDomain: "duck-s-dream.firebaseapp.com",
+            projectId: "duck-s-dream",
+            storageBucket: "duck-s-dream.firebasestorage.app",
+            messagingSenderId: "550493620497",
+            appId: "1:550493620497:web:3936c3413bcf69448864b0",
+            measurementId: "G-4M5JEHCGKJ"
+        };
+
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <style>
+        #login-button {
+            padding: 12px 20px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<button id="login-button">구글 로그인</button>
+
+<script>
+    document.getElementById('login-button').addEventListener('click', async () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        try {
+            const result = await firebase.auth().signInWithPopup(provider);
+            const user = result.user;
+
+            // 백엔드로 보낼 수 있는 ID 토큰 가져오기
+            const idToken = await user.getIdToken();
+
+            // 콘솔에 출력 (백엔드에 전송용)
+            console.log("✅ ID Token to send to backend:", idToken);
+        } catch (error) {
+            console.error("❌ 로그인 실패:", error);
+        }
+    });
+</script>
+</body>
+</html>
