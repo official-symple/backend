@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.controller;
 
 import com.DreamOfDuck.account.dto.response.TokenResponse;
+import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.jwt.JWTUtil;
 import com.DreamOfDuck.account.service.AuthService;
 import com.DreamOfDuck.account.service.MemberService;
@@ -12,7 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +58,24 @@ public class AuthController {
         String accessToken = jwtUtil.resolveToken(request);
         TokenResponse response = authService.appleLogin(accessToken);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request){
+        String refreshToken = jwtUtil.resolveToken(request);
+        TokenResponse response = authService.reissue(refreshToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        String email = customUserDetails.getUsername();
+        try{
+            authService.logout(email);
+            return ResponseEntity.ok("해당 유저가 성공적으로 로그아웃되었습니다.");
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     @GetMapping("/login")
     public String login(){

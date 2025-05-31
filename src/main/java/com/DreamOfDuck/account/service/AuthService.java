@@ -64,4 +64,14 @@ public class AuthService {
         memberRepository.save(member);
         return member;
     }
+
+    @Transactional
+    public TokenResponse reissue(String refreshToken){
+        return jwtProvider.reissue(refreshToken);
+    }
+
+    @Transactional
+    public void logout(String email){
+        jwtProvider.deleteToken(email);
+    }
 }
