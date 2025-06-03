@@ -46,6 +46,7 @@ jobs:
         echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
         echo "AI_HOST=${{ secrets.AI_HOST }}" >> .env
         echo "AI_PORT=${{ secrets.AI_PORT }}" >> .env
+        echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
       
     - name: create-json
       id: create-json
@@ -87,7 +88,7 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/dreaming_duck
           docker stop dreaming_duck || true
           docker rm dreaming_duck || true
-          docker run -d --name dreaming_duck -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dreaming_duck
+          docker-compose up -d
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
