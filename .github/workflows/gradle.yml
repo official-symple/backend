@@ -46,7 +46,6 @@ jobs:
         echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
         echo "AI_HOST=${{ secrets.AI_HOST }}" >> .env
         echo "AI_PORT=${{ secrets.AI_PORT }}" >> .env
-        echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
       
     - name: create-json
       id: create-json
