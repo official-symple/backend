@@ -1,11 +1,14 @@
-package com.DreamOfDuck.record;
+package com.DreamOfDuck.record.controller;
 
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
-import com.DreamOfDuck.talk.dto.response.MessageFormat;
-import com.DreamOfDuck.talk.dto.response.MessageResponse;
+import com.DreamOfDuck.record.dto.request.DateRequest;
+import com.DreamOfDuck.record.dto.request.DiaryRequest;
+import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
+import com.DreamOfDuck.record.dto.request.HealthUpdateRequest;
+import com.DreamOfDuck.record.dto.response.HealthResponse;
+import com.DreamOfDuck.record.service.HealthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

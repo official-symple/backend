@@ -1,7 +1,7 @@
 package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
-import com.DreamOfDuck.record.Health;
+import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.Session;
 import jakarta.persistence.*;

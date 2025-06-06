@@ -1,7 +1,7 @@
-package com.DreamOfDuck.record;
+package com.DreamOfDuck.record.dto.response;
 
+import com.DreamOfDuck.record.entity.Health;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

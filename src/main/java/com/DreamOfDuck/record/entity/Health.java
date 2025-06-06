@@ -1,4 +1,4 @@
-package com.DreamOfDuck.record;
+package com.DreamOfDuck.record.entity;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.entity.TimeStamp;

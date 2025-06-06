@@ -1,18 +1,13 @@
-package com.DreamOfDuck.record;
+package com.DreamOfDuck.record.service;
 
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
-import com.DreamOfDuck.talk.dto.request.MessageFormatF;
-import com.DreamOfDuck.talk.dto.request.MessageRequestF;
-import com.DreamOfDuck.talk.dto.response.MessageFormat;
-import com.DreamOfDuck.talk.dto.response.MessageResponse;
-import com.DreamOfDuck.talk.dto.response.MessageResponseF;
-import com.DreamOfDuck.talk.entity.Message;
-import com.DreamOfDuck.talk.entity.Session;
-import com.DreamOfDuck.talk.entity.Talker;
+import com.DreamOfDuck.record.repository.HealthRepository;
+import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
+import com.DreamOfDuck.record.dto.request.HealthUpdateRequest;
+import com.DreamOfDuck.record.dto.response.HealthResponse;
+import com.DreamOfDuck.record.entity.Health;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
