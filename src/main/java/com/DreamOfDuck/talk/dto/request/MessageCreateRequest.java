@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "message create request")
-public class MessageRequest {
+public class MessageCreateRequest {
     @Schema(example="1")
     @NotNull(message="sessionId는 필수 입력 값입니다.")
     Long sessionId;

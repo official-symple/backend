@@ -3,7 +3,7 @@ package com.DreamOfDuck.talk.controller;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.talk.dto.request.MessageRequest;
+import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.response.MessageFormat;
 import com.DreamOfDuck.talk.dto.response.MessageResponse;
@@ -32,7 +32,7 @@ public class MessageController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MessageResponse.class)
             )})
     })
-    public ResponseEntity<?> createMessage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MessageRequest request){
+    public ResponseEntity<?> createMessage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MessageCreateRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         MessageResponse response = messageService.save(member, request);
         return ResponseEntity.ok(response);

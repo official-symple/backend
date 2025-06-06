@@ -1,6 +1,6 @@
 package com.DreamOfDuck.account.controller;
 
-import com.DreamOfDuck.account.dto.request.MemberRequest;
+import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
@@ -27,7 +27,7 @@ public class MemberController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
             )})
     })
-    public MemberResponse signup(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberRequest request) {
+    public MemberResponse signup(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberCreateRequest request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return memberService.join(member, request);
     }

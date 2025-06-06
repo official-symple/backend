@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Message extends TimeStamp {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="messageId")
-    private Long messageId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="sessionId")

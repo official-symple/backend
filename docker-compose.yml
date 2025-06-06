@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   app:
-    image: ${DOCKER_USERNAME}/dreaming_duck:latest
+    image: giijinn/dreaming_duck:latest
     container_name: dreaming_duck
     ports:
       - "8080:8080"

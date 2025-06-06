@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @Schema(description = "member signup request")
-public class MemberRequest {
+public class MemberCreateRequest {
     @Schema(example="True")
     @NotNull
     Boolean isMarketing;

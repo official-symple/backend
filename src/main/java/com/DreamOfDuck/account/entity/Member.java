@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
+import com.DreamOfDuck.record.Health;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.Session;
 import jakarta.persistence.*;
@@ -42,4 +43,6 @@ public class Member extends TimeStamp {
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Health> record = new ArrayList<>();
 }
