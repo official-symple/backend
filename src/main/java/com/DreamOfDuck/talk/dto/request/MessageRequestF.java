@@ -18,7 +18,7 @@ import java.util.List;
 @Schema(description = "message create request")
 public class MessageRequestF {
 
-    @NotNull()
+    @NotNull
     Integer persona;
 
     @NotNull

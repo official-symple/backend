@@ -30,7 +30,7 @@ public class MessageFormat {
     LocalDateTime time;
     public static MessageFormat from(Message message) {
         return MessageFormat.builder()
-                .messageId(message.getMessageId())
+                .messageId(message.getId())
                 .sessionId(message.getSession().getId())
                 .talker(message.getTalker().getValue())
                 .content(message.getContent())

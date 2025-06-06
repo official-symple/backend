@@ -3,8 +3,8 @@ package com.DreamOfDuck.talk.service;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
 import com.DreamOfDuck.talk.dto.request.MessageFormatF;
-import com.DreamOfDuck.talk.dto.request.MessageRequest;
 import com.DreamOfDuck.talk.dto.request.MessageRequestF;
 import com.DreamOfDuck.talk.dto.response.MessageFormat;
 import com.DreamOfDuck.talk.dto.response.MessageResponse;
@@ -36,12 +36,12 @@ public class MessageService {
     private String endpoint;
 
     @Transactional
-    public MessageResponse save(Member host, MessageRequest request) {
+    public MessageResponse save(Member host, MessageCreateRequest request) {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
         if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         //유저 메시지 저장
         Message user = Message.builder()
@@ -91,7 +91,7 @@ public class MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MESSAGE));
         if(message.getSession().getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         return MessageFormat.from(message);
     }
@@ -100,7 +100,7 @@ public class MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MESSAGE));
         if(message.getSession().getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         messageRepository.deleteById(messageId);
     }

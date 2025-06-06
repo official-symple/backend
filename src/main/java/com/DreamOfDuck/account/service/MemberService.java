@@ -1,6 +1,6 @@
 package com.DreamOfDuck.account.service;
 
-import com.DreamOfDuck.account.dto.request.MemberRequest;
+import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Gender;
@@ -27,7 +27,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse join(Member member, MemberRequest request) {
+    public MemberResponse join(Member member, MemberCreateRequest request) {
         if(member.getRole()== Role.ROLE_USER){
             throw new CustomException(ErrorCode.USER_ALREADY_EXIST);
         }

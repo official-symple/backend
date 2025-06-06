@@ -32,9 +32,14 @@ public enum ErrorCode {
     NOT_FOUND_EMOTION(-401, "해당 감정은 존재하지 않습니다.", 406),
     NOT_FOUND_DUCK(-402, "해당 오리는 존재하지 않습니다.", 406),
     EMPTY_INPUT_FIELD(-403, "기타란을 입력해 주세요.", 400),
-    DIFFERENT_USER(-404, "해당 유저는 해당 session Id에 접근할 수 없습니다.",403),
+    DIFFERENT_USER_SESSION(-404, "해당 유저는 해당 session Id에 접근할 수 없습니다.",403),
     NOT_FOUND_SESSION(-405, "해당 세션은 존재하지 않습니다.", 406),
-    NOT_FOUND_MESSAGE(-406, "해당 메시지는 존재하지 않습니다.", 406);
+    NOT_FOUND_MESSAGE(-406, "해당 메시지는 존재하지 않습니다.", 406),
+
+    //Record
+    RECORD_ALREADY_EXIT(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),
+    NOT_FOUND_HEALTH(-501, "존재하지 않는 기록입니다.", 406),
+    DIFFERENT_USER_HEALTH(-502, "해당 유저는 해당 health Id에 접근할 수 없습니다.",403);
     private final int errorCode;
     private final String message;
     private final int httpCode;

@@ -43,7 +43,7 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
         if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
 
         session.setLast_emotion(LastEmotion.fromId(request.getLast_emotion()));
@@ -59,7 +59,7 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
         if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         return SessionResponse.from(session);
     }
@@ -69,7 +69,7 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
         if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER);
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         sessionRepository.deleteById(sessionId);
     }
