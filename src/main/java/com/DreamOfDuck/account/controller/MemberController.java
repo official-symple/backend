@@ -31,6 +31,16 @@ public class MemberController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return memberService.join(member, request);
     }
+    @PostMapping("/update")
+    @Operation(summary = "개인정보 수정", description = "개인정보를 수정할 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
+            )})
+    })
+    public MemberResponse updatMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberCreateRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateMemberInfo(member, request);
+    }
 
     @GetMapping("")
     @Operation(summary = "개인정보 받기", description = "개인정보를 받을 때 사용하는 API")
