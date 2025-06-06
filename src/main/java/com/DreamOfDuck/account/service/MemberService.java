@@ -40,4 +40,17 @@ public class MemberService {
         member.setBlue(request.getBlue());
         return MemberResponse.from(member);
     }
+    @Transactional
+    public MemberResponse updateMemberInfo(Member member, MemberCreateRequest request) {
+        if(member.getRole()!= Role.ROLE_USER){
+            throw new CustomException(ErrorCode.DO_SIGNUP_FIRST);
+        }
+        member.setIsMarketing(request.getIsMarketing());
+        member.setBirthday(request.getBirthday());
+        member.setNickname(request.getNickname());
+        member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
+        member.setConcern(Cause.fromId(request.getConcern()));
+        member.setBlue(request.getBlue());
+        return MemberResponse.from(member);
+    }
 }
