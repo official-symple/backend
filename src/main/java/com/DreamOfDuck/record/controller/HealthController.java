@@ -10,6 +10,7 @@ import com.DreamOfDuck.record.dto.request.HealthUpdateRequest;
 import com.DreamOfDuck.record.dto.response.HealthResponse;
 import com.DreamOfDuck.record.service.HealthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -87,7 +88,7 @@ public class HealthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HealthResponse.class)
             )})
     })
-    public ResponseEntity<?> getRecordByDate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value="date") LocalDate date){
+    public ResponseEntity<?> getRecordByDate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(required = true, example = "2025-06-06") @RequestParam(value = "date") LocalDate date){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(healthService.getRecordByDate(member, date));
     }
@@ -97,7 +98,7 @@ public class HealthController {
             @ApiResponse(responseCode="200", content = {@Content(array=@ArraySchema(schema= @Schema(implementation = HealthResponse.class))
             )})
     })
-    public ResponseEntity<?> getRecordByDatePeriod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value="startDate") LocalDate startDate, @RequestParam(value="endDate") LocalDate endDate){
+    public ResponseEntity<?> getRecordByDatePeriod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(required = true, example = "2025-06-01")@RequestParam(value="startDate") LocalDate startDate, @Parameter(required = true, example = "2025-06-07")@RequestParam(value="endDate") LocalDate endDate){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(healthService.getRecordsByDatePeriodAndHost(member, startDate,endDate));
     }
