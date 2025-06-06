@@ -1,13 +1,13 @@
-package com.DreamOfDuck.record;
+package com.DreamOfDuck.record.repository;
 
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.record.entity.Health;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
