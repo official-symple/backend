@@ -33,10 +33,4 @@ public class Interview extends TimeStamp {
     @OneToOne
     @JoinColumn(name="memberId")
     private Member host;
-
-    //==연관관계 메서드==//
-    public void addHost(Member member) {
-        member.setInterview(this);
-        this.setHost(member);
-    }
 }

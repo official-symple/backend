@@ -19,7 +19,7 @@ public class InterviewService {
 
     @Transactional
     public InterviewResponse save(Member member, InterviewCreateRequest interviewCreateRequest) {
-        Interview interview = member.getInterview();
+        Interview interview = interviewRepository.findByHost(member).orElse(null);
         if(interview == null){
             Interview newInterview = Interview.builder()
                     .question1(interviewCreateRequest.getQuestion1())
@@ -33,7 +33,6 @@ public class InterviewService {
                     .question9(interviewCreateRequest.getQuestion9())
                     .build();
             interviewRepository.save(newInterview);
-            newInterview.addHost(member);
             return InterviewResponse.from(newInterview);
         }else{
             interview.setQuestion1(interviewCreateRequest.getQuestion1());
