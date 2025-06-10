@@ -4,6 +4,7 @@ import com.DreamOfDuck.global.entity.TimeStamp;
 import com.DreamOfDuck.pang.Item;
 import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
+import com.DreamOfDuck.talk.entity.Interview;
 import com.DreamOfDuck.talk.entity.Session;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -51,5 +52,8 @@ public class Member extends TimeStamp {
 
     @OneToOne(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     private Item gameItem;
+
+    @OneToOne(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Interview interview;
 
 }

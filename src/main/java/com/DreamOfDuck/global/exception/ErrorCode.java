@@ -36,6 +36,8 @@ public enum ErrorCode {
     DIFFERENT_USER_SESSION(-404, "해당 유저는 해당 session Id에 접근할 수 없습니다.",403),
     NOT_FOUND_SESSION(-405, "해당 세션은 존재하지 않습니다.", 406),
     NOT_FOUND_MESSAGE(-406, "해당 메시지는 존재하지 않습니다.", 406),
+    NOT_FOUND_INTERVIEW(-407, "해당 접수면접은 존재하지 않습니다.", 406),
+    DIFFERENT_USER_INTERVIEW(-408, "해당 유저는 해당 인터뷰에 접근할 수 없습니다.",403),
 
     //Record
     RECORD_ALREADY_EXIST(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),

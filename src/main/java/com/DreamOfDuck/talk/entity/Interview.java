@@ -1,4 +1,4 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.talk.entity;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.entity.TimeStamp;
@@ -13,15 +13,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="Item")
-public class Item extends TimeStamp {
+@Table(name="Ind .terview")
+public class Interview extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="itemId")
+    @Column(name="interviewId")
     private Long id;
 
-    private Integer dia;
-    private Integer feather;
+    private String question1;
+    private String question2;
+    private String question3;
+    private String question4;
+    private String question5;
+    private String question6;
+    private String question7;
+    private String question8;
+    private String question9;
 
     @OneToOne
     @JoinColumn(name="memberId")
@@ -29,7 +36,7 @@ public class Item extends TimeStamp {
 
     //==연관관계 메서드==//
     public void addHost(Member member) {
-        member.setGameItem(this);
+        member.setInterview(this);
         this.setHost(member);
     }
 }

@@ -1,11 +1,12 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.talk.controller;
 
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
-import com.DreamOfDuck.record.dto.response.HealthResponse;
-import com.DreamOfDuck.record.service.HealthService;
+import com.DreamOfDuck.pang.ItemResponse;
+import com.DreamOfDuck.talk.dto.request.InterviewCreateRequest;
+import com.DreamOfDuck.talk.dto.response.InterviewResponse;
+import com.DreamOfDuck.talk.service.InterviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,47 +16,49 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/item")
-public class ItemController {
-    private final ItemService itemService;
+@RequestMapping("/api/interview")
+public class InterviewController {
+    private final InterviewService interviewService;
     private final MemberService memberService;
+
     @PostMapping("")
-    @Operation(summary = "item 생성/수정", description = "item을 생성/수정할 때 사용하는 API")
+    @Operation(summary = "접수면접 생성/수정", description = "접수면접을 생성/수정할 때 사용하는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ItemResponse.class)
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = InterviewResponse.class)
             )})
     })
-    public ResponseEntity<?> createItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody ItemCreateRequest request){
+    public ResponseEntity<?> createItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody InterviewCreateRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(itemService.save(member, request));
+        return ResponseEntity.ok(interviewService.save(member, request));
     }
     @GetMapping("")
-    @Operation(summary = "item 얻기", description = "해당 유저의 item을 얻을 때 사용하는 API")
+    @Operation(summary = "접수면접 얻기", description = "해당 유저의 item을 얻을 때 사용하는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ItemResponse.class)
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = InterviewResponse.class)
             )})
     })
     public ResponseEntity<?> getByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(itemService.getItemByHost(member));
+        return ResponseEntity.ok(interviewService.getInterviewByHost(member));
     }
+
     @DeleteMapping("/{id}")
-    @Operation(summary = "특정 item 삭제", description = "특정 item을 삭제할 때 사용하는 API")
+    @Operation(summary = "특정 접수면접 삭제", description = "특정 접수면접을 삭제할 때 사용하는 API")
     public ResponseEntity<?> deleteItemById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        itemService.delete(member, id);
+        interviewService.deleteById(member, id);
         return ResponseEntity.ok("아이템이 정상적으로 삭제되었습니다.");
     }
     @DeleteMapping("")
-    @Operation(summary = "유저의 item 삭제", description = "해당 유저의 item을 삭제할 때 사용하는 API")
+    @Operation(summary = "유저의 접수면접 삭제", description = "해당 유저의 접수면접을 삭제할 때 사용하는 API")
     public ResponseEntity<?> deleteItemByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        itemService.deleteByUser(member);
+        interviewService.deleteByUser(member);
         return ResponseEntity.ok("아이템이 정상적으로 삭제되었습니다.");
     }
+
 }
