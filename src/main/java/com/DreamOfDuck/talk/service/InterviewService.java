@@ -56,7 +56,7 @@ public class InterviewService {
     @Transactional
     public void deleteById(Member member, Long id) {
         Interview interview = interviewRepository.findById(id).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_INTERVIEW));
-        if(interview.getHost().equals(member)){
+        if(interview.getHost()!=member){
             throw new CustomException(ErrorCode.DIFFERENT_USER_INTERVIEW);
         }
         interviewRepository.delete(interview);

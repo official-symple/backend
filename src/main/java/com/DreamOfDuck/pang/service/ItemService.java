@@ -40,7 +40,7 @@ public class ItemService {
     @Transactional
     public void delete(Member host, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_ITEM));
-        if(item.getHost().equals(host)){
+        if(item.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_ITEM);
         }
         itemRepository.delete(item);

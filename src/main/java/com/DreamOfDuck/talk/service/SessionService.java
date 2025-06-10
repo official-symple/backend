@@ -42,7 +42,7 @@ public class SessionService {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost().equals(host)){
+        if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
 
@@ -58,7 +58,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost().equals(host)){
+        if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         return SessionResponse.from(session);
@@ -68,7 +68,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost().equals(host)){
+        if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         sessionRepository.deleteById(sessionId);

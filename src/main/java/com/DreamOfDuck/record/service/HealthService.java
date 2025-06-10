@@ -46,7 +46,7 @@ public class HealthService{
     @Transactional
     public HealthResponse updateDiary(Member host, Long healthId, String diary) {
         Health health = healthRepository.findById(healthId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         health.setDiary(diary);
@@ -56,7 +56,7 @@ public class HealthService{
     @Transactional
     public HealthResponse updateHealth(Member host, Long healthId, HealthUpdateRequest request) {
         Health health = healthRepository.findById(healthId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         health.setWalking(request.getWalking());
@@ -70,7 +70,7 @@ public class HealthService{
     @Transactional
     public HealthResponse updateDate(Member host, Long healthId, LocalDate date){
         Health health = healthRepository.findById(healthId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         health.setDate(date);
@@ -79,21 +79,21 @@ public class HealthService{
 
     public HealthResponse getRecordById(Member host, Long healthId) {
         Health health = healthRepository.findById(healthId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         return HealthResponse.from(health);
     }
     public HealthResponse getRecordByDate(Member host, LocalDate date) {
         Health health = healthRepository.findByDateAndHost(date, host).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         return HealthResponse.from(health);
     }
     public List<HealthResponse> getRecordsByDatePeriodAndHost(Member host, LocalDate startDate, LocalDate endDate) {
         List<Health> records = healthRepository.findByDatePeriodAndHost(startDate, endDate, host);
-        if(!records.isEmpty() && records.get(0).getHost().equals(host)){
+        if(!records.isEmpty() && records.get(0).getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         records.sort(Comparator.comparing(Health::getDate));
@@ -108,7 +108,7 @@ public class HealthService{
     @Transactional
     public void delete(Member host, Long healthId) {
         Health health = healthRepository.findById(healthId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_HEALTH));
-        if(health.getHost().equals(host)){
+        if(health.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_HEALTH);
         }
         healthRepository.delete(health);
