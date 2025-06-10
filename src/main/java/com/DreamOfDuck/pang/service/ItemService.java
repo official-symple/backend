@@ -19,7 +19,7 @@ public class ItemService {
 
     @Transactional
     public ItemResponse save(Member member, ItemCreateRequest request) {
-        Item item = member.getGameItem();
+        Item item = itemRepository.findByHost(member).orElse(null);
         if(item!=null){
             item.setDia(request.getDia());
             item.setFeather(request.getFeather());
@@ -30,7 +30,6 @@ public class ItemService {
                     .feather(request.getFeather())
                     .build();
             itemRepository.save(newItem);
-            newItem.addHost(member);
             return ItemResponse.from(newItem);
         }
     }
