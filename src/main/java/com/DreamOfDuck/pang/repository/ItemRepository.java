@@ -1,6 +1,7 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.pang.repository;
 
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.pang.entity.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

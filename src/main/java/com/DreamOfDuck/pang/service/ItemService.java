@@ -1,9 +1,12 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.pang.service;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.record.entity.Health;
+import com.DreamOfDuck.pang.dto.request.ItemCreateRequest;
+import com.DreamOfDuck.pang.dto.response.ItemResponse;
+import com.DreamOfDuck.pang.entity.Item;
+import com.DreamOfDuck.pang.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

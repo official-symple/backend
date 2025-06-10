@@ -3,7 +3,6 @@ package com.DreamOfDuck.talk.controller;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.pang.ItemResponse;
 import com.DreamOfDuck.talk.dto.request.InterviewCreateRequest;
 import com.DreamOfDuck.talk.dto.response.InterviewResponse;
 import com.DreamOfDuck.talk.service.InterviewService;

@@ -1,11 +1,11 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.pang.controller;
 
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
-import com.DreamOfDuck.record.dto.response.HealthResponse;
-import com.DreamOfDuck.record.service.HealthService;
+import com.DreamOfDuck.pang.dto.request.ItemCreateRequest;
+import com.DreamOfDuck.pang.dto.response.ItemResponse;
+import com.DreamOfDuck.pang.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
