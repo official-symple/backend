@@ -31,6 +31,8 @@ public class MemberResponse {
     Integer concern;
     @Schema(example="70")
     Integer blue;
+    @Schema(example="1100")
+    Integer maxScore;
 
     public static MemberResponse from(Member member){
         return MemberResponse.builder()
@@ -42,6 +44,7 @@ public class MemberResponse {
                 .gender(member.getGender().toString())
                 .concern(member.getConcern().getId())
                 .blue(member.getBlue())
+                .maxScore(member.getMaxScore())
                 .build();
     }
 }

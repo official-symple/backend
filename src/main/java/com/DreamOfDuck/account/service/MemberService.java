@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.service;
 
 import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
+import com.DreamOfDuck.account.dto.request.ScoreRequest;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Gender;
@@ -52,6 +53,13 @@ public class MemberService {
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
         member.setBlue(request.getBlue());
+        return MemberResponse.from(member);
+    }
+    @Transactional
+    public MemberResponse updateScore(Member member, ScoreRequest request) {
+        if(member.getMaxScore()<request.getScore()){
+            member.setMaxScore(request.getScore());
+        }
         return MemberResponse.from(member);
     }
 }

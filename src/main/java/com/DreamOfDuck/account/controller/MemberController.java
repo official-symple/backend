@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.controller;
 
 import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
+import com.DreamOfDuck.account.dto.request.ScoreRequest;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/member")
 public class MemberController {
     private final MemberService memberService;
-    @PostMapping("signup")
+    @PostMapping("/signup")
     @Operation(summary = "개인정보 입력", description = "개인정보를 생성할 때 사용하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
@@ -51,6 +52,17 @@ public class MemberController {
     public MemberResponse getInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return MemberResponse.from(member);
+    }
+
+    @PostMapping("/score")
+    @Operation(summary = "점수 업데이트", description = "유저의 이전 최대 점수와 비교해 더 높으면 업데이트하는 api(이전 점수가 없다면 생성)")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
+            )})
+    })
+    public MemberResponse updateScore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid ScoreRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateScore(member, request);
     }
 
 
