@@ -57,7 +57,10 @@ public class MemberService {
     }
     @Transactional
     public MemberResponse updateScore(Member member, ScoreRequest request) {
-        if(member.getMaxScore()<request.getScore()){
+        if(member.getMaxScore()==null){
+            member.setMaxScore(request.getScore());
+        }
+        else if(member.getMaxScore()<request.getScore()){
             member.setMaxScore(request.getScore());
         }
         return MemberResponse.from(member);
