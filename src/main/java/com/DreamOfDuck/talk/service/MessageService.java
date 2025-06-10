@@ -40,7 +40,7 @@ public class MessageService {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost().equals(host)){
+        if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         //유저 메시지 저장
@@ -90,7 +90,7 @@ public class MessageService {
     public MessageFormat findById(Member host, Long messageId) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MESSAGE));
-        if(message.getSession().getHost().equals(host)){
+        if(message.getSession().getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         return MessageFormat.from(message);
@@ -99,7 +99,7 @@ public class MessageService {
     public void delete(Member host, Long messageId){
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MESSAGE));
-        if(message.getSession().getHost().equals(host)){
+        if(message.getSession().getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
         messageRepository.deleteById(messageId);
