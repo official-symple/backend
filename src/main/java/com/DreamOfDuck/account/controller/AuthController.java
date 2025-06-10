@@ -71,6 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "로그아웃", description = "로그아웃할 때 사용하는 api")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         String email = customUserDetails.getUsername();
