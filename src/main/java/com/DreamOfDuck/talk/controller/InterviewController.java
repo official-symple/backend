@@ -50,14 +50,14 @@ public class InterviewController {
     public ResponseEntity<?> deleteItemById(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         interviewService.deleteById(member, id);
-        return ResponseEntity.ok("아이템이 정상적으로 삭제되었습니다.");
+        return ResponseEntity.ok("접수면접이 정상적으로 삭제되었습니다.");
     }
     @DeleteMapping("")
     @Operation(summary = "유저의 접수면접 삭제", description = "해당 유저의 접수면접을 삭제할 때 사용하는 API")
     public ResponseEntity<?> deleteItemByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         interviewService.deleteByUser(member);
-        return ResponseEntity.ok("아이템이 정상적으로 삭제되었습니다.");
+        return ResponseEntity.ok("접수면접이 정상적으로 삭제되었습니다.");
     }
 
 }
