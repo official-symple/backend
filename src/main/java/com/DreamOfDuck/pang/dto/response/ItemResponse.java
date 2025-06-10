@@ -1,6 +1,7 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.pang.dto.response;
 
 
+import com.DreamOfDuck.pang.entity.Item;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

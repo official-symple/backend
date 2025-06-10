@@ -1,7 +1,7 @@
 package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
-import com.DreamOfDuck.pang.Item;
+import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.Interview;

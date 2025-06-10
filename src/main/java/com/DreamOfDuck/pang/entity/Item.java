@@ -1,4 +1,4 @@
-package com.DreamOfDuck.pang;
+package com.DreamOfDuck.pang.entity;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.entity.TimeStamp;
