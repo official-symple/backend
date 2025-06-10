@@ -73,4 +73,10 @@ public class AuthService {
     public void logout(String email){
         jwtProvider.deleteToken(email);
     }
+
+    @Transactional
+    public void cancelMembership(Member member){
+        jwtProvider.deleteToken(member.getEmail());
+        memberRepository.delete(member);
+    }
 }
