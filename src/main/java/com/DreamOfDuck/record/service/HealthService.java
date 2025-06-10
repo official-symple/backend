@@ -26,7 +26,7 @@ public class HealthService{
     @Transactional
     public HealthResponse save(Member host, HealthCreateRequest request) {
         if(healthRepository.findByDateAndHost(request.getDate(), host).isPresent()){
-            throw new CustomException(ErrorCode.RECORD_ALREADY_EXIT);
+            throw new CustomException(ErrorCode.RECORD_ALREADY_EXIST);
         }
         //유저 메시지 저장
         Health health = Health.builder()

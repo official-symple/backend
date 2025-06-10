@@ -38,6 +38,7 @@ public class MemberService {
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
         member.setBlue(request.getBlue());
+        member.setMaxScore(0);
         return MemberResponse.from(member);
     }
     @Transactional

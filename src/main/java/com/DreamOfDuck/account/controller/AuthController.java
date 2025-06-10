@@ -59,7 +59,11 @@ public class AuthController {
         TokenResponse response = authService.appleLogin(accessToken);
         return ResponseEntity.ok(response);
     }
-
+    @Operation(summary = "토큰 재발급", description = "토큰 재발급할 때 사용하는 api(in header, Authorization : Bearer <refresh token> 형식)")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
+            )})
+    })
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request){
         String refreshToken = jwtUtil.resolveToken(request);

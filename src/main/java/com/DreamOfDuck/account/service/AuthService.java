@@ -49,7 +49,6 @@ public class AuthService {
         Member findOne = findOrCreateMember(response);
         return jwtProvider.createJWT(findOne);
     }
-
     private Member findOrCreateMember(OAuthResponse response){
         return memberRepository.findByEmail(response.getEmail()).orElseGet(()->createMember(response));
     }

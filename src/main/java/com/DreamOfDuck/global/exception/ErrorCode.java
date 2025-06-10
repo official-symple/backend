@@ -38,9 +38,13 @@ public enum ErrorCode {
     NOT_FOUND_MESSAGE(-406, "해당 메시지는 존재하지 않습니다.", 406),
 
     //Record
-    RECORD_ALREADY_EXIT(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),
+    RECORD_ALREADY_EXIST(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),
     NOT_FOUND_HEALTH(-501, "존재하지 않는 기록입니다.", 406),
-    DIFFERENT_USER_HEALTH(-502, "해당 유저는 해당 health Id에 접근할 수 없습니다.",403);
+    DIFFERENT_USER_HEALTH(-502, "해당 유저는 해당 health Id에 접근할 수 없습니다.",403),
+
+    //pang
+    NOT_FOUND_ITEM(-600, "존재하지 않는 item입니다.", 406),
+    DIFFERENT_USER_ITEM(-601, "해당 유저는 해당 item에 접근할 수 없습니다.",403);
     private final int errorCode;
     private final String message;
     private final int httpCode;

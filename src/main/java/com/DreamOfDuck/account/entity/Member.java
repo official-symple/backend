@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
+import com.DreamOfDuck.pang.Item;
 import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.Session;
@@ -40,9 +41,15 @@ public class Member extends TimeStamp {
     private Cause concern;
     private Integer blue;
 
+    private Integer maxScore;
+
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
 
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Health> record = new ArrayList<>();
+
+    @OneToOne(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Item gameItem;
+
 }
