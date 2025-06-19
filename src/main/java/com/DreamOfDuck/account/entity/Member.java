@@ -29,7 +29,7 @@ public class Member extends TimeStamp {
     private Long id;
 
     private String email;
-
+    //private String socialEmail;
     private String nickname;
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)

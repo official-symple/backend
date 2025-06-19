@@ -3,9 +3,11 @@ package com.DreamOfDuck.account.infra;
 import com.DreamOfDuck.account.dto.response.OAuthResponse;
 import com.DreamOfDuck.account.entity.SocialType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class KakaoApiClient implements OAuthApiClient {
 
     private final RestTemplate restTemplate;
@@ -28,9 +31,11 @@ public class KakaoApiClient implements OAuthApiClient {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(httpHeaders);
         ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<Map<String, Object>>() {};
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, httpMethod, request, RESPONSE_TYPE);
+        log.info(response.getBody().toString());
 
         return OAuthResponse.builder()
                 .socialType(SocialType.KAKAO)
+                //.socialEmail(response.getBody().get("kakao_account.profile.nickname").toString())
                 .email(response.getBody().get("id") + "@KAKAO")
                 .build();
     }

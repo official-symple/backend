@@ -38,6 +38,7 @@ public class MemberResponse {
         return MemberResponse.builder()
                 .memberId(member.getId())
                 .isMarketing(member.getIsMarketing())
+                //.email(member.getSocialEmail())
                 .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .role(member.getRole().toString())
