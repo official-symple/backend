@@ -18,6 +18,7 @@ public class AppleApiClient implements OAuthApiClient{
 
         return OAuthResponse.builder()
                 .socialType(SocialType.APPLE)
+                //.socialEmail(decodedToken.getEmail())
                 .email(decodedToken.getUid()+ "@APPLE")
                 .build();
     }

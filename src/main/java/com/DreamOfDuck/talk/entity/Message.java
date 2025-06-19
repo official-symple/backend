@@ -23,6 +23,7 @@ public class Message extends TimeStamp {
     private Session session;
 
     private Talker talker;
+    @Lob
     private String content;
 
     //==연관관계 메서드==//
@@ -30,5 +31,4 @@ public class Message extends TimeStamp {
         session.getConversation().add(this);
         this.setSession(session);
     }
-
 }

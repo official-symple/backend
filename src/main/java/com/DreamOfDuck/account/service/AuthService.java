@@ -32,7 +32,6 @@ public class AuthService {
 
         OAuthResponse response = kakaoApiClient.requestOAuthInfo(accessToken);
         Member findOne = findOrCreateMember(response);
-
         return jwtProvider.createJWT(findOne);
     }
 
@@ -56,6 +55,7 @@ public class AuthService {
 
         Member member = Member.builder()
                 .email(response.getEmail())
+                //.socialEmail(response.getSocialEmail())
                 .role(Role.ROLE_GUEST)
                 .socialType(response.getSocialType())
                 .build();
