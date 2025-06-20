@@ -28,6 +28,7 @@ public class Health extends TimeStamp {
     private LocalTime sleeping;
     private LocalTime screenTime;
     private LocalTime lightening;
+    @Lob
     private String diary;
     private LocalDate date;
 
