@@ -71,7 +71,7 @@ public class JWTUtil {
     public boolean validate(String token){
         
         try {
-            System.out.println("Validate token: " + token);
+            //System.out.println("Validate token: " + token);
             Jwts.parserBuilder()
                     .setSigningKey(key)  //검증키 지정
                     .build()
