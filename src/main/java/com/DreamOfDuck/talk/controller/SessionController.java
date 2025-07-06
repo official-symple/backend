@@ -5,9 +5,14 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
+import com.DreamOfDuck.talk.dto.response.AdviceResponse;
+import com.DreamOfDuck.talk.dto.response.MissionResponse;
+import com.DreamOfDuck.talk.dto.response.ReportResponse;
 import com.DreamOfDuck.talk.dto.response.SessionResponse;
 import com.DreamOfDuck.talk.service.SessionService;
+import feign.Param;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,6 +77,36 @@ public class SessionController {
     public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.findByUser(member));
+    }
+    @PostMapping("/summary/{id}")
+    @Operation(summary = "오늘의 리포트 불러오기", description = "채팅 후 오늘의 리포트를 가져올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ReportResponse.class)
+            )})
+    })
+    public ResponseEntity<?> getReportBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.saveSolution(member ,id));
+    }
+    @PostMapping("/mission/{id}")
+    @Operation(summary = "오늘의 미션 불러오기", description = "채팅 후 오늘의 미션을 가져올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MissionResponse.class)
+            )})
+    })
+    public ResponseEntity<?> getMissionBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.saveMission(member ,id));
+    }
+    @PostMapping("/advice/{id}")
+    @Operation(summary = "오늘의 미션 단어 조합 불러오기", description = "mission api호출 후 단어 조합 불러올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AdviceResponse.class)
+            )})
+    })
+    public ResponseEntity<?> getAdviceBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.saveAdvice(member ,id));
     }
 
 }

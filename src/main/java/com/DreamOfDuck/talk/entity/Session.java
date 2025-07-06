@@ -40,6 +40,23 @@ public class Session extends TimeStamp {
     private String input_field; //last_emotion 4(기타)선택 시
 
     private Cause cause;
+
+    @Lob
+    private String problem;
+
+    @ElementCollection
+    @CollectionTable(name = "session_solutions", joinColumns = @JoinColumn(name = "session_id"))
+    @Column(name = "solution")
+    private List<String> solutions =  new ArrayList<>();
+
+    @Lob
+    private String mission;
+
+    @ElementCollection
+    @CollectionTable(name = "session_advice", joinColumns = @JoinColumn(name = "session_id"))
+    @Column(name = "advice")
+    private List<String> advice =  new ArrayList<>();
+
     @OneToMany(mappedBy="session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> conversation = new ArrayList<>();
 

@@ -9,6 +9,7 @@ import com.DreamOfDuck.talk.dto.request.MessageRequestF;
 import com.DreamOfDuck.talk.dto.response.MessageFormat;
 import com.DreamOfDuck.talk.dto.response.MessageResponse;
 import com.DreamOfDuck.talk.dto.response.MessageResponseF;
+import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Message;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.entity.Talker;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly=true)
@@ -55,6 +57,8 @@ public class MessageService {
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
+                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
+                .emotion_cause(session.getCause().getText())
                 .messages(MessageFormatF.fromSession(session))
                 .build();
         MessageResponseF responseF = getMessageFromDuck(requestF);
