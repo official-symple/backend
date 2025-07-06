@@ -5,10 +5,7 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
-import com.DreamOfDuck.talk.dto.response.AdviceResponse;
-import com.DreamOfDuck.talk.dto.response.MissionResponse;
-import com.DreamOfDuck.talk.dto.response.ReportResponse;
-import com.DreamOfDuck.talk.dto.response.SessionResponse;
+import com.DreamOfDuck.talk.dto.response.*;
 import com.DreamOfDuck.talk.service.SessionService;
 import feign.Param;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,7 +68,7 @@ public class SessionController {
     @GetMapping("")
     @Operation(summary = "세션 정보 불러오기", description = "유저의 모든 세션을 불러올 때 사용하는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = SessionResponse.class))
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = SessionResponseList.class)
             )})
     })
     public ResponseEntity<?> getSessionByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){

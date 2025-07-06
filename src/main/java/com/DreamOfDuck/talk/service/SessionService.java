@@ -9,6 +9,7 @@ import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.*;
 import com.DreamOfDuck.talk.entity.*;
+import com.DreamOfDuck.talk.repository.InterviewRepository;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class SessionService {
     private final RestTemplate restTemplate;
     private final SessionRepository sessionRepository;
+    private final InterviewRepository interviewRepository;
     @Value("${fastApi.summary.endpoint}")
     private String endpoint_summary;
     @Value("${fastApi.mission.endpoint}")
@@ -74,6 +76,7 @@ public class SessionService {
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
+        SessionResponse sessionResponse = SessionResponse.from(session);
         return SessionResponse.from(session);
     }
     @Transactional
@@ -86,11 +89,12 @@ public class SessionService {
         }
         sessionRepository.deleteById(sessionId);
     }
-    public List<SessionResponse> findByUser(Member host){
+    public SessionResponseList findByUser(Member host){
         List<Session> sessionList = sessionRepository.findByHost(host);
-        return sessionList.stream()
-                .map(session->SessionResponse.from(session))
-                .collect(Collectors.toList());
+        SessionResponseList res = new SessionResponseList();
+        res.setSessions(sessionList.stream().map(SessionResponse::from).collect(Collectors.toList()));
+        res.setIsInterview(interviewRepository.existsByHost(host));
+        return res;
     }
 
     @Transactional

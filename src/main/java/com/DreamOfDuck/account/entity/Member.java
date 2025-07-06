@@ -50,10 +50,4 @@ public class Member extends TimeStamp {
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Health> record = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Item gameItem;
-//
-//    @OneToOne(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Interview interview;
-
 }

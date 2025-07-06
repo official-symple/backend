@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
     Optional<Interview> findByHost(Member host);
+    boolean existsByHost(Member host);
 }
