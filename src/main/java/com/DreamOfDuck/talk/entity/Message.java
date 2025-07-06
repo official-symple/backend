@@ -2,6 +2,7 @@ package com.DreamOfDuck.talk.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,10 +21,13 @@ public class Message extends TimeStamp {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="sessionId")
+    @NotNull
     private Session session;
 
+    @NotNull
     private Talker talker;
     @Lob
+    @NotNull
     private String content;
 
     //==연관관계 메서드==//

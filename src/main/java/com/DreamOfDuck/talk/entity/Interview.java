@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="Ind .terview")
+@Table(name="Interview")
 public class Interview extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
