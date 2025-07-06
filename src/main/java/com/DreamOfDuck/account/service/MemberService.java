@@ -38,7 +38,12 @@ public class MemberService {
         member.setNickname(request.getNickname());
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
-        member.setBlue(request.getBlue());
+        member.setStatus(request.getStatus());
+        int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
+        if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
+        else if(sum<=9) member.setTotalStatus("가벼운 우울");
+        else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
+        else member.setTotalStatus("심한 우울");
         member.setMaxScore(0);
         return MemberResponse.from(member);
     }
@@ -52,7 +57,13 @@ public class MemberService {
         member.setNickname(request.getNickname());
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
-        member.setBlue(request.getBlue());
+        member.setStatus(request.getStatus());
+        member.setStatus(request.getStatus());
+        int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
+        if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
+        else if(sum<=9) member.setTotalStatus("가벼운 우울");
+        else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
+        else member.setTotalStatus("심한 우울");
         return MemberResponse.from(member);
     }
     @Transactional

@@ -40,7 +40,13 @@ public class Member extends TimeStamp {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Cause concern;
-    private Integer blue;
+
+    @ElementCollection
+    @CollectionTable(name = "member_status", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "status")
+    private List<Integer> status =  new ArrayList<>();
+
+    private String totalStatus;
 
     private Integer maxScore;
 

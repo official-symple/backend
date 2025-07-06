@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -29,8 +30,12 @@ public class MemberResponse {
     String gender;
     @Schema(example="1")
     Integer concern;
-    @Schema(example="70")
-    Integer blue;
+
+    @Schema(example="[1, 1, 2, 3, 0, 3, 2, 3, 0]")
+    List<Integer> status;
+
+    @Schema(example="심한 우울")
+    String totalStatus;
     @Schema(example="1100")
     Integer maxScore;
 
@@ -44,7 +49,8 @@ public class MemberResponse {
                 .role(member.getRole().toString())
                 .gender(member.getGender().toString())
                 .concern(member.getConcern().getId())
-                .blue(member.getBlue())
+                .status(member.getStatus())
+                .totalStatus(member.getTotalStatus())
                 .maxScore(member.getMaxScore())
                 .build();
     }

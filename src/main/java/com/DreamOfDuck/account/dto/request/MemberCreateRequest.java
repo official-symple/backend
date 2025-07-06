@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Schema(description = "member signup request")
@@ -27,7 +28,7 @@ public class MemberCreateRequest {
     @Schema(example="1")
     @NotNull
     Integer concern;
-    @Schema(example="70")
+    @Schema(example="[1, 1, 2, 3, 0, 3, 2, 3, 0]")
     @NotNull
-    Integer blue;
+    List<Integer> status;
 }
