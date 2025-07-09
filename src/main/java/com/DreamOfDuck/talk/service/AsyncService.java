@@ -3,8 +3,10 @@ package com.DreamOfDuck.talk.service;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.talk.dto.request.AdviceRequestF;
 import com.DreamOfDuck.talk.dto.request.MessageFormatF;
 import com.DreamOfDuck.talk.dto.request.MessageRequestF;
+import com.DreamOfDuck.talk.dto.request.MissionRequestF;
 import com.DreamOfDuck.talk.dto.response.AdviceResponse;
 import com.DreamOfDuck.talk.dto.response.MissionResponse;
 import com.DreamOfDuck.talk.dto.response.ReportResponse;
@@ -42,7 +44,7 @@ public class AsyncService {
     @Async
     public void saveReportAndMission(Long sessionId){
         Session session = sessionRepository.findById(sessionId).orElse(null);
-        /*fast api와 연동*/
+
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
@@ -51,18 +53,30 @@ public class AsyncService {
                 .messages(MessageFormatF.fromSession(session))
                 .build();
         SummaryResponseF responseF = getSummary(requestF);
-        System.out.println("problem 받기 : "+responseF.getProblem());
-        System.out.println("solution 받기 : "+responseF.getSolutions());
         session.setProblem(responseF.getProblem());
         session.setSolutions(responseF.getSolutions());
-        MissionResponse responseF2 = getMission(requestF);
+
+        MissionRequestF requestF2 = MissionRequestF.builder()
+                .persona(session.getDuckType().getValue())
+                .formal(session.getIsFormal())
+                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
+                .emotion_cause(session.getCause().getText())
+                .summary(responseF.getProblem())
+                .build();
+        MissionResponse responseF2 = getMission(requestF2);
         System.out.println("mission 받기 : "+responseF2.getMission());
         session.setMission(responseF2.getMission());
-        AdviceResponse responseF3 = getAdvice(requestF);
+
+        AdviceRequestF requestF3 = AdviceRequestF.builder()
+                .messages(requestF.getMessages())
+                .persona(session.getDuckType().getValue())
+                .formal(session.getIsFormal())
+                .build();
+        AdviceResponse responseF3 = getAdvice(requestF3);
         System.out.println("advice 받기 : "+responseF3.getAdvice());
         session.setAdvice(responseF3.getAdvice());
         sessionRepository.save(session);
-        /*fast api와 연동*/
+
         return;
     }
     private SummaryResponseF getSummary(MessageRequestF request){
@@ -80,10 +94,10 @@ public class AsyncService {
         }
     }
 
-    private MissionResponse getMission(MessageRequestF request){
+    private MissionResponse getMission(MissionRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
+        HttpEntity<MissionRequestF> requestEntity = new HttpEntity<>(request, headers);
 
         try{
             ResponseEntity<MissionResponse> res = restTemplate.exchange(endpoint_mission, HttpMethod.POST, requestEntity, MissionResponse.class);
@@ -96,10 +110,10 @@ public class AsyncService {
         }
     }
 
-    private AdviceResponse getAdvice(MessageRequestF request){
+    private AdviceResponse getAdvice(AdviceRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
+        HttpEntity<AdviceRequestF> requestEntity = new HttpEntity<>(request, headers);
         try{
             ResponseEntity<AdviceResponse> res = restTemplate.exchange(endpoint_advice, HttpMethod.POST, requestEntity, AdviceResponse.class);
             if(res.getBody()==null){
