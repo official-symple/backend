@@ -1,6 +1,7 @@
 package com.DreamOfDuck.pang.service;
 
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.pang.dto.request.ItemCreateRequest;
@@ -16,10 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-
+    private final MemberRepository memberRepository;
     @Transactional
     public ItemResponse save(Member member, ItemCreateRequest request) {
         Item item = itemRepository.findByHost(member).orElse(null);
+        member = memberRepository.findById(member.getId()).orElse(null);
         if(item!=null){
             item.setDia(request.getDia());
             item.setFeather(request.getFeather());
@@ -28,6 +30,7 @@ public class ItemService {
             Item newItem = Item.builder()
                     .dia(request.getDia())
                     .feather(request.getFeather())
+                    .host(member)
                     .build();
             itemRepository.save(newItem);
             return ItemResponse.from(newItem);

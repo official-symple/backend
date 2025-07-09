@@ -24,7 +24,7 @@ public class Item extends TimeStamp {
     private Integer feather;
 
     @OneToOne
-    @JoinColumn(name="memberId")
+    @JoinColumn(name="member_id", unique=true, nullable=false)
     private Member host;
 
 }
