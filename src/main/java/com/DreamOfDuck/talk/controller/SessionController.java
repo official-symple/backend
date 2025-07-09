@@ -6,6 +6,7 @@ import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.*;
+import com.DreamOfDuck.talk.service.AsyncService;
 import com.DreamOfDuck.talk.service.SessionService;
 import feign.Param;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class SessionController {
     private final SessionService sessionService;
     private final MemberService memberService;
+    private final AsyncService asyncService;
 
     @PostMapping()
     @Operation(summary = "세션 생성", description = "세션을 생성할 때 사용하는 API")
@@ -46,8 +48,12 @@ public class SessionController {
     })
     public ResponseEntity<?> updateSession(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody SessionUpdateRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        asyncService.saveAdvice(member, request.getSessionId());
+        asyncService.saveSolution(member, request.getSessionId());
+        asyncService.saveMission(member, request.getSessionId());
         return ResponseEntity.ok(sessionService.update(member, request));
     }
+
     @GetMapping("/{id}")
     @Operation(summary = "특정 세션 조회", description = "특정 세션을 조회할 때 사용하는 API")
     @ApiResponses(value={
@@ -83,7 +89,7 @@ public class SessionController {
     })
     public ResponseEntity<?> getReportBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(sessionService.saveSolution(member ,id));
+        return ResponseEntity.ok(sessionService.getReportById(member, id));
     }
     @PostMapping("/mission/{id}")
     @Operation(summary = "오늘의 미션 불러오기", description = "채팅 후 오늘의 미션을 가져올 때 사용하는 API")
@@ -93,7 +99,7 @@ public class SessionController {
     })
     public ResponseEntity<?> getMissionBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(sessionService.saveMission(member ,id));
+        return ResponseEntity.ok(sessionService.getMissionById(member, id));
     }
     @PostMapping("/advice/{id}")
     @Operation(summary = "오늘의 미션 단어 조합 불러오기", description = "mission api호출 후 단어 조합 불러올 때 사용하는 API")
@@ -103,7 +109,7 @@ public class SessionController {
     })
     public ResponseEntity<?> getAdviceBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(sessionService.saveAdvice(member ,id));
+        return ResponseEntity.ok(sessionService.getAdviceById(member, id));
     }
 
 }
