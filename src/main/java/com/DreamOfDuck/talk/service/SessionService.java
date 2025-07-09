@@ -122,6 +122,9 @@ public class SessionService {
         if(session.getLastEmotion() == null){
             throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
         }
+        if(session.getMission()==null || session.getMission().isEmpty()){
+            throw new CustomException(ErrorCode.MISSION_ING);
+        }
         return MissionResponse.from(session);
     }
     public AdviceResponse getAdviceById(Member host, Long sessionId){
@@ -134,6 +137,9 @@ public class SessionService {
         if(session.getLastEmotion() == null){
             throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
         }
+        if(session.getAdvice()==null || session.getAdvice().isEmpty()){
+            throw new CustomException(ErrorCode.ADVICE_ING);
+        }
         return AdviceResponse.from(session);
     }
     public ReportResponse getReportById(Member host, Long sessionId){
@@ -145,6 +151,9 @@ public class SessionService {
         }
         if(session.getLastEmotion() == null){
             throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
+        }
+        if(session.getProblem()==null || session.getProblem().isEmpty() || session.getSolutions().isEmpty()){
+            throw new CustomException(ErrorCode.SUMMARY_ING);
         }
         return ReportResponse.from(session);
     }
