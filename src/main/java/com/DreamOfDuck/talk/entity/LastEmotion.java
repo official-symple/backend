@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum LastEmotion {
     OPTION1(1, "그대로야"),
     OPTION2(2, "기분이 나아졌어"),
-    OPTION3(3, "생각이 정리된 것 같아"),
-    OPTION4(4, "기타(입력)");
+    OPTION3(3, "생각이 정리된 것 같아");
     private final Integer id;
     private final String text;
 

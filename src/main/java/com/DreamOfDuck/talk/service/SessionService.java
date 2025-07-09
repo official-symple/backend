@@ -61,10 +61,6 @@ public class SessionService {
         }
 
         session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
-        if(session.getLastEmotion() == LastEmotion.OPTION4){
-            if(request.getInputField() ==null || request.getInputField().isEmpty())  throw new CustomException(ErrorCode.EMPTY_INPUT_FIELD);
-        }
-        session.setInputField(request.getInputField());
         sessionRepository.save(session);
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId()));
         return SessionResponse.from(session);

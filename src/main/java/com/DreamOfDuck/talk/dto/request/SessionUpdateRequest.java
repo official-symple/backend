@@ -12,12 +12,10 @@ public class SessionUpdateRequest {
     @NotNull
     Long sessionId;
     @Schema(
-            example="4",
-            description = "4번인 경우만 input_field를 작성해주세요"
+            example="1",
+            description = "그대로야(1) or 기분이 나아졌어(2) or 생각이 정리된 것 같아(3)"
     )
     @NotNull(message="last_emotion은 필수 입력 값입니다.")
     Integer lastEmotion;
-    @Schema(example="흠 잘 모르겠어")
-    @Nullable
-    String inputField; //last_emotion 4(기타)선택 시
+
 }

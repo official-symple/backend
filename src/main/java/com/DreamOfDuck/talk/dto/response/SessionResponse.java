@@ -33,8 +33,6 @@ public class SessionResponse {
     Integer cause;
     @Schema(example="4")
     Integer lastEmotion;
-    @Schema(example="흠 잘 모르겠어")
-    String inputField;
     @Schema(example="[\n" +
             "        {\n" +
             "            \"messageId\": 1,\n" +
@@ -63,7 +61,6 @@ public class SessionResponse {
                         .collect(Collectors.toList()))
                 .cause(session.getCause().getId())
                 .lastEmotion(session.getLastEmotion()!=null ? session.getLastEmotion().getId() : null)
-                .inputField(session.getInputField()!=null ? session.getInputField() : null)
                 .conversation(session.getConversation()!=null ?
                         session.getConversation().stream()
                         .map(MessageFormat::from)

@@ -41,7 +41,6 @@ public class Session extends TimeStamp {
     @Enumerated(EnumType.STRING)
     @NotNull
     private LastEmotion lastEmotion;
-    private String inputField; //last_emotion 4(기타)선택 시
 
     @NotNull
     private Cause cause;
