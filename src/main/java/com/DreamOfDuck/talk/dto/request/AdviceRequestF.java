@@ -20,6 +20,6 @@ public class AdviceRequestF {
     @NotNull
     Boolean formal;
 
-    @NotNull()
+    @NotNull
     List<MessageFormatF> messages;
 }

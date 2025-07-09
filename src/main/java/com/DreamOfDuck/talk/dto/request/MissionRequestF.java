@@ -26,6 +26,6 @@ public class MissionRequestF {
     @NotNull
     String emotion_cause;
 
-    @NotNull()
+    @NotNull
     String summary;
 }

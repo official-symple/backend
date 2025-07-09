@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class MessageFormatF {
     @NotNull
     String role;
-    @NotNull
+
     String content;
 
     public static List<MessageFormatF> fromSession(Session session) {

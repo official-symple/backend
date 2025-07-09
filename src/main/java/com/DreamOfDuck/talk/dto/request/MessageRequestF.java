@@ -24,11 +24,13 @@ public class MessageRequestF {
     @NotNull
     Boolean formal;
 
+    @NotNull
     List<String> emotion;
 
+    @NotNull
     String emotion_cause;
 
-    @NotNull()
+    @NotNull
     List<MessageFormatF> messages;
 
 }
