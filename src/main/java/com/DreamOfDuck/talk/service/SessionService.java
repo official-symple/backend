@@ -66,6 +66,18 @@ public class SessionService {
         session.setInputField(request.getInputField());
         return SessionResponse.from(session);
     }
+    @Transactional
+    public void deleteEmotion(Member host, Long sessionId){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
+        if(session.getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
+        }
+
+        session.setLastEmotion(null);
+        return ;
+    }
     public SessionResponse findById(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));

@@ -54,6 +54,14 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.update(member, request));
     }
 
+    @DeleteMapping("/emotion/{id}")
+    @Operation(summary = "마지막 감정 삭제(개발용)", description = "마지막 감정을 삭제할 때 사용하는 API")
+    public ResponseEntity<?> deleteEmotion(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        sessionService.deleteEmotion(member, id);
+        return ResponseEntity.ok("마지막 감정을 정상적으로 삭제했습니다.");
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "특정 세션 조회", description = "특정 세션을 조회할 때 사용하는 API")
     @ApiResponses(value={
