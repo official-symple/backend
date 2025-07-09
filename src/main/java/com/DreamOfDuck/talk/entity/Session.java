@@ -51,7 +51,7 @@ public class Session extends TimeStamp {
 
     @ElementCollection
     @CollectionTable(name = "session_solutions", joinColumns = @JoinColumn(name = "session_id"))
-    @Column(name = "solution")
+    @Column(name = "solutions")
     private List<String> solutions =  new ArrayList<>();
 
     @Lob

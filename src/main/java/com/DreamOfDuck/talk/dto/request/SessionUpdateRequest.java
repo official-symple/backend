@@ -18,7 +18,6 @@ public class SessionUpdateRequest {
     @NotNull(message="last_emotion은 필수 입력 값입니다.")
     Integer lastEmotion;
     @Schema(example="흠 잘 모르겠어")
-
     @Nullable
     String inputField; //last_emotion 4(기타)선택 시
 }

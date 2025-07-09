@@ -13,6 +13,7 @@ import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
@@ -25,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly=true)
+@Slf4j
 @RequiredArgsConstructor
 public class AsyncService {
     private final SessionRepository sessionRepository;
@@ -37,18 +38,10 @@ public class AsyncService {
     @Value("${fastApi.advice.endpoint}")
     private String endpoint_advice;
 
-    @Async
     @Transactional
-    public void saveSolution(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
-
-        if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
-        }
-        if(session.getLastEmotion() == null){
-            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
-        }
+    @Async
+    public void saveReportAndMission(Long sessionId){
+        Session session = sessionRepository.findById(sessionId).orElse(null);
         /*fast api와 연동*/
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
@@ -58,8 +51,16 @@ public class AsyncService {
                 .messages(MessageFormatF.fromSession(session))
                 .build();
         SummaryResponseF responseF = getSummary(requestF);
+        System.out.println("problem 받기 : "+responseF.getProblem());
+        System.out.println("solution 받기 : "+responseF.getSolutions());
         session.setProblem(responseF.getProblem());
         session.setSolutions(responseF.getSolutions());
+        MissionResponse responseF2 = getMission(requestF);
+        System.out.println("mission 받기 : "+responseF2.getMission());
+        session.setMission(responseF2.getMission());
+        AdviceResponse responseF3 = getAdvice(requestF);
+        System.out.println("advice 받기 : "+responseF3.getAdvice());
+        session.setAdvice(responseF3.getAdvice());
         sessionRepository.save(session);
         /*fast api와 연동*/
         return;
@@ -78,32 +79,7 @@ public class AsyncService {
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
-    @Async
-    @Transactional
-    public void saveMission(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
-        }
-        if(session.getLastEmotion() == null){
-            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
-        }
-        /*fast api와 연동*/
-        MessageRequestF requestF = MessageRequestF.builder()
-                .persona(session.getDuckType().getValue())
-                .formal(session.getIsFormal())
-                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
-                .emotion_cause(session.getCause().getText())
-                .messages(MessageFormatF.fromSession(session))
-                .build();
-        MissionResponse responseF = getMission(requestF);
-        session.setMission(responseF.getMission());
-        sessionRepository.save(session);
-        /*fast api와 연동*/
-        return;
-    }
     private MissionResponse getMission(MessageRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -119,32 +95,7 @@ public class AsyncService {
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
-    @Async
-    @Transactional
-    public void saveAdvice(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        if(session.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
-        }
-        if(session.getLastEmotion() == null){
-            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
-        }
-        /*fast api와 연동*/
-        MessageRequestF requestF = MessageRequestF.builder()
-                .persona(session.getDuckType().getValue())
-                .formal(session.getIsFormal())
-                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
-                .emotion_cause(session.getCause().getText())
-                .messages(MessageFormatF.fromSession(session))
-                .build();
-        AdviceResponse responseF = getAdvice(requestF);
-        session.setAdvice(responseF.getAdvice());
-        sessionRepository.save(session);
-        /*fast api와 연동*/
-        return ;
-    }
     private AdviceResponse getAdvice(MessageRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

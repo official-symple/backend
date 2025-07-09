@@ -9,11 +9,13 @@ import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.*;
 import com.DreamOfDuck.talk.entity.*;
+import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
 import com.DreamOfDuck.talk.repository.InterviewRepository;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,9 @@ import java.util.stream.Collectors;
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
 public class SessionService {
-
     private final SessionRepository sessionRepository;
     private final InterviewRepository interviewRepository;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public SessionResponse save(Member host, SessionCreateRequest request){
@@ -62,8 +63,9 @@ public class SessionService {
         if(session.getLastEmotion() == LastEmotion.OPTION4){
             if(request.getInputField() ==null || request.getInputField().isEmpty())  throw new CustomException(ErrorCode.EMPTY_INPUT_FIELD);
         }
-
         session.setInputField(request.getInputField());
+        sessionRepository.save(session);
+        eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId()));
         return SessionResponse.from(session);
     }
     @Transactional
@@ -76,7 +78,11 @@ public class SessionService {
         }
 
         session.setLastEmotion(null);
-        return ;
+        session.setMission(null);
+        session.setProblem(null);
+        session.setSolutions(null);
+        session.setAdvice(null);
+        return;
     }
     public SessionResponse findById(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId)

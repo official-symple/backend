@@ -48,10 +48,9 @@ public class SessionController {
     })
     public ResponseEntity<?> updateSession(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody SessionUpdateRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        asyncService.saveAdvice(member, request.getSessionId());
-        asyncService.saveSolution(member, request.getSessionId());
-        asyncService.saveMission(member, request.getSessionId());
-        return ResponseEntity.ok(sessionService.update(member, request));
+        SessionResponse res = sessionService.update(member, request);
+
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/emotion/{id}")
