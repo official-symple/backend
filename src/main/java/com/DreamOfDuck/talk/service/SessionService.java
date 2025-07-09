@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -107,7 +108,7 @@ public class SessionService {
     public SessionResponseList findByUser(Member host){
         List<Session> sessionList = sessionRepository.findByHost(host);
         SessionResponseList res = new SessionResponseList();
-        res.setSessions(sessionList.stream().map(SessionResponse::from).collect(Collectors.toList()));
+        res.setSessions(sessionList.stream().sorted(Comparator.comparing(Session::getCreatedAt).reversed()).map(SessionResponse::from).collect(Collectors.toList()));
         res.setIsInterview(interviewRepository.existsByHost(host));
         return res;
     }
