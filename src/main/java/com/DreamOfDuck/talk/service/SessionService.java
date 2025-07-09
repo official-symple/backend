@@ -108,7 +108,11 @@ public class SessionService {
     public SessionResponseList findByUser(Member host){
         List<Session> sessionList = sessionRepository.findByHost(host);
         SessionResponseList res = new SessionResponseList();
-        res.setSessions(sessionList.stream().sorted(Comparator.comparing(Session::getCreatedAt).reversed()).map(SessionResponse::from).collect(Collectors.toList()));
+        res.setSessions(sessionList.stream()
+                .filter(session -> session.getLastEmotion() !=null)
+                .sorted(Comparator.comparing(Session::getCreatedAt).reversed())
+                .map(SessionResponse::from)
+                .collect(Collectors.toList()));
         res.setIsInterview(interviewRepository.existsByHost(host));
         return res;
     }
