@@ -22,7 +22,7 @@ public class ReportResponse {
     @Schema(example="[1,10, 30]")
     List<Integer> emotions;
     @Schema(example="4")
-    Integer last_emotion;
+    Integer lastEmotion;
     @Schema(example="내가 맡은 모든 일들을 잘하고 싶은데 오점이 생겼다는 생각에 너무 화가 나")
     String problem;
     @Schema(example = "[\"‘오점이 생겼다’ 대신, '이번엔 실수가 있었지만 배울 기회가 생겼어'라고 생각해보면 어떨까? 실패를 성장가능한 과정으로 보는 연습을 하면 마음이 가벼워질 거야.\", \"모든 일을 완벽히 해내야 한다는 목표보다는, 하루에 하나씩 작은 성취를 이루는 데 집중해보자.\"]")
@@ -33,7 +33,7 @@ public class ReportResponse {
         return ReportResponse.builder()
                 .date(session.getUpdatedAt().toLocalDate())
                 .emotions(session.getEmotion().stream().map(Emotion::getId).collect(Collectors.toList()))
-                .last_emotion(session.getLast_emotion().getId())
+                .lastEmotion(session.getLast_emotion().getId())
                 .problem(session.getProblem())
                 .solutions(session.getSolutions())
                 .build();

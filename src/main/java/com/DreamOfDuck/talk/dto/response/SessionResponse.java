@@ -32,9 +32,9 @@ public class SessionResponse {
     @Schema(example="1")
     Integer cause;
     @Schema(example="4")
-    Integer last_emotion;
+    Integer lastEmotion;
     @Schema(example="흠 잘 모르겠어")
-    String input_field;
+    String inputField;
     @Schema(example="[\n" +
             "        {\n" +
             "            \"messageId\": 1,\n" +
@@ -62,8 +62,8 @@ public class SessionResponse {
                         .map(Emotion::getId)
                         .collect(Collectors.toList()))
                 .cause(session.getCause().getId())
-                .last_emotion(session.getLast_emotion()!=null ? session.getLast_emotion().getId() : null)
-                .input_field(session.getInput_field()!=null ? session.getInput_field() : null)
+                .lastEmotion(session.getLast_emotion()!=null ? session.getLast_emotion().getId() : null)
+                .inputField(session.getInput_field()!=null ? session.getInput_field() : null)
                 .conversation(session.getConversation()!=null ?
                         session.getConversation().stream()
                         .map(MessageFormat::from)

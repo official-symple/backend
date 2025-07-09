@@ -16,9 +16,9 @@ public class SessionUpdateRequest {
             description = "4번인 경우만 input_field를 작성해주세요"
     )
     @NotNull(message="last_emotion은 필수 입력 값입니다.")
-    Integer last_emotion;
+    Integer lastEmotion;
     @Schema(example="흠 잘 모르겠어")
 
     @Nullable
-    String input_field; //last_emotion 4(기타)선택 시
+    String inputField; //last_emotion 4(기타)선택 시
 }

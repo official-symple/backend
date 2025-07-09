@@ -61,12 +61,12 @@ public class SessionService {
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
 
-        session.setLast_emotion(LastEmotion.fromId(request.getLast_emotion()));
+        session.setLast_emotion(LastEmotion.fromId(request.getLastEmotion()));
         if(session.getLast_emotion() == LastEmotion.OPTION4){
-            if(request.getInput_field() ==null || request.getInput_field().isEmpty())  throw new CustomException(ErrorCode.EMPTY_INPUT_FIELD);
+            if(request.getInputField() ==null || request.getInputField().isEmpty())  throw new CustomException(ErrorCode.EMPTY_INPUT_FIELD);
         }
 
-        session.setInput_field(request.getInput_field());
+        session.setInput_field(request.getInputField());
         return SessionResponse.from(session);
     }
     public SessionResponse findById(Member host, Long sessionId){
