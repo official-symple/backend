@@ -61,12 +61,12 @@ public class SessionService {
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
 
-        session.setLast_emotion(LastEmotion.fromId(request.getLastEmotion()));
-        if(session.getLast_emotion() == LastEmotion.OPTION4){
+        session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
+        if(session.getLastEmotion() == LastEmotion.OPTION4){
             if(request.getInputField() ==null || request.getInputField().isEmpty())  throw new CustomException(ErrorCode.EMPTY_INPUT_FIELD);
         }
 
-        session.setInput_field(request.getInputField());
+        session.setInputField(request.getInputField());
         return SessionResponse.from(session);
     }
     public SessionResponse findById(Member host, Long sessionId){
@@ -105,6 +105,9 @@ public class SessionService {
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
         }
+        if(session.getLastEmotion() == null){
+            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
+        }
         /*fast api와 연동*/
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
@@ -131,7 +134,7 @@ public class SessionService {
             }
             return res.getBody();
         } catch(RestClientException e) {
-            throw new RuntimeException("fastApi와 통신 실패");
+            throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
     @Transactional
@@ -141,6 +144,9 @@ public class SessionService {
 
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
+        }
+        if(session.getLastEmotion() == null){
+            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
         }
         /*fast api와 연동*/
         MessageRequestF requestF = MessageRequestF.builder()
@@ -160,6 +166,7 @@ public class SessionService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
+
         try{
             ResponseEntity<MissionResponse> res = restTemplate.exchange(endpoint_mission, HttpMethod.POST, requestEntity, MissionResponse.class);
             if(res.getBody()==null){
@@ -167,7 +174,7 @@ public class SessionService {
             }
             return res.getBody();
         } catch(RestClientException e) {
-            throw new RuntimeException("fastApi와 통신 실패");
+            throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
     @Transactional
@@ -177,6 +184,9 @@ public class SessionService {
 
         if(session.getHost()!=host){
             throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
+        }
+        if(session.getLastEmotion() == null){
+            throw new CustomException(ErrorCode.LAST_EMOTION_NOT_EXIST);
         }
         /*fast api와 연동*/
         MessageRequestF requestF = MessageRequestF.builder()
@@ -203,7 +213,7 @@ public class SessionService {
             }
             return res.getBody();
         } catch(RestClientException e) {
-            throw new RuntimeException("fastApi와 통신 실패");
+            throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
 }

@@ -62,8 +62,8 @@ public class SessionResponse {
                         .map(Emotion::getId)
                         .collect(Collectors.toList()))
                 .cause(session.getCause().getId())
-                .lastEmotion(session.getLast_emotion()!=null ? session.getLast_emotion().getId() : null)
-                .inputField(session.getInput_field()!=null ? session.getInput_field() : null)
+                .lastEmotion(session.getLastEmotion()!=null ? session.getLastEmotion().getId() : null)
+                .inputField(session.getInputField()!=null ? session.getInputField() : null)
                 .conversation(session.getConversation()!=null ?
                         session.getConversation().stream()
                         .map(MessageFormat::from)

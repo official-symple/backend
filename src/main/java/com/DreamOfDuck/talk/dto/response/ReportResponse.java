@@ -33,7 +33,7 @@ public class ReportResponse {
         return ReportResponse.builder()
                 .date(session.getUpdatedAt().toLocalDate())
                 .emotions(session.getEmotion().stream().map(Emotion::getId).collect(Collectors.toList()))
-                .lastEmotion(session.getLast_emotion().getId())
+                .lastEmotion(session.getLastEmotion().getId())
                 .problem(session.getProblem())
                 .solutions(session.getSolutions())
                 .build();

@@ -87,7 +87,7 @@ public class MessageService {
             }
             return res.getBody();
         } catch(RestClientException e) {
-            throw new RuntimeException("fastApi와 통신 실패");
+            throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
 
