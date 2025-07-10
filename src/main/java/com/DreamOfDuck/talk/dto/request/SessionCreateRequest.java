@@ -17,7 +17,7 @@ import java.util.List;
 public class SessionCreateRequest {
     @Schema(
             example="1",
-            description="꽥둥이=1, 꽥돌이=2, 꽥둑이=3"
+            description="꽥둥이=1, 꽥둑이=2, 꽥돌이=3"
     )
     @NotNull(message="duckType은 필수 입력 값입니다.")
     Integer duckType;
