@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>관리자 페이지 - 오늘의 리포트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --main-bg: #CCCCCC;
+            --accent: #779966;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[var(--main-bg)] text-gray-800 font-sans">
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-bold text-[var(--accent)] mb-6 text-center">🦆 관리자 - 오늘의 리포트</h1>
+
+    <!-- 필터 영역 -->
+    <div class="bg-white p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-end">
+        <div>
+            <label class="block font-semibold mb-1 text-[var(--accent)]">성별</label>
+            <select id="gender" class="border border-[var(--accent)] rounded-xl px-3 py-2 bg-white focus:outline-none">
+                <option value="">전체</option>
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1 text-[var(--accent)]">연령</label>
+            <select id="age" class="border border-[var(--accent)] rounded-xl px-3 py-2 bg-white focus:outline-none">
+                <option value="">전체</option>
+                <option value="10">10대</option>
+                <option value="20">20대</option>
+                <option value="30">30대</option>
+                <option value="40">40대</option>
+                <option value="50">50대 이상</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1 text-[var(--accent)]">날짜</label>
+            <input type="date" id="date" class="border border-[var(--accent)] rounded-xl px-3 py-2 bg-white focus:outline-none" />
+        </div>
+
+        <button onclick="applyFilters()" class="ml-auto bg-[var(--accent)] hover:bg-[#667755] text-white px-5 py-2 rounded-xl shadow">
+            필터 적용
+        </button>
+    </div>
+
+    <!-- 리포트 목록 -->
+    <div id="reportList" class="space-y-4">
+        <!-- JS로 동적으로 리포트 삽입됨 -->
+    </div>
+</div>
+
+<script>
+    const dummyReports = [
+        { id: 1, name: "김희진", age: 20, gender: "female", date: "2025-07-10", content: "오늘은 운동을 했어요!" },
+        { id: 2, name: "홍길동", age: 30, gender: "male", date: "2025-07-10", content: "좋은 하루였어요." },
+        { id: 3, name: "이영희", age: 40, gender: "female", date: "2025-0

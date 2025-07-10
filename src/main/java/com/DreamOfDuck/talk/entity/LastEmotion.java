@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum LastEmotion {
-    OPTION1(1, "그대로야"),
-    OPTION2(2, "기분이 나아졌어"),
-    OPTION3(3, "생각이 정리된 것 같아");
+    OPTION1(0, "그대로야"),
+    OPTION2(1, "기분이 나아졌어"),
+    OPTION3(2, "더 안 좋아졌어");
     private final Integer id;
     private final String text;
 
