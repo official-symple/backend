@@ -39,18 +39,21 @@ public enum Emotion {
     EMOTION26(25, "화나는"),
     EMOTION27(26, "두려운"),
     EMOTION28(27, "짜증나는"),
-    EMOTION29(28, "억울한"),
-    EMOTION30(29, "후회되는"),
-    EMOTION31(30, "괴로운"),
-    EMOTION32(31, "외로운"),
-    EMOTION33(32, "걱정되는"),
-    EMOTION34(33, "실망한"),
-    EMOTION35(34, "귀찮은"),
-    EMOTION36(35, "피곤한"),
-    EMOTION37(36, "공허한"),
-    EMOTION38(37, "슬픈"),
-    EMOTION39(38, "우울한"),
-    EMOTION40(39, "지친");
+    EMOTION29(28, "긴장되는"),
+    EMOTION30(29, "답답한"),
+    EMOTION31(30, "불안한"),
+    EMOTION32(31, "억울한"),
+    EMOTION33(32, "후회되는"),
+    EMOTION34(33, "괴로운"),
+    EMOTION35(34, "외로운"),
+    EMOTION36(35, "걱정되는"),
+    EMOTION37(36, "실망한"),
+    EMOTION38(37, "귀찮은"),
+    EMOTION39(38, "피곤한"),
+    EMOTION40(39, "공허한"),
+    EMOTION41(40, "슬픈"),
+    EMOTION42(41, "우울한"),
+    EMOTION43(42, "지친");
     private final Integer id;
     private final String text;
     //성능개선 위해 map사용 -> O(1)
