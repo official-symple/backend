@@ -12,6 +12,11 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     show-sql: true
+  web:
+    resources:
+      add-mappings: true
+  thymeleaf:
+    cache: false
 logging:
   level:
     root: info

@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login", "/login/kakao", "/login/apple", "/login/google", "/reissue", "/logout", "/admin").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login", "/login/kakao", "/login/apple", "/login/google", "/reissue", "/logout", "/admin/**", "/images/**", "/css/**").permitAll()
                         .requestMatchers("/api/member/signup").hasAnyRole("GUEST", "USER")
                         .anyRequest().hasRole("USER"))
                 .sessionManagement((session)->session

@@ -61,6 +61,9 @@ public class MessageService {
                 .emotion_cause(session.getCause().getText())
                 .messages(MessageFormatF.fromSession(session))
                 .build();
+        if(request.getContent()==null){
+            requestF.setMessages(null);
+        }
         MessageResponseF responseF = getMessageFromDuck(requestF);
         Message duck = Message.builder()
                 .talker(session.getDuckType())

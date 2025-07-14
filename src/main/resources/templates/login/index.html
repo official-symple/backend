@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>오리, 비밀의 방</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Jua&display=swap"≥ rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=K2D&display=swap" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link th:href="@{/css/login/style.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <!-- 오리 이미지 -->
+    <img src="/images/login/duck.svg" alt="오리 캐릭터" class="duck" />
+
+    <!-- 로그인 박스 (bubble.svg 배경) -->
+    <div class="login-box">
+        <h1>오리, 비밀의 방</h1>
+        <form method="post" th:action="@{/templates/login}">
+            <input type="text" name="username" placeholder="username" required />
+            <input type="password" name="password" placeholder="password" required />
+            <button type="submit">로그인</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

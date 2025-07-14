@@ -43,6 +43,7 @@ public class Session extends TimeStamp {
     private LastEmotion lastEmotion;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Cause cause;
 
     @Lob

@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: 'K2D', sans-serif;
+  background-color: #779966;
+}
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 오리 이미지 왼쪽 아래 고정 */
+.duck {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 600px;
+}
+
+/* 로그인 박스 스타일 (말풍선 백그라운드) */
+.login-box {
+  background-image: url('/images/login/bubble.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 600px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left : 40%;
+  top: 10%;
+  z-index: 2;
+}
+
+.login-box h1 {
+  font-family: 'Jua', sans-serif;
+  font-size: 40px;
+  color: #2f2f2f;
+  position: absolute;
+  top: 13%;
+}
+
+.login-box input {
+  font-family: 'K2D', sans-serif;
+  color: #888888;
+  width: 280px;
+  height: 45px;
+  margin-bottom: 20px;
+  border: 2px solid #779966;
+  background: #EEEEEE;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+}
+.login-box form{
+  margin-top : 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.login-box button {
+  color: #FFFFFF;
+  width: 156px;
+  height: 44px;
+  margin-top: 20px;
+  background-color: #4E6D3F;
+  color: white;
+  border: none;
+  font-size: 20px;
+  font-width: 600;
+  border-radius: 10px;
+}
