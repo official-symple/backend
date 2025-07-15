@@ -28,6 +28,7 @@ public enum ErrorCode {
     USER_NOT_EXIST(-301, "존재하지 않는 유저입니다.", 406),
     USER_WRONG_PASSWORD(-302, "비밀번호가 틀렸습니다.", 401),
     DO_SIGNUP_FIRST(-303, "회원가입을 먼저 해주세요.", 400),
+    NINE_STATUS(-304, "9개의 status를 입력해주세요. ", 400),
 
     //Talk
     NOT_FOUND_CAUSE(-400, "해당 원인은 존재하지 않습니다.", 406),

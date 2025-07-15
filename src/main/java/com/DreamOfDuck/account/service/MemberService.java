@@ -39,6 +39,9 @@ public class MemberService {
         member.setNickname(request.getNickname());
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
+        if(request.getStatus().size()!=9){
+            throw new CustomException(ErrorCode.NINE_STATUS);
+        }
         member.setStatus(request.getStatus());
         int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
         if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
@@ -59,6 +62,9 @@ public class MemberService {
         if(request.getGender()!=null) member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         if(request.getConcern()!=null) member.setConcern(Cause.fromId(request.getConcern()));
         if(request.getStatus()!=null){
+            if(request.getStatus().size()!=9){
+                throw new CustomException(ErrorCode.NINE_STATUS);
+            }
             member.setStatus(request.getStatus());
             int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
             if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
