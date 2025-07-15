@@ -39,7 +39,8 @@ public class MemberController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
             )})
     })
-    public MemberResponse updatMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberUpdateRequest request) {
+    public MemberResponse updatMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid MemberUpdateRequest
+            request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return memberService.updateMemberInfo(member, request);
     }

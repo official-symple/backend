@@ -58,7 +58,6 @@ public class MemberService {
         if(request.getNickname()!=null) member.setNickname(request.getNickname());
         if(request.getGender()!=null) member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         if(request.getConcern()!=null) member.setConcern(Cause.fromId(request.getConcern()));
-        if(request.getStatus()!=null) member.setStatus(request.getStatus());
         if(request.getStatus()!=null){
             member.setStatus(request.getStatus());
             int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
