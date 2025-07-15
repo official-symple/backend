@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.service;
 
 import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
+import com.DreamOfDuck.account.dto.request.MemberUpdateRequest;
 import com.DreamOfDuck.account.dto.request.ScoreRequest;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
@@ -48,22 +49,24 @@ public class MemberService {
         return MemberResponse.from(member);
     }
     @Transactional
-    public MemberResponse updateMemberInfo(Member member, MemberCreateRequest request) {
+    public MemberResponse updateMemberInfo(Member member, MemberUpdateRequest request) {
         if(member.getRole()!= Role.ROLE_USER){
             throw new CustomException(ErrorCode.DO_SIGNUP_FIRST);
         }
         member.setIsMarketing(request.getIsMarketing());
-        member.setBirthday(request.getBirthday());
-        member.setNickname(request.getNickname());
-        member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
-        member.setConcern(Cause.fromId(request.getConcern()));
-        member.setStatus(request.getStatus());
-        member.setStatus(request.getStatus());
-        int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
-        if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
-        else if(sum<=9) member.setTotalStatus("가벼운 우울");
-        else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
-        else member.setTotalStatus("심한 우울");
+        if(request.getBirthday()!=null) member.setBirthday(request.getBirthday());
+        if(request.getNickname()!=null) member.setNickname(request.getNickname());
+        if(request.getGender()!=null) member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
+        if(request.getConcern()!=null) member.setConcern(Cause.fromId(request.getConcern()));
+        if(request.getStatus()!=null) member.setStatus(request.getStatus());
+        if(request.getStatus()!=null){
+            member.setStatus(request.getStatus());
+            int sum = request.getStatus().stream().mapToInt(Integer::intValue).sum();
+            if(0<=sum&&sum<=4) member.setTotalStatus("우울 아님");
+            else if(sum<=9) member.setTotalStatus("가벼운 우울");
+            else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
+            else member.setTotalStatus("심한 우울");
+        }
         return MemberResponse.from(member);
     }
     @Transactional
