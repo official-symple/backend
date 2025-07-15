@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ public class AdminService {
                         (session.getProblem() != null && !session.getProblem().isEmpty())
                                 && !session.getSolutions().isEmpty()
                 )
+                .sorted(Comparator.comparing(Session::getCreatedAt).reversed())
                 .map(session -> ReportResponseA.from(session))
                 .collect(Collectors.toList());
     }
