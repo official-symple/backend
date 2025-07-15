@@ -26,7 +26,6 @@ public class AdminController {
 
     @GetMapping("/report")
     public ResponseEntity<?> createItem(){
-
         return ResponseEntity.ok(adminService.getAllReport());
     }
 

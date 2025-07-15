@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class AdminService {
     private final SessionRepository sessionRepository;
     SessionService sessionService;
-    List<ReportResponse> getAllReport(){
+    List<ReportResponseA> getAllReport(){
         List<Session> sessions = sessionRepository.findAll();
         return sessions.stream()
                 .filter(session ->
                         (session.getProblem() == null || session.getProblem().isEmpty())
                                 && session.getSolutions().isEmpty()
                 )
-                .map(session -> ReportResponse.from(session))
+                .map(session -> ReportResponseA.from(session))
                 .collect(Collectors.toList());
     }
 }
