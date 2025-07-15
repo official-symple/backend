@@ -23,8 +23,8 @@ public class AdminService {
         List<Session> sessions = sessionRepository.findAll();
         return sessions.stream()
                 .filter(session ->
-                        (session.getProblem() == null || session.getProblem().isEmpty())
-                                && session.getSolutions().isEmpty()
+                        (session.getProblem() != null && !session.getProblem().isEmpty())
+                                && !session.getSolutions().isEmpty()
                 )
                 .map(session -> ReportResponseA.from(session))
                 .collect(Collectors.toList());
