@@ -27,8 +27,8 @@ public class AdminService {
                         (session.getProblem() != null && !session.getProblem().isEmpty())
                                 && !session.getSolutions().isEmpty()
                 )
-                .sorted(Comparator.comparing(Session::getCreatedAt).reversed())
-                .map(session -> ReportResponseA.from(session))
+                .map(ReportResponseA::from)
+                .sorted(Comparator.comparing(ReportResponseA::getDate).reversed())
                 .collect(Collectors.toList());
     }
 }
