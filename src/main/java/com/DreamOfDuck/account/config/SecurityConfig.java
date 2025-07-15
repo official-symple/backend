@@ -1,7 +1,10 @@
 package com.DreamOfDuck.account.config;
 
 import com.DreamOfDuck.account.filter.JWTFilter;
+import com.DreamOfDuck.account.filter.LoginFilter;
+import com.DreamOfDuck.account.jwt.JWTProvider;
 import com.DreamOfDuck.account.jwt.JWTUtil;
+import com.DreamOfDuck.account.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-
+    private final JWTProvider jwtProvider;
+    private final MemberRepository memberRepository;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
@@ -43,12 +48,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login", "/login/kakao", "/login/apple", "/login/google", "/reissue", "/logout", "/admin/**", "/images/**", "/css/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login/**", "/reissue", "/logout", "/api/admin/join").permitAll()
                         .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout").hasAnyRole("GUEST", "USER")
                         .anyRequest().hasRole("USER"))
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
+                .addFilterAt(new LoginFilter(memberRepository, authenticationManager(authenticationConfiguration), jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

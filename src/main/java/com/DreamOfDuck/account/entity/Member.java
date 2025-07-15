@@ -27,9 +27,8 @@ public class Member extends TimeStamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="memberId")
     private Long id;
-
     private String email;
-    //private String socialEmail;
+    private String password;
     private String nickname;
     private LocalDate birthday;
     @Enumerated(EnumType.STRING)

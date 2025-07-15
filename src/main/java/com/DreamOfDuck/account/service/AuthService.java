@@ -12,6 +12,7 @@ import com.DreamOfDuck.account.repository.MemberRepository;
 import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class AuthService {
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTProvider jwtProvider;
     private final KakaoApiClient kakaoApiClient;
     private final GoogleApiClient googleApiClient;
     private final AppleApiClient appleApiClient;
-
 
     @Transactional
     public TokenResponse kakaoLogin(String accessToken){
