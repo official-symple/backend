@@ -27,8 +27,8 @@ public class ReportResponseA {
 
     Integer duckType;
     String cause;
-    List<Integer> emotions;
-    Integer lastEmotion;
+    List<String> emotions;
+    String lastEmotion;
     String problem;
     private List<String> solutions;
 
@@ -43,8 +43,8 @@ public class ReportResponseA {
                 .blueScore(session.getHost().getTotalStatus())
                 .duckType(session.getDuckType().getValue())
                 .cause(session.getCause().getText())
-                .emotions(session.getEmotion().stream().map(Emotion::getId).collect(Collectors.toList()))
-                .lastEmotion(session.getLastEmotion().getId())
+                .emotions(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
+                .lastEmotion(session.getLastEmotion().getText())
                 .problem(session.getProblem())
                 .solutions(session.getSolutions())
                 .build();
