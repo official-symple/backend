@@ -22,7 +22,7 @@ public class InterviewService {
 
     @Transactional
     public InterviewResponse save(Member member, InterviewCreateRequest interviewCreateRequest) {
-        Interview interview = interviewRepository.findByHost(member).orElse(null);
+        Interview interview = member.getInterview();
         if(interview == null){
             Interview newInterview = Interview.builder()
                     .question1(interviewCreateRequest.getQuestion1())
@@ -42,9 +42,8 @@ public class InterviewService {
                     .question9(interviewCreateRequest.getQuestion9())
                     .question9_2(interviewCreateRequest.getQuestion9_2())
                     .question10(interviewCreateRequest.getQuestion10())
-                    .host(member)
                     .build();
-
+            member.setInterview(newInterview);
             interviewRepository.save(newInterview);
             return InterviewResponse.from(newInterview);
         }else{
@@ -70,21 +69,27 @@ public class InterviewService {
         }
     }
     public InterviewResponse getInterviewByHost(Member member){
-        Interview interview = interviewRepository.findByHost(member).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_INTERVIEW));
+        Interview interview = member.getInterview();
+        if(interview == null){
+            throw new CustomException(ErrorCode.NOT_FOUND_INTERVIEW);
+        }
         return InterviewResponse.from(interview);
     }
 
     @Transactional
     public void deleteById(Member member, Long id) {
-        Interview interview = interviewRepository.findById(id).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_INTERVIEW));
-        if(interview.getHost()!=member){
-            throw new CustomException(ErrorCode.DIFFERENT_USER_INTERVIEW);
+        Interview interview = member.getInterview();
+        if(interview == null){
+            throw new CustomException(ErrorCode.NOT_FOUND_INTERVIEW);
         }
         interviewRepository.delete(interview);
     }
     @Transactional
     public void deleteByUser(Member member) {
-        Interview interview = interviewRepository.findByHost(member).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_INTERVIEW));
+        Interview interview = member.getInterview();
+        if(interview == null){
+            throw new CustomException(ErrorCode.NOT_FOUND_INTERVIEW);
+        }
         interviewRepository.delete(interview);
     }
 

@@ -109,7 +109,7 @@ public class SessionService {
                 .sorted(Comparator.comparing(Session::getCreatedAt).reversed())
                 .map(SessionResponse::from)
                 .collect(Collectors.toList()));
-        res.setIsInterview(interviewRepository.existsByHost(host));
+        res.setIsInterview(host.getInterview() != null);
         return res;
     }
 

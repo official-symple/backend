@@ -23,8 +23,4 @@ public class Item extends TimeStamp {
     private Integer dia;
     private Integer feather;
 
-    @OneToOne
-    @JoinColumn(name="member_id", unique=true, nullable=false)
-    private Member host;
-
 }

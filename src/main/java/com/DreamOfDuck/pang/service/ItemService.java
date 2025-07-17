@@ -20,7 +20,7 @@ public class ItemService {
     private final MemberRepository memberRepository;
     @Transactional
     public ItemResponse save(Member member, ItemCreateRequest request) {
-        Item item = itemRepository.findByHost(member).orElse(null);
+        Item item = member.getItem();
         member = memberRepository.findById(member.getId()).orElse(null);
         if(item!=null){
             item.setDia(request.getDia());
@@ -30,27 +30,30 @@ public class ItemService {
             Item newItem = Item.builder()
                     .dia(request.getDia())
                     .feather(request.getFeather())
-                    .host(member)
                     .build();
+            member.setItem(newItem);
             itemRepository.save(newItem);
             return ItemResponse.from(newItem);
         }
     }
     public ItemResponse getItemByHost(Member member){
-        Item item = itemRepository.findByHost(member).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_ITEM));
+        Item item = member.getItem();
+        if(item==null){
+           throw new CustomException(ErrorCode.NOT_FOUND_ITEM);
+        }
         return ItemResponse.from(item);
     }
     @Transactional
     public void delete(Member host, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_ITEM));
-        if(item.getHost()!=host){
-            throw new CustomException(ErrorCode.DIFFERENT_USER_ITEM);
-        }
         itemRepository.delete(item);
     }
     @Transactional
     public void deleteByUser(Member member){
-        Item item = itemRepository.findByHost(member).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_ITEM));
+        Item item = member.getItem();
+        if(item==null){
+            throw new CustomException(ErrorCode.NOT_FOUND_ITEM);
+        }
         itemRepository.delete(item);
     }
 }

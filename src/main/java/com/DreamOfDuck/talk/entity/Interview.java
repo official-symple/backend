@@ -37,8 +37,4 @@ public class Interview extends TimeStamp {
     private String question9;
     private String question9_2;
     private String question10;
-
-    @OneToOne
-    @JoinColumn(name="memberId")
-    private Member host;
 }
