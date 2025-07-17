@@ -56,7 +56,7 @@ public class MemberService {
         if(member.getRole()!= Role.ROLE_USER){
             throw new CustomException(ErrorCode.DO_SIGNUP_FIRST);
         }
-        member.setIsMarketing(request.getIsMarketing());
+        if(request.getIsMarketing()!=null) member.setIsMarketing(request.getIsMarketing());
         if(request.getBirthday()!=null) member.setBirthday(request.getBirthday());
         if(request.getNickname()!=null) member.setNickname(request.getNickname());
         if(request.getGender()!=null) member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
