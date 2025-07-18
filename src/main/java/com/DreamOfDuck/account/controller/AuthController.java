@@ -21,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashMap;
+
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -87,7 +89,7 @@ public class AuthController {
     public ResponseEntity<?> cancel(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         authService.cancelMembership(member);
-        return ResponseEntity.ok("해당 유저가 탈퇴되었습니다.");
+        return ResponseEntity.ok(new HashMap<>());
     }
     @GetMapping("/login")
     public String login(){
