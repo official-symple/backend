@@ -25,8 +25,12 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/report")
-    public ResponseEntity<?> createItem(){
+    public ResponseEntity<?> getAllReports(){
         return ResponseEntity.ok(adminService.getAllReport());
+    }
+    @GetMapping("/report-detail/{id}")
+    public ResponseEntity<?> getReportById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adminService.getReportById(id));
     }
 
 }

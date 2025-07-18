@@ -31,4 +31,8 @@ public class AdminService {
                 .sorted(Comparator.comparing(ReportResponseA::getDate).reversed())
                 .collect(Collectors.toList());
     }
+    ReportResponseA getReportById(Long sessionId){
+        Session session = sessionRepository.findById(sessionId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+        return ReportResponseA.from(session);
+    }
 }
