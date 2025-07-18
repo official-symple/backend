@@ -31,5 +31,13 @@ public enum Cause {
         }
         throw new CustomException(ErrorCode.NOT_FOUND_CAUSE);
     }
+    public static Cause fromText(String text){
+        for(Cause cause : Cause.values()){
+            if(cause.getText().equals(text)){
+                return cause;
+            }
+        }
+        throw new CustomException(ErrorCode.NOT_FOUND_CAUSE);
+    }
 
 }

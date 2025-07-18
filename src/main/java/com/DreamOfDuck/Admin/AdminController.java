@@ -32,5 +32,9 @@ public class AdminController {
     public ResponseEntity<?> getReportById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adminService.getReportById(id));
     }
+    @GetMapping("/report/search")
+    public ResponseEntity<?> getReportBySearch(SearchRequest searchRequest){
+        return ResponseEntity.ok(adminService.getReportsByFilter(searchRequest));
+    }
 
 }

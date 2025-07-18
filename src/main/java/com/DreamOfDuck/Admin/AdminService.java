@@ -5,6 +5,7 @@ import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.response.ReportResponse;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.repository.SessionRepository;
+import com.DreamOfDuck.talk.repository.SessionRepositoryCustomImpl;
 import com.DreamOfDuck.talk.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class AdminService {
     private final SessionRepository sessionRepository;
+    private final SessionRepositoryCustomImpl sessionRepositoryCustom;
+
     SessionService sessionService;
     List<ReportResponseA> getAllReport(){
         List<Session> sessions = sessionRepository.findAll();
@@ -26,6 +29,9 @@ public class AdminService {
                 .filter(session ->
                         (session.getProblem() != null && !session.getProblem().isEmpty())
                                 && !session.getSolutions().isEmpty()
+                                && (session.getMission()!=null)
+                                && !session.getAdvice().isEmpty()
+                                && (session.getMission()!=null)
                 )
                 .map(ReportResponseA::from)
                 .sorted(Comparator.comparing(ReportResponseA::getDate).reversed())
@@ -35,4 +41,13 @@ public class AdminService {
         Session session = sessionRepository.findById(sessionId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_SESSION));
         return ReportResponseA.from(session);
     }
+
+    List<ReportResponseA> getReportsByFilter(SearchRequest req){
+        List<Session> sessions = sessionRepositoryCustom.searchSessions(req);
+        return sessions.stream()
+                .map(ReportResponseA::from)
+                .sorted(Comparator.comparing(ReportResponseA::getDate).reversed())
+                .collect(Collectors.toList());
+    }
+
 }
