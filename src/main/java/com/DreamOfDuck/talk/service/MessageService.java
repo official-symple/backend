@@ -60,6 +60,7 @@ public class MessageService {
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
                 .messages(MessageFormatF.fromSession(session))
+                .nickname(host.getNickname())
                 .build();
         if(request.getContent()==null){
             requestF.setMessages(null);

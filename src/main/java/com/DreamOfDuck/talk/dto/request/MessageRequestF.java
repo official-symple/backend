@@ -33,4 +33,6 @@ public class MessageRequestF {
     @NotNull
     List<MessageFormatF> messages;
 
+    @NotNull
+    String nickname;
 }
