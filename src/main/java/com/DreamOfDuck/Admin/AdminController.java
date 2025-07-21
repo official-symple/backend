@@ -36,5 +36,8 @@ public class AdminController {
     public ResponseEntity<?> getReportBySearch(SearchRequest searchRequest){
         return ResponseEntity.ok(adminService.getReportsByFilter(searchRequest));
     }
-
+    @GetMapping("/chat-detail/{id}")
+    public ResponseEntity<?> getChatById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adminService.getChatById(id));
+    }
 }

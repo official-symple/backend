@@ -2,7 +2,7 @@ package com.DreamOfDuck.Admin;
 
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.talk.dto.response.ReportResponse;
+import com.DreamOfDuck.talk.dto.response.SessionResponse;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 import com.DreamOfDuck.talk.repository.SessionRepositoryCustomImpl;
@@ -48,6 +48,10 @@ public class AdminService {
                 .map(ReportResponseA::from)
                 .sorted(Comparator.comparing(ReportResponseA::getDate).reversed())
                 .collect(Collectors.toList());
+    }
+    SessionResponse getChatById(Long sessionId){
+        Session session = sessionRepository.findById(sessionId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+        return SessionResponse.from(session);
     }
 
 }
