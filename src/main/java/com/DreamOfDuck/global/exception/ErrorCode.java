@@ -29,6 +29,8 @@ public enum ErrorCode {
     USER_WRONG_PASSWORD(-302, "비밀번호가 틀렸습니다.", 401),
     DO_SIGNUP_FIRST(-303, "회원가입을 먼저 해주세요.", 400),
     NINE_STATUS(-304, "9개의 status를 입력해주세요. ", 400),
+    NICKNAME_LEN(-305, "닉네임 길이를 2자이상 14자 이하로 설정해주세요", 400),
+    NICKNAME_EXIST(-306, "이미 존재하는 닉네임입니다.", 400),
 
     //Talk
     NOT_FOUND_CAUSE(-400, "해당 원인은 존재하지 않습니다.", 406),

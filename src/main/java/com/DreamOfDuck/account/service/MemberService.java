@@ -35,6 +35,12 @@ public class MemberService {
         member.setRole(Role.ROLE_USER);
         member.setIsMarketing(request.getIsMarketing());
         member.setBirthday(request.getBirthday());
+        if(memberRepository.existsByNickname(request.getNickname())){
+            throw new CustomException(ErrorCode.NICKNAME_EXIST);
+        }
+        if(request.getNickname().length()>14 || request.getNickname().length()<2){
+            throw new CustomException(ErrorCode.NICKNAME_LEN);
+        }
         member.setNickname(request.getNickname());
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
