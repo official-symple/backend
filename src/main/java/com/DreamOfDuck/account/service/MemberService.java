@@ -1,8 +1,7 @@
 package com.DreamOfDuck.account.service;
 
-import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
-import com.DreamOfDuck.account.dto.request.MemberUpdateRequest;
-import com.DreamOfDuck.account.dto.request.ScoreRequest;
+import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Gender;
@@ -49,6 +48,10 @@ public class MemberService {
         else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
         else member.setTotalStatus("심한 우울");
         member.setMaxScore(0);
+        member.setHeart(0);
+        member.setDia(0);
+        member.setFeather(0);
+        member.setLv(1);
         return MemberResponse.from(member);
     }
     @Transactional
@@ -84,4 +87,35 @@ public class MemberService {
         }
         return MemberResponse.from(member);
     }
+
+    public HomeResponse getHomeInfo(Member member){
+        return HomeResponse.from(member);
+    }
+
+    @Transactional
+    public HomeResponse updateHeart(Member member, HeartRequest request) {
+        member.setHeart(request.getHeart());
+        return HomeResponse.from(member);
+    }
+    @Transactional
+    public HomeResponse updateDia(Member member, DiaRequest request) {
+        member.setDia(request.getDia());
+        return HomeResponse.from(member);
+    }
+    @Transactional
+    public HomeResponse updateFeather(Member member, FeatherRequest request) {
+        member.setFeather(request.getFeather());
+        return HomeResponse.from(member);
+    }
+    @Transactional
+    public HomeResponse updateLv(Member member, LvRequest request) {
+        member.setLv(request.getLv());
+        return HomeResponse.from(member);
+    }
+    @Transactional
+    public HomeResponse updateDuckname(Member member, DucknameRequest request) {
+        member.setDuckname(request.getDuckname());
+        return HomeResponse.from(member);
+    }
+
 }

@@ -1,8 +1,7 @@
 package com.DreamOfDuck.account.controller;
 
-import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
-import com.DreamOfDuck.account.dto.request.MemberUpdateRequest;
-import com.DreamOfDuck.account.dto.request.ScoreRequest;
+import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
@@ -67,5 +66,64 @@ public class MemberController {
         return memberService.updateScore(member, request);
     }
 
-
+    @GetMapping("/home")
+    @Operation(summary = "홈화면 점수받기", description = "유저의 홈화면 정보를 불러오는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse getHomeInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.getHomeInfo(member);
+    }
+    @PostMapping("/heart")
+    @Operation(summary = "하트 업데이트", description = "하트를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeart(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid HeartRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateHeart(member, request);
+    }
+    @PostMapping("/dia")
+    @Operation(summary = "다이아 업데이트", description = "다이아를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeart(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DiaRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateDia(member, request);
+    }
+    @PostMapping("/feather")
+    @Operation(summary = "깃털 업데이트", description = "깃털을 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateFeather(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid FeatherRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateFeather(member, request);
+    }
+    @PostMapping("/duckname")
+    @Operation(summary = "오리이름 업데이트", description = "오리이름을 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateDuckName(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DucknameRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateDuckname(member, request);
+    }
+    @PostMapping("/lv")
+    @Operation(summary = "레벨 업데이트", description = "레벨을 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateLv(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid LvRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateLv(member, request);
+    }
 }

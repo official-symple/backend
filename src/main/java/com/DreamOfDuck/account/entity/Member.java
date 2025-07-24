@@ -44,10 +44,14 @@ public class Member extends TimeStamp {
     @CollectionTable(name = "member_status", joinColumns = @JoinColumn(name = "member_id"))
     @Column(name = "status")
     private List<Integer> status =  new ArrayList<>();
-
     private String totalStatus;
 
     private Integer maxScore;
+    private Integer heart;
+    private Integer dia;
+    private Integer feather;
+    private Integer lv;
+    private String duckname;
 
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
