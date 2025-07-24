@@ -121,6 +121,9 @@ public class MemberService {
     @Transactional
     public HomeResponse updateDuckname(Member member, DucknameRequest request) {
         member.setDuckname(request.getDuckname());
+        if(request.getDuckname().length()>14 || request.getDuckname().length()<2){
+            throw new CustomException(ErrorCode.NICKNAME_LEN);
+        }
         return HomeResponse.from(member);
     }
 
