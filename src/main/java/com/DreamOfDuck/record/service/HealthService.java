@@ -36,8 +36,8 @@ public class HealthService{
                    .diary(request.getDiary())
                    .date(request.getDate())
                    .build();
-           healthRepository.save(newhealth);
            newhealth.addHost(host);
+           healthRepository.save(newhealth);
            return HealthResponse.from(newhealth);
         }else{
            health.setWalking(request.getWalking());
@@ -46,7 +46,7 @@ public class HealthService{
            health.setScreenTime(request.getScreenTime());
            health.setLightening(request.getLightening());
            health.setDiary(request.getDiary());
-            return HealthResponse.from(health);
+           return HealthResponse.from(health);
         }
 
     }
