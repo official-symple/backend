@@ -30,4 +30,10 @@ public class Feedback {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="memberId")
     private Member host;
+
+    //==연관관계 메서드==//
+    public void addHost(Member member) {
+        member.getFeedback().add(this);
+        this.setHost(member);
+    }
 }
