@@ -54,7 +54,7 @@ public class MemberService {
         else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
         else member.setTotalStatus("심한 우울");
         member.setMaxScore(0);
-        member.setHeart(0);
+        member.setHeart(2);
         member.setDia(0);
         member.setFeather(0);
         member.setLv(1);

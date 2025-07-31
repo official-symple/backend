@@ -26,7 +26,7 @@ public class HealthService{
     @Transactional
     public HealthResponse save(Member host, HealthCreateRequest request) {
         Health health = healthRepository.findByDateAndHost(request.getDate(), host).orElse(null);
-       if (health == null) {
+        if (health == null) {
            Health newhealth = Health.builder()
                    .walking(request.getWalking())
                    .sleeping(request.getSleeping())
@@ -38,15 +38,17 @@ public class HealthService{
                    .build();
            healthRepository.save(newhealth);
            newhealth.addHost(host);
-       }else{
+           return HealthResponse.from(newhealth);
+        }else{
            health.setWalking(request.getWalking());
            health.setSleeping(request.getSleeping());
            health.setHeartbeat(request.getHeartbeat());
            health.setScreenTime(request.getScreenTime());
            health.setLightening(request.getLightening());
            health.setDiary(request.getDiary());
-       }
-        return HealthResponse.from(health);
+            return HealthResponse.from(health);
+        }
+
     }
 
     @Transactional

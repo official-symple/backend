@@ -28,4 +28,7 @@ public class MissionRequestF {
 
     @NotNull
     String summary;
+
+    @NotNull
+    String nickname;
 }

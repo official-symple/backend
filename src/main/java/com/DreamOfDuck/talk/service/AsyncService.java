@@ -62,6 +62,7 @@ public class AsyncService {
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
                 .summary(responseF.getProblem())
+                .nickname(session.getHost().getNickname())
                 .build();
         MissionResponse responseF2 = getMission(requestF2);
         System.out.println("mission 받기 : "+responseF2.getMission());
@@ -71,6 +72,7 @@ public class AsyncService {
                 .messages(requestF.getMessages())
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
+                .nickname(session.getHost().getNickname())
                 .build();
         AdviceResponse responseF3 = getAdvice(requestF3);
         System.out.println("advice 받기 : "+responseF3.getAdvice());

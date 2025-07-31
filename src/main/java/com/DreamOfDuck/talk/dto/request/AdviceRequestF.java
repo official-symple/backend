@@ -22,4 +22,7 @@ public class AdviceRequestF {
 
     @NotNull
     List<MessageFormatF> messages;
+
+    @NotNull
+    String nickname;
 }
