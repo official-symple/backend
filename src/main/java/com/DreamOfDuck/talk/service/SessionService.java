@@ -62,7 +62,7 @@ public class SessionService {
 
         session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
         sessionRepository.save(session);
-        eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId()));
+        eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
         return SessionResponse.from(session);
     }
     @Transactional

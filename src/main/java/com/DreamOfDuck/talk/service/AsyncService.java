@@ -78,7 +78,6 @@ public class AsyncService {
         System.out.println("advice 받기 : "+responseF3.getAdvice());
         session.setAdvice(responseF3.getAdvice());
         sessionRepository.save(session);
-
         return;
     }
     private SummaryResponseF getSummary(MessageRequestF request){
