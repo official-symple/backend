@@ -25,21 +25,27 @@ public class HealthService{
 
     @Transactional
     public HealthResponse save(Member host, HealthCreateRequest request) {
-        if(healthRepository.findByDateAndHost(request.getDate(), host).isPresent()){
-            throw new CustomException(ErrorCode.RECORD_ALREADY_EXIST);
-        }
-        //유저 메시지 저장
-        Health health = Health.builder()
-                .walking(request.getWalking())
-                .sleeping(request.getSleeping())
-                .heartbeat(request.getHeartbeat())
-                .screenTime(request.getScreenTime())
-                .lightening(request.getLightening())
-                .diary(request.getDiary())
-                .date(request.getDate())
-                .build();
-        healthRepository.save(health);
-        health.addHost(host);
+        Health health = healthRepository.findByDateAndHost(request.getDate(), host).orElse(null);
+       if (health == null) {
+           Health newhealth = Health.builder()
+                   .walking(request.getWalking())
+                   .sleeping(request.getSleeping())
+                   .heartbeat(request.getHeartbeat())
+                   .screenTime(request.getScreenTime())
+                   .lightening(request.getLightening())
+                   .diary(request.getDiary())
+                   .date(request.getDate())
+                   .build();
+           healthRepository.save(newhealth);
+           newhealth.addHost(host);
+       }else{
+           health.setWalking(request.getWalking());
+           health.setSleeping(request.getSleeping());
+           health.setHeartbeat(request.getHeartbeat());
+           health.setScreenTime(request.getScreenTime());
+           health.setLightening(request.getLightening());
+           health.setDiary(request.getDiary());
+       }
         return HealthResponse.from(health);
     }
 
