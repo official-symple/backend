@@ -56,6 +56,7 @@ public class MemberService {
         member.setDia(0);
         member.setFeather(0);
         member.setLv(1);
+        member.setDuckname("꽥꽥이");
         return MemberResponse.from(member);
     }
     @Transactional
