@@ -110,7 +110,26 @@ public class MemberService {
     }
     @Transactional
     public HomeResponse updateFeather(Member member, FeatherRequest request) {
-        member.setFeather(request.getFeather());
+        int totalFeather=member.getFeather()+request.getFeather();
+        int curLv=member.getLv();
+        int[] levelRequirements = {
+                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
+                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
+                13000, 14500, 16000, 17500, 19000, 21000, 23000,
+                25000, 27000, 29000, 31000, 33000, 35000
+        };
+        int i;
+        for(i=1;i<levelRequirements.length;i++){
+            if(totalFeather<levelRequirements[i]) break;
+        }
+        //levelRequirements[i-1]<=totalFeather<levelRequirements[i]
+        i--; //level to be set
+        if(curLv<i){
+            curLv=i;
+            totalFeather=0;
+        }
+        member.setLv(curLv);
+        member.setFeather(totalFeather);
         return HomeResponse.from(member);
     }
     @Transactional

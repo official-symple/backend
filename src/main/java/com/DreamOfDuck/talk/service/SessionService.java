@@ -62,6 +62,7 @@ public class SessionService {
 
         session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
         sessionRepository.save(session);
+        host.setHeart(host.getHeart()+2);
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
         return SessionResponse.from(session);
     }
