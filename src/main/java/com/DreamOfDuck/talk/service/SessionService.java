@@ -3,10 +3,7 @@ package com.DreamOfDuck.talk.service;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.talk.dto.request.MessageFormatF;
-import com.DreamOfDuck.talk.dto.request.MessageRequestF;
-import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
-import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
+import com.DreamOfDuck.talk.dto.request.*;
 import com.DreamOfDuck.talk.dto.response.*;
 import com.DreamOfDuck.talk.entity.*;
 import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
@@ -158,5 +155,18 @@ public class SessionService {
             throw new CustomException(ErrorCode.SUMMARY_ING);
         }
         return ReportResponse.from(session);
+    }
+
+    @Transactional
+    public FeedbackResponse saveFeedback(Member host, FeedbackRequest request){
+        Session session = sessionRepository.findById(request.getSessionId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
+        if(session.getHost()!=host){
+            throw new CustomException(ErrorCode.DIFFERENT_USER_SESSION);
+        }
+        session.setFeedback(request.getFeedback());
+        return FeedbackResponse.from(session);
+
     }
 }

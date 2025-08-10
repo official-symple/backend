@@ -3,6 +3,7 @@ package com.DreamOfDuck.talk.controller;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
+import com.DreamOfDuck.talk.dto.request.FeedbackRequest;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.*;
@@ -117,6 +118,16 @@ public class SessionController {
     public ResponseEntity<?> getAdviceBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.getAdviceById(member, id));
+    }
+    @PostMapping("/feedback")
+    @Operation(summary = "세션별 피드백 접수하기", description = "세션별 피드백 접수할 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = FeedbackResponse.class)
+            )})
+    })
+    public ResponseEntity<?> createFeedback(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody FeedbackRequest request){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.saveFeedback(member, request));
     }
 
 }

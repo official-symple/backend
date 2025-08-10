@@ -57,6 +57,9 @@ public class Session extends TimeStamp {
     @Lob
     private String mission;
 
+    @Lob
+    private String feedback;
+
     @ElementCollection
     @CollectionTable(name = "session_advice", joinColumns = @JoinColumn(name = "session_id"))
     @Column(name = "advice")
