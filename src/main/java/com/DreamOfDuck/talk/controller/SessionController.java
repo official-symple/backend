@@ -119,15 +119,15 @@ public class SessionController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.getAdviceById(member, id));
     }
-    @PostMapping("/feedback")
+    @PostMapping("/feedback/{id}")
     @Operation(summary = "세션별 피드백 접수하기", description = "세션별 피드백 접수할 때 사용하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = FeedbackResponse.class)
             )})
     })
-    public ResponseEntity<?> createFeedback(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody FeedbackRequest request){
+    public ResponseEntity<?> createFeedback(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody FeedbackRequest request, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return ResponseEntity.ok(sessionService.saveFeedback(member, request));
+        return ResponseEntity.ok(sessionService.saveFeedback(member, request, id));
     }
 
 }

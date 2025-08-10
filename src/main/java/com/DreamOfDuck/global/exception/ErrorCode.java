@@ -51,6 +51,9 @@ public enum ErrorCode {
     RECORD_ALREADY_EXIST(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),
     NOT_FOUND_HEALTH(-501, "존재하지 않는 기록입니다.", 406),
     DIFFERENT_USER_HEALTH(-502, "해당 유저는 해당 health Id에 접근할 수 없습니다.",403),
+    NOT_FOUND_GOAL(-503, "존재하지 않는 목표입니다.", 406),
+    DIFFERENT_USER_GOAL(-504, "해당 유저는 해당 goal Id에 접근할 수 없습니다.", 403),
+    GOAL_ALREADY_EXIST(-500, "해당 목표는 이미 존재합니다. 수정 API를 이용해주세요.", 400),
 
     //pang
     NOT_FOUND_ITEM(-600, "존재하지 않는 item입니다.", 406),

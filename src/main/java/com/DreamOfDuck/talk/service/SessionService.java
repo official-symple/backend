@@ -158,8 +158,8 @@ public class SessionService {
     }
 
     @Transactional
-    public FeedbackResponse saveFeedback(Member host, FeedbackRequest request){
-        Session session = sessionRepository.findById(request.getSessionId())
+    public FeedbackResponse saveFeedback(Member host, FeedbackRequest request, Long id){
+        Session session = sessionRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
         if(session.getHost()!=host){
