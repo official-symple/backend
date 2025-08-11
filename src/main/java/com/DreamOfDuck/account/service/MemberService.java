@@ -94,7 +94,19 @@ public class MemberService {
     }
 
     public HomeResponse getHomeInfo(Member member){
-        return HomeResponse.from(member);
+        int[] levelRequirements = {
+                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
+                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
+                13000, 14500, 16000, 17500, 19000, 21000, 23000,
+                25000, 27000, 29000, 31000, 33000, 35000
+        };
+
+        HomeResponse homeResponse = HomeResponse.from(member);
+        int curLv=member.getLv();
+        int requiredFeather=levelRequirements[curLv+1];
+        requiredFeather-=member.getFeather();
+        homeResponse.setRequiredFeather(requiredFeather);
+        return homeResponse;
     }
 
     @Transactional

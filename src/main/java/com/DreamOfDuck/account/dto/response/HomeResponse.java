@@ -26,6 +26,8 @@ public class HomeResponse {
     Integer feather;
     @Schema(example="1")
     Integer lv;
+    @Schema(example="20")
+    Integer requiredFeather;
 
     public static HomeResponse from(Member member){
         return HomeResponse.builder()
