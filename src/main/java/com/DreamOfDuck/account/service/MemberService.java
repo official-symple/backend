@@ -137,7 +137,7 @@ public class MemberService {
         i--; //level to be set
         if(curLv<i){
             curLv=i;
-            totalFeather=0;
+            totalFeather-=levelRequirements[i];
         }
         member.setLv(curLv);
         member.setFeather(totalFeather);
