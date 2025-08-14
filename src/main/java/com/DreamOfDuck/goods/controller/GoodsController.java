@@ -1,0 +1,121 @@
+package com.DreamOfDuck.goods.controller;
+
+import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.HomeResponse;
+import com.DreamOfDuck.account.dto.response.MemberResponse;
+import com.DreamOfDuck.account.entity.CustomUserDetails;
+import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.service.MemberService;
+import com.DreamOfDuck.goods.service.GoodsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/goods")
+public class GoodsController {
+    private final MemberService memberService;
+    private final GoodsService goodsService;
+
+
+
+    @PostMapping("/heart/ad")
+    @Operation(summary = "광고,하트 업데이트", description = "광고보고 하트를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeartByAd(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusHeart(member, 1);
+    }
+    @PostMapping("/heart/share")
+    @Operation(summary = "공유하기,하트 업데이트", description = "공유하고 하트를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeartByShare(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusHeart(member, 1);
+    }
+    @PostMapping("/heart/mission")
+    @Operation(summary = "오늘의 미션 완료시 하트 지급 API", description = "오늘의 미션 완료시 하트를 지급하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeartByMission(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusHeart(member, 2);
+    }
+    @DeleteMapping("/heart/pang")
+    @Operation(summary = "게임시 하트 사용", description = "게임시 하트를 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateHeartByGame(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.minusHeart(member, 1);
+    }
+
+    @PostMapping("/dia/pang")
+    @Operation(summary = "꽥팡 후, 다이아 업데이트", description = "꽥팡 후, 다이아를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateDiaByPang(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DiaRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusDia(member, request);
+    }
+    @PostMapping("/dia/recharge")
+    @Operation(summary = "다이아 구매", description = "다이아 구매시, 업데이트 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateDiaByStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DiaRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusDia(member, request);
+    }
+    @DeleteMapping("/dia/consume")
+    @Operation(summary = "게임 아이템/얼음깨기/오리 코스툼 구매", description = "게임 아이템/얼음깨기/오리 코스튬 구매시, 다이아 업데이트 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse deleteDiaByStore(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DiaRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.minusDia(member, request);
+    }
+    @PostMapping("/feather")
+    @Operation(summary = "깃털 업데이트", description = "깃털을 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateFeather(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid FeatherRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.updateFeather(member, request);
+    }
+    @PostMapping("/duckname")
+    @Operation(summary = "오리이름 업데이트", description = "오리이름을 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateDuckName(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DucknameRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.updateDuckname(member, request);
+    }
+
+}

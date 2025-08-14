@@ -1,7 +1,7 @@
-package com.DreamOfDuck.account.event.handler;
+package com.DreamOfDuck.goods.event.handler;
 
-import com.DreamOfDuck.account.event.AttendanceCreatedEvent;
-import com.DreamOfDuck.account.service.AttendanceAsyncService;
+import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
+import com.DreamOfDuck.goods.service.AttendanceAsyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

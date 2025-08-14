@@ -1,4 +1,4 @@
-package com.DreamOfDuck.account.event;
+package com.DreamOfDuck.goods.event;
 
 import com.DreamOfDuck.account.entity.Member;
 import lombok.AllArgsConstructor;

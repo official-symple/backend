@@ -1,31 +1,24 @@
 package com.DreamOfDuck.talk.service;
 
+import com.DreamOfDuck.account.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.event.AttendanceCreatedEvent;
+import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.goods.service.GoodsService;
 import com.DreamOfDuck.talk.dto.request.*;
 import com.DreamOfDuck.talk.dto.response.*;
 import com.DreamOfDuck.talk.entity.*;
 import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
-import com.DreamOfDuck.talk.repository.InterviewRepository;
 import com.DreamOfDuck.talk.repository.SessionRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +27,7 @@ import java.util.stream.Collectors;
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final ApplicationEventPublisher eventPublisher;
-
+    private final GoodsService goodsService;
     @Transactional
     public SessionResponse save(Member host, SessionCreateRequest request){
         Session session = Session.builder()
@@ -157,6 +150,9 @@ public class SessionService {
         if(session.getProblem()==null || session.getProblem().isEmpty() || session.getSolutions().isEmpty()){
             throw new CustomException(ErrorCode.SUMMARY_ING);
         }
+        FeatherRequest request = new FeatherRequest();
+        request.setFeather(50);
+        goodsService.updateFeather(host, request);
         return ReportResponse.from(session);
     }
 

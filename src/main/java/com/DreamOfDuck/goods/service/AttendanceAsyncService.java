@@ -1,6 +1,7 @@
-package com.DreamOfDuck.account.service;
+package com.DreamOfDuck.goods.service;
 
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -19,6 +20,7 @@ import java.util.TreeSet;
 public class AttendanceAsyncService {
 
     private final MemberService memberService;
+    private final GoodsService goodsService;
 
     @Transactional
     @Async
@@ -30,7 +32,7 @@ public class AttendanceAsyncService {
         if (attendedDates.contains(curDate)) {
             return;
         }
-        memberService.addAttendance(member, curDate);
+        goodsService.addAttendance(member, curDate);
         // 정렬된 TreeSet으로 변환해서 streak 계산
         NavigableSet<LocalDate> sortedDates = new TreeSet<>(attendedDates);
         Integer newCurStreak = calculateCurrentStreak(sortedDates, curDate, member.getCurStreak());
