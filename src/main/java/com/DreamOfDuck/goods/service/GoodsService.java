@@ -1,6 +1,8 @@
 package com.DreamOfDuck.goods.service;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.AttendanceByMonthResponse;
+import com.DreamOfDuck.account.dto.response.AttendanceResponse;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
@@ -11,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -78,5 +83,19 @@ public class GoodsService {
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }
         return HomeResponse.from(member);
+    }
+
+    public List<AttendanceByMonthResponse> getAttendanceByMonth(Member member, YearMonth yearMonth){
+        return member.getAttendedDates()
+                .stream()
+                .filter(d->d.getYear()==yearMonth.getYear() && d.getMonth()==yearMonth.getMonth())
+                .sorted()
+                .map(d->AttendanceByMonthResponse.builder()
+                        .attendedDate(d)
+                        .build())
+                .collect(Collectors.toList());
+    }
+    public AttendanceResponse getAttendance(Member member){
+        return AttendanceResponse.fromMember(member);
     }
 }

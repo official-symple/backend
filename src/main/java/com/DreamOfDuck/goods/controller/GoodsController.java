@@ -1,6 +1,8 @@
 package com.DreamOfDuck.goods.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.AttendanceByMonthResponse;
+import com.DreamOfDuck.account.dto.response.AttendanceResponse;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
@@ -8,14 +10,20 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.goods.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +32,30 @@ public class GoodsController {
     private final MemberService memberService;
     private final GoodsService goodsService;
 
-
-
+    @GetMapping("/attendance/month")
+    @Operation(summary = "월별 출석 기록", description = "월별 출석 기록을 받는 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "해당 월의 출석 내역",
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = AttendanceByMonthResponse.class))
+                    )
+            )
+    })
+    public List<AttendanceByMonthResponse> getAttendanceByMonth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam @DateTimeFormat(pattern="yyyy-MM") YearMonth yearMonth) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.getAttendanceByMonth(member, yearMonth);
+    }
+    @GetMapping("/attendance")
+    @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
+            )})
+    })
+    public AttendanceResponse getAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.getAttendance(member);
+    }
     @PostMapping("/heart/ad")
     @Operation(summary = "광고,하트 업데이트", description = "광고보고 하트를 업데이트하는 API")
     @ApiResponses(value={
