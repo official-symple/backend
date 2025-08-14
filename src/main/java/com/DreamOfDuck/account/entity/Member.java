@@ -2,7 +2,6 @@ package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.feedback.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
-import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.record.entity.Goal;
 import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
@@ -15,8 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Entity
@@ -47,12 +45,23 @@ public class Member extends TimeStamp {
     @Column(name = "status")
     private List<Integer> status =  new ArrayList<>();
     private String totalStatus;
-
+    //꽥팡
     private Integer maxScore;
+    //출석
+    @ElementCollection
+    @CollectionTable(name = "member_attendance", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "attendance_date")
+    private Set<LocalDate> attendedDates = new TreeSet<>();
+    private Integer curStreak=0;
+    private Integer longestStreak=0;
+    private LocalDate LastDayOfLongestStreak;
+    //재화
     private Integer heart;
     private Integer dia;
     private Integer feather;
+    private Integer requiredFeather;
     private Integer lv;
+    //캐릭터-스토어 이후 분리하기
     private String duckname;
 
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -66,9 +75,6 @@ public class Member extends TimeStamp {
 
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Feedback> feedback = new ArrayList<>();
-
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Item item;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Interview interview;

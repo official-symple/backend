@@ -7,15 +7,19 @@ import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Gender;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.entity.Cause;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @Slf4j
@@ -23,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
     public Member findMemberByEmail(String email){
         return memberRepository.findByEmail(email).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_EXIST));
     }
@@ -51,11 +57,16 @@ public class MemberService {
         else if(sum<=9) member.setTotalStatus("가벼운 우울");
         else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
         else member.setTotalStatus("심한 우울");
+
+        member.setLongestStreak(0);
+        member.setCurStreak(0);
+
         member.setMaxScore(0);
         member.setHeart(2);
         member.setDia(0);
         member.setFeather(0);
         member.setLv(1);
+
         member.setDuckname("꽥꽥이");
         return MemberResponse.from(member);
     }
@@ -90,23 +101,17 @@ public class MemberService {
         else if(member.getMaxScore()<request.getScore()){
             member.setMaxScore(request.getScore());
         }
+        eventPublisher.publishEvent(new AttendanceCreatedEvent(member.getEmail(), LocalDate.now()));
+
         return MemberResponse.from(member);
     }
 
     public HomeResponse getHomeInfo(Member member){
-        int[] levelRequirements = {
-                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
-                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
-                13000, 14500, 16000, 17500, 19000, 21000, 23000,
-                25000, 27000, 29000, 31000, 33000, 35000
-        };
-
-        HomeResponse homeResponse = HomeResponse.from(member);
-        int curLv=member.getLv();
-        int requiredFeather=levelRequirements[curLv+1];
-        requiredFeather-=member.getFeather();
-        homeResponse.setRequiredFeather(requiredFeather);
-        return homeResponse;
+        return HomeResponse.from(member);
+    }
+    @Transactional
+    public void addAttendance(Member member, LocalDate date){
+        member.getAttendedDates().add(date);
     }
 
     @Transactional
@@ -130,17 +135,20 @@ public class MemberService {
                 25000, 27000, 29000, 31000, 33000, 35000
         };
         int i;
-        for(i=1;i<levelRequirements.length;i++){
+        for(i=0;i<levelRequirements.length;i++){
             if(totalFeather<levelRequirements[i]) break;
         }
-        //levelRequirements[i-1]<=totalFeather<levelRequirements[i]
-        i--; //level to be set
+
         if(curLv<i){
             curLv=i;
-            totalFeather-=levelRequirements[i];
+            totalFeather-=levelRequirements[i-1];
+            member.setLv(curLv);
         }
-        member.setLv(curLv);
         member.setFeather(totalFeather);
+
+        Integer requiredFeather=levelRequirements[curLv];
+        requiredFeather-=totalFeather;
+        member.setRequiredFeather(requiredFeather);
         return HomeResponse.from(member);
     }
     @Transactional

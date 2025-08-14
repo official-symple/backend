@@ -35,6 +35,7 @@ public class HomeResponse {
                 .heart(member.getHeart())
                 .dia(member.getDia())
                 .feather(member.getFeather())
+                .requiredFeather(member.getRequiredFeather())
                 .lv(member.getLv())
                 .build();
     }

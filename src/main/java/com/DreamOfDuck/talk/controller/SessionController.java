@@ -7,12 +7,10 @@ import com.DreamOfDuck.talk.dto.request.FeedbackRequest;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
 import com.DreamOfDuck.talk.dto.response.*;
-import com.DreamOfDuck.talk.service.AsyncService;
+import com.DreamOfDuck.talk.service.LastEmotionAsyncService;
 import com.DreamOfDuck.talk.service.SessionService;
-import feign.Param;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class SessionController {
     private final SessionService sessionService;
     private final MemberService memberService;
-    private final AsyncService asyncService;
+    private final LastEmotionAsyncService lastEmotionAsyncService;
 
     @PostMapping()
     @Operation(summary = "세션 생성", description = "세션을 생성할 때 사용하는 API")

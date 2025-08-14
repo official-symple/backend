@@ -1,6 +1,7 @@
 package com.DreamOfDuck.talk.service;
 
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.*;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +33,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SessionService {
     private final SessionRepository sessionRepository;
-    private final InterviewRepository interviewRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -61,6 +62,8 @@ public class SessionService {
         sessionRepository.save(session);
         host.setHeart(host.getHeart()+2);
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
+        eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), LocalDate.now()));
+        host.getAttendedDates().add(LocalDate.now());
         return SessionResponse.from(session);
     }
     @Transactional

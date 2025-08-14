@@ -4,8 +4,6 @@ import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.AuthService;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.pang.dto.request.ItemCreateRequest;
-import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

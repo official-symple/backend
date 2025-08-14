@@ -1,6 +1,5 @@
 package com.DreamOfDuck.talk.service;
 
-import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.AdviceRequestF;
@@ -9,7 +8,6 @@ import com.DreamOfDuck.talk.dto.request.MessageRequestF;
 import com.DreamOfDuck.talk.dto.request.MissionRequestF;
 import com.DreamOfDuck.talk.dto.response.AdviceResponse;
 import com.DreamOfDuck.talk.dto.response.MissionResponse;
-import com.DreamOfDuck.talk.dto.response.ReportResponse;
 import com.DreamOfDuck.talk.dto.response.SummaryResponseF;
 import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Session;
@@ -24,13 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AsyncService {
+public class LastEmotionAsyncService {
     private final SessionRepository sessionRepository;
     private final RestTemplate restTemplate;
     @Value("${fastApi.summary.endpoint}")
