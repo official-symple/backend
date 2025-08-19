@@ -1,9 +1,10 @@
-package com.DreamOfDuck.feedback;
+package com.DreamOfDuck.feedback.controller;
 
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
+import com.DreamOfDuck.feedback.dto.FeedbackCreateRequest;
+import com.DreamOfDuck.feedback.service.FeedbackService;
 import com.DreamOfDuck.record.dto.response.HealthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

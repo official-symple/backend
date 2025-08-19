@@ -1,6 +1,5 @@
 package com.DreamOfDuck.talk.dto.response;
 
-import com.DreamOfDuck.feedback.Feedback;
 import com.DreamOfDuck.talk.entity.Session;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

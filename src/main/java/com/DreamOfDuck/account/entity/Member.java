@@ -1,6 +1,6 @@
 package com.DreamOfDuck.account.entity;
 
-import com.DreamOfDuck.feedback.Feedback;
+import com.DreamOfDuck.feedback.entity.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
 import com.DreamOfDuck.record.entity.Goal;
 import com.DreamOfDuck.record.entity.Health;

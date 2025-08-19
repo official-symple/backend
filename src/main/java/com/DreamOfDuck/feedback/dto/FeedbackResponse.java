@@ -1,14 +1,11 @@
-package com.DreamOfDuck.feedback;
+package com.DreamOfDuck.feedback.dto;
 
-import com.DreamOfDuck.talk.dto.response.AdviceResponse;
-import com.DreamOfDuck.talk.entity.Session;
+import com.DreamOfDuck.feedback.entity.Feedback;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @Builder

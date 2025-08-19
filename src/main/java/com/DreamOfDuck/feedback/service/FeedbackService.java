@@ -1,9 +1,10 @@
-package com.DreamOfDuck.feedback;
+package com.DreamOfDuck.feedback.service;
 
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.record.dto.request.HealthCreateRequest;
-import com.DreamOfDuck.record.dto.response.HealthResponse;
-import com.DreamOfDuck.record.entity.Health;
+import com.DreamOfDuck.feedback.entity.Feedback;
+import com.DreamOfDuck.feedback.repository.FeedbackRepository;
+import com.DreamOfDuck.feedback.dto.FeedbackCreateRequest;
+import com.DreamOfDuck.feedback.dto.FeedbackResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,16 +1,11 @@
-package com.DreamOfDuck.feedback;
+package com.DreamOfDuck.feedback.entity;
 
-import com.DreamOfDuck.account.entity.Gender;
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.entity.Role;
-import com.DreamOfDuck.account.entity.SocialType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @Entity
