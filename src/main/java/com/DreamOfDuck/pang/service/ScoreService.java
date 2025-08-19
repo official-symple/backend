@@ -6,7 +6,7 @@ import com.DreamOfDuck.global.redis.RedisService;
 import com.DreamOfDuck.pang.dto.request.ScoreCreateRequest;
 import com.DreamOfDuck.pang.dto.response.ScoreResponse;
 import com.DreamOfDuck.pang.entity.Score;
-import com.DreamOfDuck.pang.event.GamePlayEvent;
+
 import com.DreamOfDuck.pang.repository.ScoreRepository;
 import com.DreamOfDuck.pang.repository.ScoreRepositoryCustomImpl;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,6 @@ public class ScoreService {
 
     @Transactional
     public ScoreResponse createScore(Member host, ScoreCreateRequest request){
-
         //entity 저장
         Score score=Score.builder()
                 .score(request.getScore())
