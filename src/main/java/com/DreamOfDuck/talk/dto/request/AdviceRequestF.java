@@ -17,6 +17,8 @@ public class AdviceRequestF {
     @NotNull
     Integer persona;
 
+    String language;
+
     @NotNull
     Boolean formal;
 

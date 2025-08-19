@@ -24,6 +24,8 @@ public class MessageRequestF {
     @NotNull
     Boolean formal;
 
+    String language;
+
     @NotNull
     List<String> emotion;
 

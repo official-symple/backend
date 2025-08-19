@@ -17,6 +17,6 @@ public class LastEmotionEventHandler {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleMission(LastEmotionCreatedEvent event) {
-        lastEmotionAsyncService.saveReportAndMission(event.getSessionId());
+        lastEmotionAsyncService.saveReportAndMission(event.getMember(), event.getSessionId());
     }
 }

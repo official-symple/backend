@@ -1,5 +1,6 @@
 package com.DreamOfDuck.talk.service;
 
+import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.AdviceRequestF;
@@ -39,11 +40,12 @@ public class LastEmotionAsyncService {
 
     @Transactional
     @Async
-    public void saveReportAndMission(Long sessionId){
+    public void saveReportAndMission(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId).orElse(null);
 
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
+                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
@@ -55,6 +57,7 @@ public class LastEmotionAsyncService {
 
         MissionRequestF requestF2 = MissionRequestF.builder()
                 .persona(session.getDuckType().getValue())
+                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
@@ -67,6 +70,7 @@ public class LastEmotionAsyncService {
 
         AdviceRequestF requestF3 = AdviceRequestF.builder()
                 .messages(requestF.getMessages())
+                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
                 .nickname(session.getHost().getNickname())

@@ -20,6 +20,8 @@ public class MissionRequestF {
     @NotNull
     Boolean formal;
 
+    String language;
+
     @NotNull
     List<String> emotion;
 

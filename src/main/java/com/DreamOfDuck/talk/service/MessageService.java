@@ -57,6 +57,7 @@ public class MessageService {
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
+                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
                 .messages(MessageFormatF.fromSession(session))

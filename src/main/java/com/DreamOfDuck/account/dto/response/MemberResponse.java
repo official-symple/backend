@@ -49,7 +49,7 @@ public class MemberResponse {
                 .birthday(member.getBirthday())
                 .role(member.getRole() != null ? member.getRole().toString() : null)
                 .gender(member.getGender() != null ? member.getGender().toString() : null)
-                .language(member.getLanguage() != null ? member.getLanguage().toString() : null)
+                .language(member.getLanguage() != null ? member.getLanguage().toString().toLowerCase() : null)
                 .concern(member.getConcern() != null ? member.getConcern().getId() : null)
                 .status(member.getStatus())
                 .totalStatus(member.getTotalStatus())
