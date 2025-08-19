@@ -12,10 +12,12 @@ import com.DreamOfDuck.pang.repository.ScoreRepositoryCustomImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ScoreService {
@@ -27,7 +29,7 @@ public class ScoreService {
 
     @Transactional
     public ScoreResponse createScore(Member host, ScoreCreateRequest request){
-        eventPublisher.publishEvent(new GamePlayEvent(host, request.getScore()));
+
         //entity 저장
         Score score=Score.builder()
                 .score(request.getScore())
@@ -35,14 +37,21 @@ public class ScoreService {
         score.addHost(host);
         scoreRepository.save(score);
         //resopnse
-        Long totalPlayer=redisService.getLongValues("totalPlayer");
+        Long totalScore=scoreRepository.count();
         Long goePlayer=scoreRepositoryCustom.countByScoreGreaterThanEqual(request.getScore());
         Long worldRecord=redisService.getLongValues("worldRecord");
+        if(worldRecord==null || worldRecord<request.getScore()){
+            redisService.setLongValue("worldRecord", request.getScore(), null, null);
+            worldRecord= request.getScore();
+        }
         ScoreResponse res = ScoreResponse.from(score);
-        res.setPercentile((double)goePlayer/totalPlayer*100);
+
+        res.setPercentile((double)goePlayer/totalScore*100);
         res.setRank(goePlayer);
         res.setWorldRecord(worldRecord);
         return res;
     }
+
+
 
 }

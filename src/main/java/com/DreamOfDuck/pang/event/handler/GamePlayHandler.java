@@ -6,6 +6,7 @@ import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
 import com.DreamOfDuck.talk.service.LastEmotionAsyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -16,7 +17,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class GamePlayHandler {
     private final ScoreAsyncService scoreAsyncService;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void handleRedisInfo(GamePlayEvent event) {
         scoreAsyncService.updateTotalPlayer(event.getMember());
         scoreAsyncService.updateWorldRecord(event.getScore());

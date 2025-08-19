@@ -27,12 +27,14 @@ public class RedisService {
         if (duration == null || timeUnit == null) {
             values.set(key, data); // TTL 없이 저장
         } else {
-            values.set(key, data, duration, timeUnit); // TTL 적용
+            values.set(key, data.longValue(), duration, timeUnit); // TTL 적용
         }
     }
     public Long getLongValues(String key) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        return (Long)values.get(key);
+        Object val = values.get(key);
+        if (val == null) return null;
+        return ((Number) val).longValue();
     }
 
     public void deleteValues(String key) {
