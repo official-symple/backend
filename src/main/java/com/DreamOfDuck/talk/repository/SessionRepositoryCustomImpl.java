@@ -1,8 +1,7 @@
 package com.DreamOfDuck.talk.repository;
 
-import com.DreamOfDuck.Admin.SearchRequest;
+import com.DreamOfDuck.admin.SearchRequest;
 import com.DreamOfDuck.account.entity.Gender;
-import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.QMember;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.QSession;

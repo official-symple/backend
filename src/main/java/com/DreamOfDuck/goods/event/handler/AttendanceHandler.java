@@ -4,6 +4,7 @@ import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.goods.service.AttendanceAsyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -14,7 +15,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class AttendanceHandler {
     private final AttendanceAsyncService attendanceAsyncService;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void handleAttendance(AttendanceCreatedEvent event) {
         attendanceAsyncService.addAttendance(event.getEmail(), event.getDate());
 

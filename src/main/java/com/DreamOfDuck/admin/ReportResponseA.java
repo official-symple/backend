@@ -1,4 +1,4 @@
-package com.DreamOfDuck.Admin;
+package com.DreamOfDuck.admin;
 
 import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Session;

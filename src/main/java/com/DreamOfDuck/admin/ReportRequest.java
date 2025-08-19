@@ -1,7 +1,6 @@
-package com.DreamOfDuck.Admin;
+package com.DreamOfDuck.admin;
 
 import com.DreamOfDuck.talk.dto.request.MessageFormatF;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

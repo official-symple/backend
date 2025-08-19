@@ -2,6 +2,7 @@ package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.feedback.entity.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
+import com.DreamOfDuck.pang.entity.Score;
 import com.DreamOfDuck.record.entity.Goal;
 import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
@@ -78,6 +79,9 @@ public class Member extends TimeStamp {
 
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Feedback> feedback = new ArrayList<>();
+
+    @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Score> scores = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Interview interview;

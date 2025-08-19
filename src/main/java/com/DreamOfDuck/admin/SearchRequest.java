@@ -1,4 +1,4 @@
-package com.DreamOfDuck.Admin;
+package com.DreamOfDuck.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

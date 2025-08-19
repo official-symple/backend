@@ -1,4 +1,4 @@
-package com.DreamOfDuck.Admin;
+package com.DreamOfDuck.admin;
 
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
