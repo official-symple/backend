@@ -3,10 +3,7 @@ package com.DreamOfDuck.account.service;
 import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
-import com.DreamOfDuck.account.entity.CustomUserDetails;
-import com.DreamOfDuck.account.entity.Gender;
-import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.entity.*;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
@@ -41,7 +38,7 @@ public class MemberService {
         member.setRole(Role.ROLE_USER);
         member.setIsMarketing(request.getIsMarketing());
         member.setBirthday(request.getBirthday());
-
+        member.setLanguage(Language.valueOf(request.getLanguage().toUpperCase()));
         if(request.getNickname().length()>14 || request.getNickname().length()<2){
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }

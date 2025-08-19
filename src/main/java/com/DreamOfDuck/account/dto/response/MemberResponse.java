@@ -28,6 +28,8 @@ public class MemberResponse {
     String role;
     @Schema(example="FEMALE")
     String gender;
+    @Schema(example="KOR")
+    String language;
     @Schema(example="1")
     Integer concern;
 
@@ -47,6 +49,7 @@ public class MemberResponse {
                 .birthday(member.getBirthday())
                 .role(member.getRole() != null ? member.getRole().toString() : null)
                 .gender(member.getGender() != null ? member.getGender().toString() : null)
+                .language(member.getLanguage() != null ? member.getLanguage().toString() : null)
                 .concern(member.getConcern() != null ? member.getConcern().getId() : null)
                 .status(member.getStatus())
                 .totalStatus(member.getTotalStatus())

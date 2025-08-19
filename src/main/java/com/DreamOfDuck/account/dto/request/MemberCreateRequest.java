@@ -26,6 +26,12 @@ public class MemberCreateRequest {
     )
     @NotNull
     String gender;
+    @Schema(
+            example = "kor(eng)",
+            description = "kor or eng"
+    )
+    @NotNull
+    String language;
     @Schema(example="1")
     @NotNull
     Integer concern;

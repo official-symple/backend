@@ -34,11 +34,14 @@ public class Member extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
     @Enumerated(EnumType.STRING)
+    private Language language;
+    @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isMarketing;
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Cause concern;
+
 
     @ElementCollection
     @CollectionTable(name = "member_status", joinColumns = @JoinColumn(name = "member_id"))
