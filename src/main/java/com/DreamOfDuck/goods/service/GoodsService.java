@@ -22,7 +22,12 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GoodsService {
-
+    int[] levelRequirements = {
+            0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
+            4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
+            13000, 14500, 16000, 17500, 19000, 21000, 23000,
+            25000, 27000, 29000, 31000, 33000, 35000
+    };
     @Transactional
     public void addAttendance(Member member, LocalDate date){
         member.getAttendedDates().add(date);
@@ -31,34 +36,37 @@ public class GoodsService {
     @Transactional
     public HomeResponse plusHeart(Member member, Integer cnt) {
         member.setHeart(member.getHeart()+cnt);
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse minusHeart(Member member, Integer cnt) {
         member.setHeart(member.getHeart()-cnt);
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse plusDia(Member member, DiaRequest request) {
         member.setDia(member.getDia()+request.getDia());
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse minusDia(Member member, DiaRequest request) {
         member.setDia(member.getDia()-request.getDia());
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse plusDiaAndFeather(Member member, DFRequest request) {
         member.setDia(member.getDia()+request.getDia());
         int totalFeather=member.getFeather()+request.getFeather();
         int curLv=member.getLv();
-        int[] levelRequirements = {
-                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
-                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
-                13000, 14500, 16000, 17500, 19000, 21000, 23000,
-                25000, 27000, 29000, 31000, 33000, 35000
-        };
+
         int i;
         for(i=0;i<levelRequirements.length;i++){
             if(totalFeather<levelRequirements[i]) break;
@@ -108,7 +116,9 @@ public class GoodsService {
         if(request.getDuckname().length()>14 || request.getDuckname().length()<2){
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
 
     public List<AttendanceByMonthResponse> getAttendanceByMonth(Member member, YearMonth yearMonth){
