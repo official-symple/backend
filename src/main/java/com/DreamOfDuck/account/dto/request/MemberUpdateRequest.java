@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,6 +23,11 @@ public class MemberUpdateRequest {
             description = "female or male"
     )
     String gender;
+    @Schema(
+            example = "Kor(Eng)",
+            description = "Kor or Eng"
+    )
+    String language;
     @Schema(example="1")
     Integer concern;
     @Schema(example="[1, 1, 2, 3, 0, 3, 2, 3, 0]")

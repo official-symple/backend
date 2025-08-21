@@ -38,7 +38,7 @@ public class MemberService {
         member.setRole(Role.ROLE_USER);
         member.setIsMarketing(request.getIsMarketing());
         member.setBirthday(request.getBirthday());
-        member.setLanguage(Language.valueOf(request.getLanguage().toUpperCase()));
+        member.setLanguage(request.getLanguage()!=null?Language.valueOf(request.getLanguage().toUpperCase()):Language.KOR);
         if(request.getNickname().length()>14 || request.getNickname().length()<2){
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }
@@ -88,6 +88,7 @@ public class MemberService {
             else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
             else member.setTotalStatus("심한 우울");
         }
+        if(request.getLanguage()!=null) member.setLanguage(Language.valueOf(request.getLanguage().toUpperCase()));
         return MemberResponse.from(member);
     }
     @Transactional

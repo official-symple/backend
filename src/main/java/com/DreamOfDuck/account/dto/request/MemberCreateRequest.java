@@ -28,8 +28,8 @@ public class MemberCreateRequest {
     @NotNull
     String gender;
     @Schema(
-            example = "kor(eng)",
-            description = "kor or eng"
+            example = "Kor(Eng)",
+            description = "Kor or Eng"
     )
     @Nullable
     String language;

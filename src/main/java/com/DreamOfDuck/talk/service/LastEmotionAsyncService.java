@@ -45,7 +45,7 @@ public class LastEmotionAsyncService {
 
         MessageRequestF requestF = MessageRequestF.builder()
                 .persona(session.getDuckType().getValue())
-                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
+                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
@@ -57,7 +57,7 @@ public class LastEmotionAsyncService {
 
         MissionRequestF requestF2 = MissionRequestF.builder()
                 .persona(session.getDuckType().getValue())
-                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
+                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .emotion_cause(session.getCause().getText())
@@ -70,7 +70,7 @@ public class LastEmotionAsyncService {
 
         AdviceRequestF requestF3 = AdviceRequestF.builder()
                 .messages(requestF.getMessages())
-                .language(host.getLanguage()==null?"KOR":host.getLanguage().toString().toLowerCase())
+                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
                 .nickname(session.getHost().getNickname())
