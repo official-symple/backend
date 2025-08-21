@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class MemberCreateRequest {
             example = "kor(eng)",
             description = "kor or eng"
     )
-    @NotNull
+    @Nullable
     String language;
     @Schema(example="1")
     @NotNull
