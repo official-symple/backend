@@ -24,8 +24,8 @@ public class MemberUpdateRequest {
     )
     String gender;
     @Schema(
-            example = "Kor(Eng)",
-            description = "Kor or Eng"
+            example = "kor(eng)",
+            description = "kor or eng"
     )
     String language;
     @Schema(example="1")

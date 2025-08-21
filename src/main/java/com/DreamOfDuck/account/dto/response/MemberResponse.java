@@ -28,7 +28,7 @@ public class MemberResponse {
     String role;
     @Schema(example="FEMALE")
     String gender;
-    @Schema(example="KOR")
+    @Schema(example="kor")
     String language;
     @Schema(example="1")
     Integer concern;
