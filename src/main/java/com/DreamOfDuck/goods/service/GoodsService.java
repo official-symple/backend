@@ -49,6 +49,33 @@ public class GoodsService {
         return HomeResponse.from(member);
     }
     @Transactional
+    public HomeResponse plusDiaAndFeather(Member member, DFRequest request) {
+        member.setDia(member.getDia()+request.getDia());
+        int totalFeather=member.getFeather()+request.getFeather();
+        int curLv=member.getLv();
+        int[] levelRequirements = {
+                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
+                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
+                13000, 14500, 16000, 17500, 19000, 21000, 23000,
+                25000, 27000, 29000, 31000, 33000, 35000
+        };
+        int i;
+        for(i=0;i<levelRequirements.length;i++){
+            if(totalFeather<levelRequirements[i]) break;
+        }
+
+        if(curLv<i){
+            curLv=i;
+            totalFeather-=levelRequirements[i-1];
+            member.setLv(curLv);
+        }
+        member.setFeather(totalFeather);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[curLv]);
+
+        return res;
+    }
+    @Transactional
     public HomeResponse updateFeather(Member member, FeatherRequest request) {
         int totalFeather=member.getFeather()+request.getFeather();
         int curLv=member.getLv();

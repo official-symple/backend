@@ -97,16 +97,17 @@ public class GoodsController {
         return goodsService.minusHeart(member, 1);
     }
 
-    @PostMapping("/dia/pang")
-    @Operation(summary = "꽥팡 후, 다이아 업데이트", description = "꽥팡 후, 다이아를 업데이트하는 API")
+    @PostMapping("/pang")
+    @Operation(summary = "꽥팡 후, 다이아&깃털 업데이트", description = "꽥팡 후, 다이아&깃털을 업데이트하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
             )})
     })
-    public HomeResponse updateDiaByPang(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DiaRequest request) {
+    public HomeResponse updateDiaByPang(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid DFRequest request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.plusDia(member, request);
+        return goodsService.plusDiaAndFeather(member, request);
     }
+
     @PostMapping("/dia/recharge")
     @Operation(summary = "다이아 구매", description = "다이아 구매시, 업데이트 API")
     @ApiResponses(value={
@@ -127,16 +128,7 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.minusDia(member, request);
     }
-    @PostMapping("/feather")
-    @Operation(summary = "깃털 업데이트", description = "깃털을 업데이트하는 API")
-    @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
-            )})
-    })
-    public HomeResponse updateFeather(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid FeatherRequest request) {
-        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.updateFeather(member, request);
-    }
+
     @PostMapping("/duckname")
     @Operation(summary = "오리이름 업데이트", description = "오리이름을 업데이트하는 API")
     @ApiResponses(value={
