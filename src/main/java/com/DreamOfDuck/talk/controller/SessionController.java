@@ -93,7 +93,7 @@ public class SessionController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ReportResponse.class)
             )})
     })
-    public ResponseEntity<?> getReportBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+    public ResponseEntity<?> oldReportBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.getReportById(member, id));
     }
@@ -103,7 +103,7 @@ public class SessionController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MissionResponse.class)
             )})
     })
-    public ResponseEntity<?> getMissionBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+    public ResponseEntity<?> oldMissionBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.getMissionById(member, id));
     }
@@ -113,10 +113,42 @@ public class SessionController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AdviceResponse.class)
             )})
     })
+    public ResponseEntity<?> oldAdviceBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.getAdviceById(member, id));
+    }
+
+    @GetMapping("/summary/{id}")
+    @Operation(summary = "오늘의 리포트 불러오기", description = "채팅 후 오늘의 리포트를 가져올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ReportResponse.class)
+            )})
+    })
+    public ResponseEntity<?> getReportBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.getReportById(member, id));
+    }
+    @GetMapping("/mission/{id}")
+    @Operation(summary = "오늘의 미션 불러오기", description = "채팅 후 오늘의 미션을 가져올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MissionResponse.class)
+            )})
+    })
+    public ResponseEntity<?> getMissionBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return ResponseEntity.ok(sessionService.getMissionById(member, id));
+    }
+    @GetMapping("/advice/{id}")
+    @Operation(summary = "오늘의 미션 단어 조합 불러오기", description = "mission api호출 후 단어 조합 불러올 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AdviceResponse.class)
+            )})
+    })
     public ResponseEntity<?> getAdviceBySessionId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Parameter(description = "session Id") @PathVariable("id") Long id){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return ResponseEntity.ok(sessionService.getAdviceById(member, id));
     }
+
     @PostMapping("/feedback/{id}")
     @Operation(summary = "세션별 피드백 접수하기", description = "세션별 피드백 접수할 때 사용하는 API")
     @ApiResponses(value={
