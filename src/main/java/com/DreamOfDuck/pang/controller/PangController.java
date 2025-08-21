@@ -6,6 +6,7 @@ import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.pang.dto.request.ScoreCreateRequest;
+import com.DreamOfDuck.pang.dto.response.RankingResponse;
 import com.DreamOfDuck.pang.dto.response.ScoreResponse;
 import com.DreamOfDuck.pang.service.ScoreService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,5 +34,16 @@ public class PangController {
     public ScoreResponse updateHeartByAd(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid ScoreCreateRequest request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return scoreService.createScore(member, request);
+    }
+
+    @GetMapping("/ranking")
+    @Operation(summary = "랭킹 페이지 및 나의 최고 기록", description = "랭킹 페이지 및 나의 최고기록 반환하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = RankingResponse.class)
+            )})
+    })
+    public RankingResponse getRanking(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return scoreService.getRanking(member);
     }
 }

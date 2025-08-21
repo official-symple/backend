@@ -27,7 +27,6 @@ public class AttendanceAsyncService {
     @Async
     public void addAttendance(String email, LocalDate curDate) {
         Member member = memberService.findMemberByEmail(email);
-
         Set<LocalDate> attendedDates = member.getAttendedDates();
 
         if (attendedDates.contains(curDate)) {
@@ -66,6 +65,7 @@ public class AttendanceAsyncService {
             return 1;
         }
     }
+
     public Integer checkAttendanceReward(Member member, Integer streak) {
         Integer feather = 0;
 

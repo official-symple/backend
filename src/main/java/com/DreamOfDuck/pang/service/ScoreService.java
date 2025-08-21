@@ -4,6 +4,8 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.redis.RedisService;
 import com.DreamOfDuck.pang.dto.request.ScoreCreateRequest;
+import com.DreamOfDuck.pang.dto.response.PersonalRecord;
+import com.DreamOfDuck.pang.dto.response.RankingResponse;
 import com.DreamOfDuck.pang.dto.response.ScoreResponse;
 import com.DreamOfDuck.pang.entity.Score;
 
@@ -15,6 +17,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -35,6 +39,8 @@ public class ScoreService {
                 .build();
         score.addHost(host);
         scoreRepository.save(score);
+        host.setCntPlaying(host.getCntPlaying()+1);
+
         //resopnse
         Long totalScore=scoreRepository.count();
         Long goePlayer=scoreRepositoryCustom.countByScoreGreaterThanEqual(request.getScore());
@@ -48,6 +54,27 @@ public class ScoreService {
         res.setPercentile((double)goePlayer/totalScore*100);
         res.setRank(goePlayer);
         res.setWorldRecord(worldRecord);
+        return res;
+    }
+    public RankingResponse getRanking(Member host){
+        RankingResponse res=new RankingResponse();
+        res.setCntPlaying(host.getCntPlaying());
+        List<Score> scores = scoreRepository.findAllByOrderByScoreDesc();
+
+        List<PersonalRecord> rankingList = scores.stream()
+                .map(score->{
+                    PersonalRecord personalRecord=new PersonalRecord();
+                    personalRecord.setScore(score.getScore());
+                    personalRecord.setNickname(score.getHost().getNickname());
+                    return personalRecord;
+                })
+                .limit(5)
+                .toList();
+        res.setRankingList(rankingList);
+        Long myBestScore=scoreRepository.findTopByHostOrderByScoreDesc(host).map(Score::getScore).orElse(0L);
+        res.setMyBestScore(myBestScore);
+        Long goePlayer=scoreRepositoryCustom.countByScoreGreaterThanEqual(myBestScore);
+        res.setMyBestRank(goePlayer==0?-1:goePlayer);
         return res;
     }
 

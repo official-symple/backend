@@ -69,11 +69,10 @@ public class GoodsService {
             member.setLv(curLv);
         }
         member.setFeather(totalFeather);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[curLv]);
 
-        Integer requiredFeather=levelRequirements[curLv];
-        requiredFeather-=totalFeather;
-        member.setRequiredFeather(requiredFeather);
-        return HomeResponse.from(member);
+        return res;
     }
 
     @Transactional

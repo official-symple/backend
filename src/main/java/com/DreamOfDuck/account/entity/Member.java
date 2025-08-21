@@ -51,6 +51,7 @@ public class Member extends TimeStamp {
     private String totalStatus;
     //꽥팡
     private Integer maxScore;
+    private Long cntPlaying;
     //출석
     @ElementCollection
     @CollectionTable(name = "member_attendance", joinColumns = @JoinColumn(name = "member_id"))
@@ -63,11 +64,10 @@ public class Member extends TimeStamp {
     private Integer heart;
     private Integer dia;
     private Integer feather;
-    private Integer requiredFeather;
+
     private Integer lv;
     //캐릭터-스토어 이후 분리하기
     private String duckname;
-
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
 
