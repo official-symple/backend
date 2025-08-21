@@ -25,7 +25,12 @@ import java.time.LocalDate;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
-
+    int[] levelRequirements = {
+            0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
+            4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
+            13000, 14500, 16000, 17500, 19000, 21000, 23000,
+            25000, 27000, 29000, 31000, 33000, 35000
+    };
     public Member findMemberByEmail(String email){
         return memberRepository.findByEmail(email).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_EXIST));
     }
@@ -107,7 +112,9 @@ public class MemberService {
     }
 
     public HomeResponse getHomeInfo(Member member){
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public void addAttendance(Member member, LocalDate date){
@@ -117,23 +124,21 @@ public class MemberService {
     @Transactional
     public HomeResponse updateHeart(Member member, HeartRequest request) {
         member.setHeart(request.getHeart());
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse updateDia(Member member, DiaRequest request) {
         member.setDia(request.getDia());
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse updateFeather(Member member, FeatherRequest request) {
         int totalFeather=member.getFeather()+request.getFeather();
         int curLv=member.getLv();
-        int[] levelRequirements = {
-                0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
-                4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
-                13000, 14500, 16000, 17500, 19000, 21000, 23000,
-                25000, 27000, 29000, 31000, 33000, 35000
-        };
         int i;
         for(i=0;i<levelRequirements.length;i++){
             if(totalFeather<levelRequirements[i]) break;
@@ -153,7 +158,9 @@ public class MemberService {
     @Transactional
     public HomeResponse updateLv(Member member, LvRequest request) {
         member.setLv(request.getLv());
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[request.getLv()]);
+        return res;
     }
     @Transactional
     public HomeResponse updateDuckname(Member member, DucknameRequest request) {
@@ -161,7 +168,9 @@ public class MemberService {
         if(request.getDuckname().length()>14 || request.getDuckname().length()<2){
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }
-        return HomeResponse.from(member);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
     }
 
 }
