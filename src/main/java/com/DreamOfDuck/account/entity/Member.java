@@ -2,6 +2,7 @@ package com.DreamOfDuck.account.entity;
 
 import com.DreamOfDuck.feedback.entity.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
+import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.pang.entity.Score;
 import com.DreamOfDuck.record.entity.Goal;
 import com.DreamOfDuck.record.entity.Health;
@@ -65,6 +66,7 @@ public class Member extends TimeStamp {
     private Integer dia;
     private Integer feather;
 
+
     private Integer lv;
     //캐릭터-스토어 이후 분리하기
     private String duckname;
@@ -86,4 +88,6 @@ public class Member extends TimeStamp {
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Interview interview;
 
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Item item;
 }
