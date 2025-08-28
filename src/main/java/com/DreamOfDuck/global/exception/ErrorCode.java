@@ -57,7 +57,8 @@ public enum ErrorCode {
 
     //pang
     NOT_FOUND_ITEM(-600, "존재하지 않는 item입니다.", 406),
-    DIFFERENT_USER_ITEM(-601, "해당 유저는 해당 item에 접근할 수 없습니다.",403);
+    DIFFERENT_USER_ITEM(-601, "해당 유저는 해당 item에 접근할 수 없습니다.",403),
+    NOT_ENOUGH_ITEM(-601, "아이템이 부족합니다.", 400);
     private final int errorCode;
     private final String message;
     private final int httpCode;

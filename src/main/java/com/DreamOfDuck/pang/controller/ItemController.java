@@ -3,6 +3,7 @@ package com.DreamOfDuck.pang.controller;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
+import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
 import com.DreamOfDuck.pang.dto.request.ScoreCreateRequest;
 import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import com.DreamOfDuck.pang.dto.response.ScoreResponse;
@@ -15,10 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,5 +54,25 @@ public class ItemController {
     public ItemResponse updateBreadCrubme(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return itemService.updateBreadCrumble(member);
+    }
+    @PostMapping("/use")
+    @Operation(summary = "아이템 사용", description = "아이템을 사용한만큼 -시켜주는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ItemResponse.class)
+            )})
+    })
+    public ItemResponse useItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody ItemUseRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return itemService.useItem(member, request);
+    }
+    @GetMapping
+    @Operation(summary = "아이템 조회", description = "사용자의 아이템 조회하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ItemResponse.class)
+            )})
+    })
+    public ItemResponse getItem(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return itemService.getItem(member);
     }
 }

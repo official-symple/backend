@@ -2,6 +2,9 @@ package com.DreamOfDuck.pang.service;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
 import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.pang.repository.ItemRepository;
@@ -55,6 +58,25 @@ public class ItemService {
             itemRepository.save(item);
         }
         return host.getItem();
+    }
+    @Transactional
+    public ItemResponse useItem(Member host, ItemUseRequest request){
+        Item item = getOrCreateItem(host);
+        Long breadCrumble = item.getBreadCrumble();
+        Long tornado = item.getTornado();
+        Long bubblePang = item.getBubblePang();
+        if(request.getBreadCrumble()>breadCrumble || request.getTornado()>tornado|| request.getBubblePang()>bubblePang ){
+            throw new CustomException(ErrorCode.NOT_ENOUGH_ITEM);
+        }
+        item.setBreadCrumble(breadCrumble-request.getBreadCrumble());
+        item.setTornado(tornado-request.getTornado());
+        item.setBubblePang(bubblePang-request.getBubblePang());
+        return ItemResponse.fromItem(item);
+    }
+
+    public ItemResponse getItem(Member host){
+        Item item = getOrCreateItem(host);
+        return ItemResponse.fromItem(item);
     }
 }
 
