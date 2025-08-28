@@ -30,6 +30,8 @@ public class MemberResponse {
     String gender;
     @Schema(example="kor")
     String language;
+    @Schema(example="Asia/Seoul")
+    String location;
     @Schema(example="1")
     Integer concern;
 
@@ -50,6 +52,7 @@ public class MemberResponse {
                 .role(member.getRole() != null ? member.getRole().toString() : null)
                 .gender(member.getGender() != null ? member.getGender().toString() : null)
                 .language(member.getLanguage() != null ? member.getLanguage().toString().toLowerCase() : null)
+                .location(member.getLocation().toString())
                 .concern(member.getConcern() != null ? member.getConcern().getId() : null)
                 .status(member.getStatus())
                 .totalStatus(member.getTotalStatus())

@@ -70,7 +70,7 @@ public class MemberService {
         member.setDia(0);
         member.setFeather(0);
         member.setLv(1);
-
+        member.setLocation("Asia/Seoul");
         member.setDuckname("꽥꽥이");
         return MemberResponse.from(member);
     }
@@ -171,6 +171,16 @@ public class MemberService {
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
+    }
+    @Transactional
+    public MemberResponse updateLocation(Member member, LocationRequest request) {
+        member.setLocation(request.getLocation());
+        return MemberResponse.from(member);
+    }
+    @Transactional
+    public void updateToken(Member member, TokenRequest request) {
+        member.setDeviceToken(request.getDeviceToken());
+        return;
     }
 
 }

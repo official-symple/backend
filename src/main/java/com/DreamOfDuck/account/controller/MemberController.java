@@ -126,4 +126,29 @@ public class MemberController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return memberService.updateLv(member, request);
     }
+
+    @PostMapping("/location")
+    @Operation(summary = "사용자 위치 업데이트", description = "사용자 위치를 업데이트하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MemberResponse.class)
+            )})
+    })
+    public MemberResponse updateLocation(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid LocationRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return memberService.updateLocation(member, request);
+    }
+    @PostMapping("/fcmToken")
+    @Operation(summary = "fcm device token 업데이트", description = "fcm device token 정보를 업데이트하는 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상 응답"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 에러")
+    })
+
+    public void updateFcmToken(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TokenRequest request) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        memberService.updateToken(member, request);
+        return;
+    }
 }

@@ -65,11 +65,12 @@ public class Member extends TimeStamp {
     private Integer heart;
     private Integer dia;
     private Integer feather;
-
-
     private Integer lv;
     //캐릭터-스토어 이후 분리하기
     private String duckname;
+
+    private String location;
+    private String deviceToken;
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Session> sessions = new ArrayList<>();
 
