@@ -30,6 +30,7 @@ public class Member extends TimeStamp {
     @Column(name="memberId")
     private Long id;
     private String email;
+    private String socialEmail;
     private String password;
     private String nickname;
     private LocalDate birthday;
@@ -68,7 +69,6 @@ public class Member extends TimeStamp {
     private Integer lv;
     //캐릭터-스토어 이후 분리하기
     private String duckname;
-
     private String location;
     private String deviceToken;
     @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)

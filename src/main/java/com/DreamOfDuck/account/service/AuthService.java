@@ -56,7 +56,7 @@ public class AuthService {
 
         Member member = Member.builder()
                 .email(response.getEmail())
-                //.socialEmail(response.getSocialEmail())
+                .socialEmail(response.getSocialEmail())
                 .role(Role.ROLE_GUEST)
                 .socialType(response.getSocialType())
                 .build();

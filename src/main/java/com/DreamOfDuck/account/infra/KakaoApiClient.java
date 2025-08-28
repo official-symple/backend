@@ -36,6 +36,7 @@ public class KakaoApiClient implements OAuthApiClient {
         return OAuthResponse.builder()
                 .socialType(SocialType.KAKAO)
                 //.socialEmail(response.getBody().get("kakao_account.profile.nickname").toString())
+                .socialEmail(null)
                 .email(response.getBody().get("id") + "@KAKAO")
                 .build();
     }

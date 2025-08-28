@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OAuthResponse {
     String email;
-    //String socialEmail;
+    String socialEmail;
     SocialType socialType;
     String refreshToken;
 }
