@@ -26,6 +26,7 @@ public class FcmService {
     private final ObjectMapper objectMapper;
 
     public void sendMessageTo(String deviceToken, FcmRequest fcmRequest) throws IOException {
+        log.info("Sending FCM message");
         fcmRequest.setDeviceToken(deviceToken);
         String message = makeMessage(fcmRequest);
         RestTemplate restTemplate = new RestTemplate();
@@ -41,7 +42,7 @@ public class FcmService {
 
         String API_URL = "<https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send>";
         ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
-
+        log.info("success to send request");
         System.out.println(response.getStatusCode());
     }
 
@@ -53,6 +54,7 @@ public class FcmService {
                 .createScoped(List.of("<https://www.googleapis.com/auth/cloud-platform>"));
 
         googleCredentials.refreshIfExpired();
+        log.info("get access token");
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
