@@ -72,7 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login/**", "/reissue", "/logout").permitAll()
                         .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout").hasAnyRole("GUEST", "USER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                        .anyRequest().hasRole("USER"))
+                        .anyRequest().hasAnyRole("USER", "ADMIN"))
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http

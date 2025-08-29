@@ -5,6 +5,7 @@ import com.DreamOfDuck.account.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.account.dto.response.AttendanceResponse;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.entity.Role;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class GoodsService {
     }
     @Transactional
     public HomeResponse minusHeart(Member member, Integer cnt) {
-        member.setHeart(member.getHeart()-cnt);
+        if(member.getRole()!= Role.ROLE_ADMIN) member.setHeart(member.getHeart()-cnt);
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
