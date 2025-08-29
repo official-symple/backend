@@ -41,7 +41,7 @@ public class FcmService {
 
         HttpEntity entity = new HttpEntity<>(message, headers);
 
-        String API_URL = "<https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send>";
+        String API_URL = "https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send";
         ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
         log.info("success to send request");
         System.out.println(response.getStatusCode());
