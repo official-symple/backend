@@ -28,6 +28,7 @@ public class FcmService {
     public void sendMessageTo(String deviceToken, FcmRequest fcmRequest) throws IOException {
         log.info("Sending FCM message");
         fcmRequest.setDeviceToken(deviceToken);
+        log.info("device token: {}", fcmRequest.getDeviceToken());
         String message = makeMessage(fcmRequest);
         RestTemplate restTemplate = new RestTemplate();
 
@@ -47,6 +48,7 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
+        log.info("getting access token");
         String firebaseConfigPath = "firebase.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
@@ -54,7 +56,7 @@ public class FcmService {
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
         googleCredentials.refreshIfExpired();
-        log.info("get access token");
+        log.info("ending access token");
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
