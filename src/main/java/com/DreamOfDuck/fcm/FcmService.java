@@ -67,10 +67,6 @@ public class FcmService {
         }
     }
 
-        googleCredentials.refreshIfExpired();
-        log.info("ending access token");
-        return googleCredentials.getAccessToken().getTokenValue();
-    }
 
     private String makeMessage(FcmRequest fcmRequest) throws JsonProcessingException {
 
