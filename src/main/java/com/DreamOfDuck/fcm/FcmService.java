@@ -1,5 +1,7 @@
 package com.DreamOfDuck.fcm;
 
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -28,7 +30,7 @@ public class FcmService {
     public void sendMessageTo(String deviceToken, FcmRequest fcmRequest) throws IOException {
         log.info("Sending FCM message");
         fcmRequest.setDeviceToken(deviceToken);
-        log.info("device token: {}", fcmRequest.getDeviceToken());
+
         String message = makeMessage(fcmRequest);
         RestTemplate restTemplate = new RestTemplate();
 
@@ -48,12 +50,22 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
-        log.info("getting access token");
+
         String firebaseConfigPath = "firebase.json";
 
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+        try {
+            final GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
+                    .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+            googleCredentials.refreshIfExpired();
+            log.info("access token: {}",googleCredentials.getAccessToken());
+            return googleCredentials.getAccessToken().getTokenValue();
+
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.GOOGLE_REQUEST_TOKEN_ERROR);
+        }
+    }
 
         googleCredentials.refreshIfExpired();
         log.info("ending access token");
