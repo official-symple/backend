@@ -3,12 +3,14 @@ package com.DreamOfDuck.account.entity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
+
     private final Member member;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
