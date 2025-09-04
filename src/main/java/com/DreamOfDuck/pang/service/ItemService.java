@@ -73,7 +73,7 @@ public class ItemService {
         item.setBubblePang(bubblePang-request.getBubblePang());
         return ItemResponse.fromItem(item);
     }
-
+    @Transactional
     public ItemResponse getItem(Member host){
         Item item = getOrCreateItem(host);
         return ItemResponse.fromItem(item);
