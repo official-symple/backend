@@ -16,4 +16,7 @@ public class ItemUseRequest {
     @NotNull
     @Schema(example="4")
     Long breadCrumble;
+    @NotNull
+    @Schema(example="4")
+    Long grass;
 }

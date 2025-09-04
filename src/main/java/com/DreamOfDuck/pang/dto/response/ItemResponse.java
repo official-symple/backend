@@ -19,12 +19,15 @@ public class ItemResponse {
     Long bubblePang;
     @Schema(example="4")
     Long breadCrumble;
+    @Schema(example="4")
+    Long grass;
 
     public static ItemResponse fromItem(Item item) {
         return ItemResponse.builder()
                 .tornado(item.getTornado())
                 .bubblePang(item.getBubblePang())
                 .breadCrumble(item.getBreadCrumble())
+                .grass(item.getGrass())
                 .build();
     }
 }

@@ -21,4 +21,5 @@ public class Item {
     private Long bubblePang;
     private Long breadCrumble;
     private Long tornado;
+    private Long grass;
 }

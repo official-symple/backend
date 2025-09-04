@@ -44,6 +44,12 @@ public class ItemService {
         item.setTornado(item.getTornado() + 1);
         return ItemResponse.fromItem(item);
     }
+    @Transactional
+    public ItemResponse updateGrass(Member host){
+        Item item = getOrCreateItem(host);
+        item.setTornado(item.getGrass() + 1);
+        return ItemResponse.fromItem(item);
+    }
 
     // Item이 없으면 새로 생성
     private Item getOrCreateItem(Member host){
@@ -53,6 +59,7 @@ public class ItemService {
                     .bubblePang(0L)
                     .breadCrumble(0L)
                     .tornado(0L)
+                    .grass(0L)
                     .build();
             host.setItem(item); // Member와 연관관계 연결
             itemRepository.save(item);

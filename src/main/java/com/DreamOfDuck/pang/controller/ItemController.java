@@ -55,6 +55,16 @@ public class ItemController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return itemService.updateBreadCrumble(member);
     }
+    @PostMapping("/grass")
+    @Operation(summary = "물풀 + 1 ", description = "물풀 + 1하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = ItemResponse.class)
+            )})
+    })
+    public ItemResponse updateGrass(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return itemService.updateGrass(member);
+    }
     @PostMapping("/use")
     @Operation(summary = "아이템 사용", description = "아이템을 사용한만큼 -시켜주는 API")
     @ApiResponses(value={
