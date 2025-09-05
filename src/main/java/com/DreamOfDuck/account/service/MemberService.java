@@ -8,14 +8,16 @@ import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
+import com.DreamOfDuck.mind.entity.MindCheckTime;
+import com.DreamOfDuck.mind.entity.MindChecks;
 import com.DreamOfDuck.talk.entity.Cause;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Service
@@ -180,6 +182,22 @@ public class MemberService {
     @Transactional
     public void updateToken(Member member, TokenRequest request) {
         member.setDeviceToken(request.getDeviceToken());
+        return;
+    }
+    public MindChecks hasTodayMindCheck(Member member, LocalDate date) {
+        return member.getMindChecks().stream()
+                .filter(mc->mc.getDate().equals(date))
+                .findFirst()
+                .orElse(null);
+    }
+    public MindCheckTime getTodayMindCheckTime(Member member, DayOfWeek dayOfWeek) {
+        return member.getMindCheckTimes().stream()
+                .filter(time->time.getDayOfWeek()==dayOfWeek)
+                .findFirst().orElse(null);
+    }
+    @Transactional
+    public void saveMindCheck(Member member, MindChecks mindChecks) {
+        member.getMindChecks().add(mindChecks);
         return;
     }
 

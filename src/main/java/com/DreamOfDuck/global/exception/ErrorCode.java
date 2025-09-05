@@ -59,7 +59,12 @@ public enum ErrorCode {
     //pang
     NOT_FOUND_ITEM(-600, "존재하지 않는 item입니다.", 406),
     DIFFERENT_USER_ITEM(-601, "해당 유저는 해당 item에 접근할 수 없습니다.",403),
-    NOT_ENOUGH_ITEM(-601, "아이템이 부족합니다.", 400);
+    NOT_ENOUGH_ITEM(-601, "아이템이 부족합니다.", 400),
+
+    //mind check
+    IMPOSSIBLE_PERIOD(-700, "해당 시간대에는 마음 체크에 진입할 수 없습니다.", 400),
+    NOT_PERMISSION_ACCESS(-701, "설정한 시간이 지났으므로로 마음체크에 접근할 수 없습니다.", 403),
+    ALREADY_EXIST(-702, "해당 날짜, 해당 시간 대의 마음체크는 이미 완료했습니다.", 400);
     private final int errorCode;
     private final String message;
     private final int httpCode;
