@@ -17,9 +17,12 @@ public class FcmRequest {
     @Schema(example="body")
     @NotNull
     private String body;
+    @Schema(example="deeplink")
+    private String deeplink;
     @Builder(toBuilder = true)
-    public FcmRequest(String title, String body) {
+    public FcmRequest(String title, String body, String deeplink) {
         this.title = title;
         this.body = body;
+        this.deeplink = deeplink;
     }
 }
