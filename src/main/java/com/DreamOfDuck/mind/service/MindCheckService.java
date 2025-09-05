@@ -41,7 +41,7 @@ public class MindCheckService {
         LocalDateTime now = LocalDateTime.now(userZone);
         TimePeriod timePeriod = TimePeriod.of(now);
         //접근 가능한 시간 이후면 에러처리
-        if(!checkTime(member, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
+        if(!checkTime(member, userZone, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
         //6 to 6
         if(now.toLocalTime().isBefore(LocalTime.of(6,0))){
             now=now.minusDays(1);
@@ -81,13 +81,13 @@ public class MindCheckService {
         mindChecksRepository.save(mindChecks);
         return MindCheckResponse.fromMindCheck(mindCheck);
     }
-    private boolean checkTime(Member member, LocalDateTime now, TimePeriod timePeriod) {
+    private boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
         MindCheckTime mindCheckTime = memberService.getTodayMindCheckTime(member, now.getDayOfWeek());
         LocalTime dayTime, nightTime;
         //푸시알림 시간 확인
         if(mindCheckTime==null) {
-            dayTime = LocalTime.of(8,0);
-            nightTime = LocalTime.of(23,0);
+            dayTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(8,0),userZone).toLocalTime();
+            nightTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(23,0),userZone).toLocalTime();
         }else{
             dayTime = mindCheckTime.getDayTime();
             nightTime = mindCheckTime.getNightTime();
