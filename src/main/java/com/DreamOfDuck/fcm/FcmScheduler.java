@@ -3,16 +3,15 @@ package com.DreamOfDuck.fcm;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.account.service.MemberService;
+import com.DreamOfDuck.mind.entity.MindCheck;
 import com.DreamOfDuck.mind.entity.MindCheckTime;
+import com.DreamOfDuck.mind.entity.MindChecks;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -150,9 +149,54 @@ public class FcmScheduler {
                     fcmService.sendMessageTo(member.getDeviceToken(), request);
                 }
 
+                if(currentTime.getHour()==16 && currentTime.getMinute() == 0){
+                    int streak = getConsecutiveMindChecks(member, userNow.toLocalDate());
+
+                    if (streak >= 10) {
+                        FcmRequest request = FcmRequest.builder()
+                                .title("10일 이상 연속 아침 마음체크")
+                                .body("아침 마음 기록 "+streak+"일째! "+member.getDuckname()+"도 뿌듯해해요.")
+                                .deeplink("ducksdream://deeplink/record")
+                                .build();
+                        fcmService.sendMessageTo(member.getDeviceToken(), request);
+
+                    } else if (streak == 7) {
+                        FcmRequest request = FcmRequest.builder()
+                                .title("7일 연속 아침 마음체크")
+                                .body("1주일째 아침 마음체크 중! 멋진 꾸준함이에요.")
+                                .deeplink("ducksdream://deeplink/record")
+                                .build();
+                        fcmService.sendMessageTo(member.getDeviceToken(), request);
+
+                    } else if (streak == 3) {
+                        FcmRequest request = FcmRequest.builder()
+                                .title("3일 연속 아침 마음체크️")
+                                .body("3일째 아침 마음체크 성공! 패턴이 눈에 보이기 시작했어요.")
+                                .deeplink("ducksdream://deeplink/record")
+                                .build();
+                        fcmService.sendMessageTo(member.getDeviceToken(), request);
+                    }
+                }
+
             } catch (Exception e) {
                 log.error("Error sending push for member {}: {}", member.getId(), e.getMessage());
             }
         }
+    }
+    private int getConsecutiveMindChecks(Member member, LocalDate today) {
+        int streak = 0;
+
+        for (int i = 0; ; i++) {
+            LocalDate date = today.minusDays(i);
+            MindChecks check = memberService.hasTodayMindCheck(member, date);
+
+            if (check != null && check.getDayMindCheck() != null) {
+                streak++;
+            } else {
+                break; // 끊기면 중단
+            }
+        }
+
+        return streak;
     }
 }

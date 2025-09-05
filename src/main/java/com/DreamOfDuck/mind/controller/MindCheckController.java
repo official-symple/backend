@@ -53,7 +53,7 @@ public class MindCheckController {
         return mindCheckService.getMindCheckTimes(member);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @Operation(summary = "마음체크 작성", description = "마음체크 작성하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckResponse.class)
