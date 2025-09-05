@@ -17,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +37,8 @@ public class MindCheckService {
     @Transactional
     public MindCheckResponse checkMind(Member member, MindCheckRequest request) {
 
-        LocalDateTime now = LocalDateTime.now();
+        ZoneId userZone = ZoneId.of(member.getLocation()); // ex: "Asia/Seoul"
+        LocalDateTime now = LocalDateTime.now(userZone);
         TimePeriod timePeriod = TimePeriod.of(now);
         //접근 가능한 시간 이후면 에러처리
         if(!checkTime(member, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
