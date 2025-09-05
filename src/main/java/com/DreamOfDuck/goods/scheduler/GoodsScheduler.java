@@ -39,4 +39,5 @@ public class GoodsScheduler {
                 log.error("Invalid time zone for member {}: {}", member.getId(), member.getLocation(), e);
             }
         }
+    }
 }
