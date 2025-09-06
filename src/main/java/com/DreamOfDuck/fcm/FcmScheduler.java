@@ -8,6 +8,7 @@ import com.DreamOfDuck.mind.entity.MindCheckTime;
 import com.DreamOfDuck.mind.entity.MindChecks;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class FcmScheduler {
     private final FcmService fcmService; // 실제 FCM 전송 서비스
 
     // 매 분마다 체크
+    @Async
     @Scheduled(cron = "0 * * * * *") // 매 분 실행
     public void sendMindCheckPush() {
         List<Member> members = memberRepository.findAll();

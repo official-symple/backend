@@ -1,0 +1,21 @@
+################
+# [feat] :
+[fix] : fcm token response 형식 변경
+# [docs] :
+# [test] :
+# [refactor] :
+# [style] :
+# [chore] :
+################
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch dev
+# Your branch is up to date with 'origin/dev'.
+#
+# Changes to be committed:
+#	modified:   src/main/java/com/DreamOfDuck/account/controller/MemberController.java
+#	new file:   src/main/java/com/DreamOfDuck/account/dto/response/FcmTokenResponse.java
+#	modified:   src/main/java/com/DreamOfDuck/account/service/MemberService.java
+#

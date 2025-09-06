@@ -19,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoodsScheduler {
     private final MemberRepository memberRepository;
+    @Async
     @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
     @Transactional
     public void resetHeartByMemberLocation() {
