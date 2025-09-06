@@ -59,7 +59,7 @@ public class FcmScheduler {
                         .equals(mindCheckTime.getDayTime().truncatedTo(ChronoUnit.MINUTES))) {
                     log.info("day time alarm");
                     String[] messages = {
-                            "좋은 아침이에요! 꽥! 지금 내 마음을 체크하고 하루를 시작해요.",
+                            "좋은 아침이에요! 꽥! \n지금 내 마음을 체크하고 하루를 시작해요.",
                             "눈뜨자마자 마음체크, " + member.getNickname() + "님, 오늘도 잊지 않았죠?",
                             "어제와 오늘 아침, 어떤 차이가 있는지 기록해볼까요?",
                             "지금 마음체크하면 깃털을 받을 수 있어요!"
@@ -96,7 +96,7 @@ public class FcmScheduler {
                 if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))
                         && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
-                            "아침 마음체크를 할 수 있는 시간이 10분 밖에 남지 않았어요! 아침 기분은 하루의 나침반이에요.",
+                            "아침 마음체크를 할 수 있는 시간이 10분 밖에 남지 않았어요! \n아침 기분은 하루의 나침반이에요.",
                             "꽥!! 아침 마음체크 마감까지 10분! 지금 체크해보세요.",
                             "지금 마음체크하면 더 정확한 마음차트를 받을 수 있어요."
                     };
@@ -112,12 +112,12 @@ public class FcmScheduler {
                 targetTime = mindCheckTime.getDayTime().plusHours(3);
                 if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))){
                     String[] messages1={
-                            "오늘은 아침 마음체크를 놓쳤어요. 밤에는 꼭 만나요!",
+                            "오늘은 아침 마음체크를 놓쳤어요. \n밤에는 꼭 만나요!",
                             member.getNickname()+"님, 밤에는 마음체크 해줄거죠? 기다리고 있을게요!"
                     };
                     String[] messages2={
-                            "오늘 하루를 완성하려면 밤 기록도 필요해요. 잊지 마세요!",
-                            "아침 마음체크 성공! 최고최고! 밤에도 찾아와줄거죠?",
+                            "오늘 하루를 완성하려면 밤 기록도 필요해요. \n잊지 마세요!",
+                            "아침 마음체크 성공! 최고최고! \n밤에도 찾아와줄거죠?",
                             "아침 마음체크에 성공한 "+member.getNickname()+ "님은 역시 멋쟁이에요."
                     };
                     Random random = new Random();
@@ -143,8 +143,8 @@ public class FcmScheduler {
                 if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))
                         && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
-                            "오늘은 마음체크가 비어 있어요. 내일은 꼭 이어가볼까요?",
-                            "유저의 "+ ThreadLocalRandom.current().nextInt(80,101) +"%가 마음체크를 꾸준히 완료하고 있어요. 내일은 "+member.getNickname()+"님도 으쌰으쌰!"
+                            "오늘은 마음체크가 비어 있어요. \n내일은 꼭 이어가볼까요?",
+                            "유저의 "+ ThreadLocalRandom.current().nextInt(80,101) +"%가 마음체크를 꾸준히 완료하고 있어요. \n내일은 "+member.getNickname()+"님도 으쌰으쌰!"
                     };
                     Random random = new Random();
                     FcmRequest request = FcmRequest.builder()
@@ -169,7 +169,7 @@ public class FcmScheduler {
                     } else if (streak == 7) {
                         FcmRequest request = FcmRequest.builder()
                                 .title("잘하고 있어요!")
-                                .body("1주일째 아침 마음체크 중! 멋진 꾸준함이에요.")
+                                .body("1주일째 아침 마음체크 중! \n멋진 꾸준함이에요.")
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
                         fcmService.sendMessageTo(member.getDeviceToken(), request);
@@ -177,7 +177,7 @@ public class FcmScheduler {
                     } else if (streak == 3) {
                         FcmRequest request = FcmRequest.builder()
                                 .title("잘하고 있어요!")
-                                .body("3일째 아침 마음체크 성공! 패턴이 눈에 보이기 시작했어요.")
+                                .body("3일째 아침 마음체크 성공! \n패턴이 눈에 보이기 시작했어요.")
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
                         fcmService.sendMessageTo(member.getDeviceToken(), request);
