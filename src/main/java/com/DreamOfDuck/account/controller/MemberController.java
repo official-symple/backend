@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -140,15 +142,11 @@ public class MemberController {
     @PostMapping("/fcmToken")
     @Operation(summary = "fcm device token 업데이트", description = "fcm device token 정보를 업데이트하는 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "정상 응답"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 에러")
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = FcmTokenResponse.class)
+            )})
     })
-
-    public void updateFcmToken(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TokenRequest request) {
+    public FcmTokenResponse updateFcmToken(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TokenRequest request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        memberService.updateToken(member, request);
-        return;
+        return memberService.updateToken(member, request);
     }
 }

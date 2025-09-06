@@ -1,6 +1,7 @@
 package com.DreamOfDuck.account.service;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
 import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.*;
@@ -180,9 +181,9 @@ public class MemberService {
         return MemberResponse.from(member);
     }
     @Transactional
-    public void updateToken(Member member, TokenRequest request) {
+    public FcmTokenResponse updateToken(Member member, TokenRequest request) {
         member.setDeviceToken(request.getDeviceToken());
-        return;
+        return FcmTokenResponse.of(request.getDeviceToken());
     }
     public MindChecks hasTodayMindCheck(Member member, LocalDate date) {
         return member.getMindChecks().stream()
