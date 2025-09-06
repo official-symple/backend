@@ -38,7 +38,6 @@ public class FcmScheduler {
         for (Member member : members) {
             try {
                 ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
-
                 ZonedDateTime userNow = ZonedDateTime.now(userZone);
                 DayOfWeek today = userNow.getDayOfWeek();
                 LocalTime currentTime = userNow.toLocalTime();

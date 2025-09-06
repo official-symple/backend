@@ -151,9 +151,18 @@ public class MindCheckService {
 
     public MindCheckReport getMindCheckResult(Member member, LocalDate now) {
         MindChecks mindChecks = memberService.getMindCheck(member, now);
-        float score=0;
+        //에러처리
+        //null인 경우
         if(mindChecks==null) throw new CustomException(ErrorCode.NULL_MIND_CHECK);
+        //오늘 마음체크 미완료인데 요청한 경우
+        ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
+        ZonedDateTime userNow = ZonedDateTime.now(userZone);
+        LocalDate currentDate = userNow.toLocalDate();
+        if(currentDate.equals(now) && (mindChecks.getNightMindCheck()==null || mindChecks.getDayMindCheck()==null)){
+            throw new CustomException(ErrorCode.CHECK_TOMORROW);
+        }
         MindCheckReport response = MindCheckReport.of(mindChecks);
+        float score=0;
         if(mindChecks.getNightMindCheck()!=null && mindChecks.getDayMindCheck()!=null){
             score+= (float) (mindChecks.getDayMindCheck().getScore()*0.5);
             score+= (float) (mindChecks.getNightMindCheck().getScore()*0.5);
