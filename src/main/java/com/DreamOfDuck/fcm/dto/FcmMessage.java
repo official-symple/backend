@@ -14,8 +14,10 @@ public class FcmMessage {
     @AllArgsConstructor
     @Getter
     public static class Message {
-        private Notification notification;
         private String token;
+        private Notification notification;
+        private Data data;
+
     }
     @Builder
     @AllArgsConstructor
@@ -25,4 +27,11 @@ public class FcmMessage {
         private String body;
         private String image;
     }
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class Data {
+        private String deeplink;
+    }
+
 }

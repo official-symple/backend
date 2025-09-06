@@ -78,7 +78,11 @@ public class FcmService {
                                 .body(fcmRequest.getBody())
                                 .image(null)
                                 .build()
-                        ).build()).validateOnly(false).build();
+                        )
+                        .data(FcmMessage.Data.builder()
+                                .deeplink(fcmRequest.getDeeplink())
+                                .build())
+                        .build()).validateOnly(false).build();
         return om.writeValueAsString(fcmMessageDto);
     }
 }
