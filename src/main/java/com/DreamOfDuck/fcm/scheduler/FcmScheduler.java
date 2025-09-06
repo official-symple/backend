@@ -30,7 +30,6 @@ public class FcmScheduler {
 
     // 매 분마다 체크
     @Async
-    @Transactional(readOnly = true)
     @Scheduled(cron = "0 * * * * *") // 매 분 실행
     public void sendMindCheckPush() {
         List<Member> members = memberRepository.findAll();
