@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -55,7 +56,8 @@ public class FcmScheduler {
 
                 //dayTime 알림
                 log.info("day time {}", mindCheckTime.getDayTime());
-                if (currentTime.equals(mindCheckTime.getDayTime())) {
+                if (currentTime.truncatedTo(ChronoUnit.MINUTES)
+                        .equals(mindCheckTime.getDayTime().truncatedTo(ChronoUnit.MINUTES))) {
                     log.info("day time alarm");
                     String[] messages = {
                             "좋은 아침이에요! 꽥! 지금 내 마음을 체크하고 하루를 시작해요.",
@@ -73,7 +75,8 @@ public class FcmScheduler {
                     fcmService.sendMessageTo(member.getDeviceToken(), request);
                 }
                 //nightTime 알림
-                if (currentTime.equals(mindCheckTime.getNightTime())) {
+                if (currentTime.truncatedTo(ChronoUnit.MINUTES)
+                        .equals(mindCheckTime.getNightTime().truncatedTo(ChronoUnit.MINUTES))) {
                     String[] messages={
                             "자기 전에 마음체크! "+member.getNickname()+ "님, 지금은 기분이 어때요?",
                             "지금 마음체크하면 깃털을 받을 수 있어요!",
@@ -90,7 +93,8 @@ public class FcmScheduler {
                     fcmService.sendMessageTo(member.getDeviceToken(), request);
                 }
                 //아침 마음체크 마감 10분전
-                if(currentTime.equals(mindCheckTime.getDayTime().plusMinutes(50))
+                LocalTime targetTime = mindCheckTime.getDayTime().plusMinutes(50);
+                if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))
                         && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
                             "아침 마음체크를 할 수 있는 시간이 10분 밖에 남지 않았어요! 아침 기분은 하루의 나침반이에요.",
@@ -106,7 +110,8 @@ public class FcmScheduler {
                     fcmService.sendMessageTo(member.getDeviceToken(), request);
                 }
                 //아침 미음체크 마감 후 2시간
-                if(currentTime.equals(mindCheckTime.getDayTime().plusHours(3))){
+                targetTime = mindCheckTime.getDayTime().plusHours(3);
+                if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))){
                     String[] messages1={
                             "오늘은 아침 마음체크를 놓쳤어요. 밤에는 꼭 만나요!",
                             member.getNickname()+"님, 밤에는 마음체크 해줄거죠? 기다리고 있을게요!"
@@ -135,7 +140,8 @@ public class FcmScheduler {
                     }
                 }
                 //수면정보+1, 하루 종일 마음체크 x
-                if(currentTime.equals(mindCheckTime.getNightTime().plusHours(1))
+                targetTime = mindCheckTime.getNightTime().plusHours(1);
+                if(targetTime.truncatedTo(ChronoUnit.MINUTES).equals(currentTime.truncatedTo(ChronoUnit.MINUTES))
                         && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
                             "오늘은 마음체크가 비어 있어요. 내일은 꼭 이어가볼까요?",

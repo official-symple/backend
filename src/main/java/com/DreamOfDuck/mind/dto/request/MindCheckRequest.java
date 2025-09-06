@@ -18,9 +18,9 @@ public class MindCheckRequest {
     @Schema(example="true")
     boolean question3;
     @Nullable
-    @Schema(example="null")
+    @Schema(nullable = true, example="0")
     Integer positiveEmotion;
     @Nullable
-    @Schema(example="1")
+    @Schema(nullable = true, example="1")
     Integer negativeEmotion;
 }
