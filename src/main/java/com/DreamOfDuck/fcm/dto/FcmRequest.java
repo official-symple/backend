@@ -1,4 +1,4 @@
-package com.DreamOfDuck.fcm;
+package com.DreamOfDuck.fcm.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

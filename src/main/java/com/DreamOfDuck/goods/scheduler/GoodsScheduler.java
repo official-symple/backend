@@ -23,11 +23,11 @@ public class GoodsScheduler {
     @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
     @Transactional
     public void resetHeartByMemberLocation() {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findAllWithMindCheckTimes();
 
         for (Member member : members) {
             try {
-                ZoneId userZone = ZoneId.of(member.getLocation());
+                ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
                 LocalTime userLocalTime = LocalTime.now(userZone);
 
                 // 자정(00:00)에 초기화

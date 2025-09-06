@@ -1,4 +1,4 @@
-package com.DreamOfDuck.fcm;
+package com.DreamOfDuck.fcm.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

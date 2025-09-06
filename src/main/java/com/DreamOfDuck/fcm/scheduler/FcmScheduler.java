@@ -1,9 +1,10 @@
-package com.DreamOfDuck.fcm;
+package com.DreamOfDuck.fcm.scheduler;
 
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.mind.entity.MindCheck;
+import com.DreamOfDuck.fcm.dto.FcmRequest;
+import com.DreamOfDuck.fcm.service.FcmService;
 import com.DreamOfDuck.mind.entity.MindCheckTime;
 import com.DreamOfDuck.mind.entity.MindChecks;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.util.List;
@@ -28,18 +30,14 @@ public class FcmScheduler {
 
     // 매 분마다 체크
     @Async
+    @Transactional(readOnly = true)
     @Scheduled(cron = "0 * * * * *") // 매 분 실행
     public void sendMindCheckPush() {
         List<Member> members = memberRepository.findAll();
 
         for (Member member : members) {
             try {
-                ZoneId userZone;
-                if(member.getLocation()!=null){
-                    userZone = ZoneId.of(member.getLocation());
-                }else{
-                    userZone = ZoneId.of("Asia/Seoul");
-                }
+                ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
 
                 ZonedDateTime userNow = ZonedDateTime.now(userZone);
                 DayOfWeek today = userNow.getDayOfWeek();

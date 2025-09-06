@@ -1,12 +1,12 @@
-package com.DreamOfDuck.fcm;
+package com.DreamOfDuck.fcm.controller;
 
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import io.lettuce.core.api.push.PushMessage;
+import com.DreamOfDuck.fcm.dto.FcmRequest;
+import com.DreamOfDuck.fcm.service.FcmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.json.JsonWriter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
