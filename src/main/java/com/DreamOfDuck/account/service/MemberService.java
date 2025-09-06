@@ -75,6 +75,7 @@ public class MemberService {
         member.setLv(1);
         member.setLocation("Asia/Seoul");
         member.setDuckname("꽥꽥이");
+        memberRepository.save(member);
         return MemberResponse.from(member);
     }
     @Transactional
@@ -99,6 +100,7 @@ public class MemberService {
             else member.setTotalStatus("심한 우울");
         }
         if(request.getLanguage()!=null) member.setLanguage(Language.valueOf(request.getLanguage().toUpperCase()));
+        memberRepository.save(member);
         return MemberResponse.from(member);
     }
     @Transactional
@@ -110,7 +112,7 @@ public class MemberService {
             member.setMaxScore(request.getScore());
         }
         eventPublisher.publishEvent(new AttendanceCreatedEvent(member.getEmail(), LocalDate.now()));
-
+        memberRepository.save(member);
         return MemberResponse.from(member);
     }
 
@@ -122,6 +124,7 @@ public class MemberService {
     @Transactional
     public void addAttendance(Member member, LocalDate date){
         member.getAttendedDates().add(date);
+        memberRepository.save(member);
     }
 
     @Transactional
@@ -129,6 +132,7 @@ public class MemberService {
         member.setHeart(request.getHeart());
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
+        memberRepository.save(member);
         return res;
     }
     @Transactional
@@ -136,6 +140,7 @@ public class MemberService {
         member.setDia(request.getDia());
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
+        memberRepository.save(member);
         return res;
     }
     @Transactional
@@ -153,7 +158,7 @@ public class MemberService {
             member.setLv(curLv);
         }
         member.setFeather(totalFeather);
-
+        memberRepository.save(member);
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[curLv]);
         return res;
@@ -163,6 +168,7 @@ public class MemberService {
         member.setLv(request.getLv());
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[request.getLv()]);
+        memberRepository.save(member);
         return res;
     }
     @Transactional
@@ -173,17 +179,20 @@ public class MemberService {
         }
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
+        memberRepository.save(member);
         return res;
     }
     @Transactional
     public MemberResponse updateLocation(Member member, LocationRequest request) {
         member.setLocation(request.getLocation());
+        memberRepository.save(member);
         return MemberResponse.from(member);
     }
     @Transactional
     public FcmTokenResponse updateToken(Member member, TokenRequest request) {
         member.setDeviceToken(request.getDeviceToken());
         log.info("fcm token : {}", request.getDeviceToken());
+        memberRepository.save(member);
         return FcmTokenResponse.of(request.getDeviceToken());
     }
     public MindChecks hasTodayMindCheck(Member member, LocalDate date) {
