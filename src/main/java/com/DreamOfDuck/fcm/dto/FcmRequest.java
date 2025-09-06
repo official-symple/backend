@@ -19,6 +19,7 @@ public class FcmRequest {
     private String body;
     @Schema(example="deeplink")
     private String deeplink;
+
     @Builder(toBuilder = true)
     public FcmRequest(String title, String body, String deeplink) {
         this.title = title;

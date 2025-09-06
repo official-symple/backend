@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -79,9 +80,7 @@ public class FcmService {
                                 .image(null)
                                 .build()
                         )
-                        .data(FcmMessage.Data.builder()
-                                .deeplink(fcmRequest.getDeeplink())
-                                .build())
+                        .data(Map.of("deeplink", fcmRequest.getDeeplink()))
                         .build()).validateOnly(false).build();
         return om.writeValueAsString(fcmMessageDto);
     }

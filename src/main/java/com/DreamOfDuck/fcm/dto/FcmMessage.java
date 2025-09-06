@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Map;
+
 @Builder
 @AllArgsConstructor
 @Getter
@@ -16,7 +18,7 @@ public class FcmMessage {
     public static class Message {
         private String token;
         private Notification notification;
-        private Data data;
+        private Map<String, String> data;
 
     }
     @Builder
@@ -27,11 +29,6 @@ public class FcmMessage {
         private String body;
         private String image;
     }
-    @Builder
-    @AllArgsConstructor
-    @Getter
-    public static class Data {
-        private String deeplink;
-    }
+
 
 }
