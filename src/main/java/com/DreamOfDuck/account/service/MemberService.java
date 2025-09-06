@@ -183,6 +183,7 @@ public class MemberService {
     @Transactional
     public FcmTokenResponse updateToken(Member member, TokenRequest request) {
         member.setDeviceToken(request.getDeviceToken());
+        log.info("fcm token : {}", request.getDeviceToken());
         return FcmTokenResponse.of(request.getDeviceToken());
     }
     public MindChecks hasTodayMindCheck(Member member, LocalDate date) {
