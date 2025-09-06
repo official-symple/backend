@@ -64,7 +64,7 @@ public class FcmScheduler {
                     Random random = new Random();
 
                     FcmRequest request = FcmRequest.builder()
-                            .title("좋은 하루 보내고 있어요? ")
+                            .title("좋은 하루 보내고 있어요?")
                             .body(messages[random.nextInt(messages.length)])
                             .deeplink("ducksdream://deeplink/mindCheck")
                             .build();
@@ -81,7 +81,7 @@ public class FcmScheduler {
                     Random random = new Random();
 
                     FcmRequest request = FcmRequest.builder()
-                            .title("좋은 하루 보내고 있어요? ")
+                            .title("좋은 하루 보내고 있어요?")
                             .body(messages[random.nextInt(messages.length)])
                             .deeplink("ducksdream://deeplink/mindCheck")
                             .build();
@@ -97,7 +97,7 @@ public class FcmScheduler {
                     };
                     Random random = new Random();
                     FcmRequest request = FcmRequest.builder()
-                            .title("좋은 하루 보내고 있어요? ")
+                            .title("좋은 하루 보내고 있어요?")
                             .body(messages[random.nextInt(messages.length)])
                             .deeplink("ducksdream://deeplink/mindCheck")
                             .build();
@@ -118,14 +118,14 @@ public class FcmScheduler {
                     //미완료
                     if(memberService.hasTodayMindCheck(member, userNow.toLocalDate())==null){
                         FcmRequest request = FcmRequest.builder()
-                                .title("좋은 하루 보내고 있어요? ")
+                                .title("좋은 하루 보내고 있어요?")
                                 .body(messages1[random.nextInt(messages1.length)])
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
                         fcmService.sendMessageTo(member.getDeviceToken(), request);
                     }else{//완료
                         FcmRequest request = FcmRequest.builder()
-                                .title("좋은 하루 보내고 있어요? ")
+                                .title("좋은 하루 보내고 있어요?")
                                 .body(messages2[random.nextInt(messages2.length)])
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
@@ -141,7 +141,7 @@ public class FcmScheduler {
                     };
                     Random random = new Random();
                     FcmRequest request = FcmRequest.builder()
-                            .title("좋은 하루 보내고 있어요? ")
+                            .title("좋은 하루 보내고 있어요?")
                             .body(messages[random.nextInt(messages.length)])
                             .deeplink("ducksdream://deeplink/record")
                             .build();
@@ -153,7 +153,7 @@ public class FcmScheduler {
 
                     if (streak >= 10) {
                         FcmRequest request = FcmRequest.builder()
-                                .title("좋은 하루 보내고 있어요? ")
+                                .title("잘하고 있어요!")
                                 .body("아침 마음 기록 "+streak+"일째! "+member.getDuckname()+"도 뿌듯해해요.")
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
@@ -161,7 +161,7 @@ public class FcmScheduler {
 
                     } else if (streak == 7) {
                         FcmRequest request = FcmRequest.builder()
-                                .title("좋은 하루 보내고 있어요? ")
+                                .title("잘하고 있어요!")
                                 .body("1주일째 아침 마음체크 중! 멋진 꾸준함이에요.")
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
@@ -169,7 +169,7 @@ public class FcmScheduler {
 
                     } else if (streak == 3) {
                         FcmRequest request = FcmRequest.builder()
-                                .title("좋은 하루 보내고 있어요? ")
+                                .title("잘하고 있어요!")
                                 .body("3일째 아침 마음체크 성공! 패턴이 눈에 보이기 시작했어요.")
                                 .deeplink("ducksdream://deeplink/record")
                                 .build();
