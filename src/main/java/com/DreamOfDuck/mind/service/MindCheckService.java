@@ -4,6 +4,8 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.mind.dto.response.MindCheckReport;
+import com.DreamOfDuck.mind.dto.response.MindCheckResultResponse;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.repository.MindCheckRepository;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
@@ -47,13 +49,14 @@ public class MindCheckService {
             now=now.minusDays(1);
         }
         LocalDate nowDate=now.toLocalDate();
-        MindChecks mindChecks=memberService.hasTodayMindCheck(member, nowDate);
+        MindChecks mindChecks=memberService.getMindCheck(member, nowDate);
         MindCheck mindCheck = MindCheck.builder()
                 .question1(request.isQuestion1())
                 .question2(request.isQuestion2())
                 .question3(request.isQuestion3())
                 .negativeEmotion(request.getNegativeEmotion()==null?null: NegativeEmotion.fromId(request.getNegativeEmotion()))
                 .positiveEmotion(request.getPositiveEmotion()==null?null: PositiveEmotion.fromId(request.getPositiveEmotion()))
+                .createTime(now)
                 .build();
         mindCheckRepository.save(mindCheck);
         //calculate score
@@ -82,7 +85,7 @@ public class MindCheckService {
         return MindCheckResponse.fromMindCheck(mindCheck);
     }
     private boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
-        MindCheckTime mindCheckTime = memberService.getTodayMindCheckTime(member, now.getDayOfWeek());
+        MindCheckTime mindCheckTime = memberService.getMindCheckTime(member, now.getDayOfWeek());
         LocalTime dayTime, nightTime;
         //푸시알림 시간 확인
         if(mindCheckTime==null) {
@@ -144,6 +147,31 @@ public class MindCheckService {
         return member.getMindCheckTimes().stream()
                 .map(MindCheckTimeResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    public MindCheckReport getMindCheckResult(Member member, LocalDate now) {
+        MindChecks mindChecks = memberService.getMindCheck(member, now);
+        float score=0;
+        if(mindChecks==null) throw new CustomException(ErrorCode.NULL_MIND_CHECK);
+        MindCheckReport response = MindCheckReport.of(mindChecks);
+        if(mindChecks.getNightMindCheck()!=null && mindChecks.getDayMindCheck()!=null){
+            score+= (float) (mindChecks.getDayMindCheck().getScore()*0.5);
+            score+= (float) (mindChecks.getNightMindCheck().getScore()*0.5);
+        }else if(mindChecks.getNightMindCheck()!=null){
+            score+= (float) (mindChecks.getNightMindCheck().getScore());
+        }else if(mindChecks.getDayMindCheck()!=null){
+            score+= (float) (mindChecks.getDayMindCheck().getScore());
+        }else throw new CustomException(ErrorCode.NULL_MIND_CHECK);
+        if(score>=75){
+            response.setResult("안정");
+        }else if(score>=50){
+            response.setResult("주의");
+        }else if(score>=25){
+            response.setResult("경고");
+        }else{
+            response.setResult("고위험");
+        }
+        return response;
     }
 
 }

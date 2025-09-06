@@ -195,13 +195,13 @@ public class MemberService {
         memberRepository.save(member);
         return FcmTokenResponse.of(request.getDeviceToken());
     }
-    public MindChecks hasTodayMindCheck(Member member, LocalDate date) {
+    public MindChecks getMindCheck(Member member, LocalDate date) {
         return member.getMindChecks().stream()
                 .filter(mc->mc.getDate().equals(date))
                 .findFirst()
                 .orElse(null);
     }
-    public MindCheckTime getTodayMindCheckTime(Member member, DayOfWeek dayOfWeek) {
+    public MindCheckTime getMindCheckTime(Member member, DayOfWeek dayOfWeek) {
         return member.getMindCheckTimes().stream()
                 .filter(time->time.getDayOfWeek()==dayOfWeek)
                 .findFirst().orElse(null);

@@ -28,7 +28,7 @@ public class MindCheckResponse {
     @Schema(example="null")
     String positiveEmotion;
 
-    @Schema(example="1")
+    @Schema(example="배고파")
     String negativeEmotion;
 
     public static MindCheckResponse fromMindCheck(MindCheck mindCheck) {

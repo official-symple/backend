@@ -5,6 +5,7 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
 import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
+import com.DreamOfDuck.mind.dto.response.MindCheckReport;
 import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.service.MindCheckService;
@@ -18,9 +19,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -62,5 +65,15 @@ public class MindCheckController {
     public MindCheckResponse useItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MindCheckRequest request) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return mindCheckService.checkMind(member, request);
+    }
+    @GetMapping("/report/{date}")
+    @Operation(summary = "일별 마음체크 받기", description = "일별 마음체크를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
+            )})
+    })
+    public MindCheckReport useItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return mindCheckService.getMindCheckResult(member, date);
     }
 }

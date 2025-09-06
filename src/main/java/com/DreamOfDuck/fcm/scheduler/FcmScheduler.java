@@ -32,7 +32,7 @@ public class FcmScheduler {
     @Async
     @Scheduled(cron = "0 * * * * *") // 매 분 실행
     public void sendMindCheckPush() {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findAllWithMindCheckTimes();
 
         for (Member member : members) {
             try {
@@ -41,7 +41,7 @@ public class FcmScheduler {
                 ZonedDateTime userNow = ZonedDateTime.now(userZone);
                 DayOfWeek today = userNow.getDayOfWeek();
                 LocalTime currentTime = userNow.toLocalTime();
-
+                log.info("member id {}, location {}, current_time {}", member.getId(), userZone, currentTime);
 
                 Optional<MindCheckTime> optionalTime = member.getMindCheckTimes().stream()
                         .filter(t -> t.getDayOfWeek() == today)
@@ -54,7 +54,9 @@ public class FcmScheduler {
                 MindCheckTime mindCheckTime = optionalTime.get();
 
                 //dayTime 알림
+                log.info("day time {}", mindCheckTime.getDayTime());
                 if (currentTime.equals(mindCheckTime.getDayTime())) {
+                    log.info("day time alarm");
                     String[] messages = {
                             "좋은 아침이에요! 꽥! 지금 내 마음을 체크하고 하루를 시작해요.",
                             "눈뜨자마자 마음체크, " + member.getNickname() + "님, 오늘도 잊지 않았죠?",
@@ -89,7 +91,7 @@ public class FcmScheduler {
                 }
                 //아침 마음체크 마감 10분전
                 if(currentTime.equals(mindCheckTime.getDayTime().plusMinutes(50))
-                        && (memberService.hasTodayMindCheck(member, userNow.toLocalDate())==null)){
+                        && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
                             "아침 마음체크를 할 수 있는 시간이 10분 밖에 남지 않았어요! 아침 기분은 하루의 나침반이에요.",
                             "꽥!! 아침 마음체크 마감까지 10분! 지금 체크해보세요.",
@@ -116,7 +118,7 @@ public class FcmScheduler {
                     };
                     Random random = new Random();
                     //미완료
-                    if(memberService.hasTodayMindCheck(member, userNow.toLocalDate())==null){
+                    if(memberService.getMindCheck(member, userNow.toLocalDate())==null){
                         FcmRequest request = FcmRequest.builder()
                                 .title("좋은 하루 보내고 있어요?")
                                 .body(messages1[random.nextInt(messages1.length)])
@@ -134,7 +136,7 @@ public class FcmScheduler {
                 }
                 //수면정보+1, 하루 종일 마음체크 x
                 if(currentTime.equals(mindCheckTime.getNightTime().plusHours(1))
-                        && (memberService.hasTodayMindCheck(member, userNow.toLocalDate())==null)){
+                        && (memberService.getMindCheck(member, userNow.toLocalDate())==null)){
                     String[] messages={
                             "오늘은 마음체크가 비어 있어요. 내일은 꼭 이어가볼까요?",
                             "유저의 "+ ThreadLocalRandom.current().nextInt(80,101) +"%가 마음체크를 꾸준히 완료하고 있어요. 내일은 "+member.getNickname()+"님도 으쌰으쌰!"
@@ -187,7 +189,7 @@ public class FcmScheduler {
 
         for (int i = 0; ; i++) {
             LocalDate date = today.minusDays(i);
-            MindChecks check = memberService.hasTodayMindCheck(member, date);
+            MindChecks check = memberService.getMindCheck(member, date);
 
             if (check != null && check.getDayMindCheck() != null) {
                 streak++;

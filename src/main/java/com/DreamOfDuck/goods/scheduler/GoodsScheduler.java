@@ -23,7 +23,7 @@ public class GoodsScheduler {
     @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
     @Transactional
     public void resetHeartByMemberLocation() {
-        List<Member> members = memberRepository.findAllWithMindCheckTimes();
+        List<Member> members = memberRepository.findAll();
 
         for (Member member : members) {
             try {

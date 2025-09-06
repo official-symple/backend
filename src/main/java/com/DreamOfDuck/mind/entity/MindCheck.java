@@ -1,10 +1,13 @@
 package com.DreamOfDuck.mind.entity;
 
+import com.DreamOfDuck.global.entity.TimeStamp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -24,5 +27,6 @@ public class MindCheck{
     private PositiveEmotion positiveEmotion;
     private NegativeEmotion negativeEmotion;
     private float score;
+    private LocalDateTime createTime;
 
 }
