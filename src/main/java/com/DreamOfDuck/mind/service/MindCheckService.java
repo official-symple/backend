@@ -1,9 +1,11 @@
 package com.DreamOfDuck.mind.service;
 
+import com.DreamOfDuck.account.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.goods.service.GoodsService;
 import com.DreamOfDuck.mind.dto.response.MindCheckReport;
 import com.DreamOfDuck.mind.dto.response.MindCheckResultResponse;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
@@ -35,6 +37,7 @@ public class MindCheckService {
     private final MindChecksRepository mindChecksRepository;
     private final MindCheckTimeRepository mindCheckTimeRepository;
     private final MemberService memberService;
+    private final GoodsService goodsService;
 
     @Transactional
     public MindCheckResponse checkMind(Member member, MindCheckRequest request) {
@@ -82,6 +85,9 @@ public class MindCheckService {
                 mindChecks.setNightMindCheck(mindCheck);
         }
         mindChecksRepository.save(mindChecks);
+        FeatherRequest featherRequest=new FeatherRequest();
+        featherRequest.setFeather(30);
+        goodsService.updateFeather(member, featherRequest); //깃털 보상
         return MindCheckResponse.fromMindCheck(mindCheck);
     }
     private boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
