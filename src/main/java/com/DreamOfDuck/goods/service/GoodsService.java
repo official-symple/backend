@@ -41,6 +41,14 @@ public class GoodsService {
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
     }
+
+    @Transactional
+    public HomeResponse plusFeather(Member member, Integer cnt) {
+        member.setFeather(member.getFeather()+cnt);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
+    }
     @Transactional
     public HomeResponse minusHeart(Member member, Integer cnt) {
         if(member.getRole()!= Role.ROLE_ADMIN) member.setHeart(member.getHeart()-cnt);

@@ -86,6 +86,17 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.plusHeart(member, 2);
     }
+
+    @PostMapping("/feather/mission")
+    @Operation(summary = "오늘의 미션 완료시 깃털 50개 지급 API", description = "오늘의 미션 완료시 깃털을 지급하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = HomeResponse.class)
+            )})
+    })
+    public HomeResponse updateFeatherByMission(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.plusFeather(member, 50);
+    }
     @DeleteMapping("/heart/pang")
     @Operation(summary = "게임시 하트 사용", description = "게임시 하트를 사용하는 API")
     @ApiResponses(value={
