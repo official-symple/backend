@@ -41,7 +41,7 @@ public class MemberService {
     @Transactional
     public MemberResponse join(Member member, MemberCreateRequest request) {
         if(member.getRole()== Role.ROLE_USER){
-            throw new CustomException(ErrorCode.USER_ALREADY_EXIST);
+            return MemberResponse.from(member);
         }
         member.setRole(Role.ROLE_USER);
         member.setIsMarketing(request.getIsMarketing());
