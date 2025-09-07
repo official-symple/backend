@@ -7,7 +7,6 @@ import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.service.GoodsService;
 import com.DreamOfDuck.mind.dto.response.MindCheckReport;
-import com.DreamOfDuck.mind.dto.response.MindCheckResultResponse;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.repository.MindCheckRepository;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
@@ -16,6 +15,7 @@ import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
 import com.DreamOfDuck.mind.entity.*;
 import com.DreamOfDuck.mind.repository.MindCheckTimeRepository;
 import com.DreamOfDuck.mind.repository.MindChecksRepository;
+import com.DreamOfDuck.talk.entity.Emotion;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,8 +57,7 @@ public class MindCheckService {
                 .question1(request.isQuestion1())
                 .question2(request.isQuestion2())
                 .question3(request.isQuestion3())
-                .negativeEmotion(request.getNegativeEmotion()==null?null: NegativeEmotion.fromId(request.getNegativeEmotion()))
-                .positiveEmotion(request.getPositiveEmotion()==null?null: PositiveEmotion.fromId(request.getPositiveEmotion()))
+                .emotion(Emotion.fromId(request.getEmotion()))
                 .createTime(now)
                 .build();
         mindCheckRepository.save(mindCheck);
@@ -164,9 +163,9 @@ public class MindCheckService {
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         ZonedDateTime userNow = ZonedDateTime.now(userZone);
         LocalDate currentDate = userNow.toLocalDate();
-//        if(currentDate.equals(now) && (mindChecks.getNightMindCheck()==null || mindChecks.getDayMindCheck()==null)){
-//            throw new CustomException(ErrorCode.CHECK_TOMORROW);
-//        }
+        if(currentDate.equals(now) && (mindChecks.getNightMindCheck()==null || mindChecks.getDayMindCheck()==null)){
+            throw new CustomException(ErrorCode.CHECK_TOMORROW);
+        }
         MindCheckReport response = MindCheckReport.of(mindChecks);
         float score=0;
         if(mindChecks.getNightMindCheck()!=null && mindChecks.getDayMindCheck()!=null){

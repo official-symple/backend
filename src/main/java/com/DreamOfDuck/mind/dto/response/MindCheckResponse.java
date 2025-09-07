@@ -25,11 +25,10 @@ public class MindCheckResponse {
     @Schema(example="true")
     boolean question3;
 
-    @Schema(example="null")
-    String positiveEmotion;
+    @Schema(example="흥분돼")
+    String emotion;
 
-    @Schema(example="배고파")
-    String negativeEmotion;
+
 
     public static MindCheckResponse fromMindCheck(MindCheck mindCheck) {
         return MindCheckResponse.builder()
@@ -37,8 +36,7 @@ public class MindCheckResponse {
                 .question1(mindCheck.isQuestion1())
                 .question2(mindCheck.isQuestion2())
                 .question3(mindCheck.isQuestion3())
-                .negativeEmotion(mindCheck.getNegativeEmotion()==null?null:mindCheck.getNegativeEmotion().getText())
-                .positiveEmotion(mindCheck.getPositiveEmotion()==null?null:mindCheck.getPositiveEmotion().getText())
+                .emotion(mindCheck.getEmotion().getText())
                 .build();
     }
 }

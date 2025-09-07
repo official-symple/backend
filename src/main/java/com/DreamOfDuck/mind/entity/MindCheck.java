@@ -1,6 +1,7 @@
 package com.DreamOfDuck.mind.entity;
 
 import com.DreamOfDuck.global.entity.TimeStamp;
+import com.DreamOfDuck.talk.entity.Emotion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +25,7 @@ public class MindCheck{
     private boolean question2;
     private boolean question3;
 
-    private PositiveEmotion positiveEmotion;
-    private NegativeEmotion negativeEmotion;
+    private Emotion emotion;
     private float score;
     private LocalDateTime createTime;
 
