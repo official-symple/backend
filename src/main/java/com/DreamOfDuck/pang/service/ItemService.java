@@ -47,7 +47,7 @@ public class ItemService {
     @Transactional
     public ItemResponse updateGrass(Member host){
         Item item = getOrCreateItem(host);
-        item.setTornado(item.getGrass() + 1);
+        item.setGrass(item.getGrass() + 1);
         return ItemResponse.fromItem(item);
     }
 
