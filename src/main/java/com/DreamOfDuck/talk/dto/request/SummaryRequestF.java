@@ -13,18 +13,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MissionRequestF {
-    @NotNull
-    Integer persona;
-
-    @NotNull
-    Boolean formal;
-
+@Schema(description = "summary create request")
+public class SummaryRequestF {
     String language;
-
     @NotNull
-    String summary;
-
-    @NotNull
-    String nickname;
+    List<MessageFormatF> messages;
 }

@@ -3,10 +3,7 @@ package com.DreamOfDuck.talk.service;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.talk.dto.request.AdviceRequestF;
-import com.DreamOfDuck.talk.dto.request.MessageFormatF;
-import com.DreamOfDuck.talk.dto.request.MessageRequestF;
-import com.DreamOfDuck.talk.dto.request.MissionRequestF;
+import com.DreamOfDuck.talk.dto.request.*;
 import com.DreamOfDuck.talk.dto.response.AdviceResponse;
 import com.DreamOfDuck.talk.dto.response.MissionResponse;
 import com.DreamOfDuck.talk.dto.response.SummaryResponseF;
@@ -43,14 +40,11 @@ public class LastEmotionAsyncService {
     public void saveReportAndMission(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId).orElse(null);
 
-        MessageRequestF requestF = MessageRequestF.builder()
-                .persona(session.getDuckType().getValue())
+        SummaryRequestF requestF = SummaryRequestF.builder()
                 .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
-                .formal(session.getIsFormal())
-                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
-                .emotion_cause(session.getCause().getText())
                 .messages(MessageFormatF.fromSession(session))
                 .build();
+
         SummaryResponseF responseF = getSummary(requestF);
         session.setProblem(responseF.getProblem());
         session.setSolutions(responseF.getSolutions());
@@ -59,8 +53,6 @@ public class LastEmotionAsyncService {
                 .persona(session.getDuckType().getValue())
                 .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
-                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
-                .emotion_cause(session.getCause().getText())
                 .summary(responseF.getProblem())
                 .nickname(session.getHost().getNickname())
                 .build();
@@ -81,10 +73,10 @@ public class LastEmotionAsyncService {
         sessionRepository.save(session);
         return;
     }
-    private SummaryResponseF getSummary(MessageRequestF request){
+    private SummaryResponseF getSummary(SummaryRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
+        HttpEntity<SummaryRequestF> requestEntity = new HttpEntity<>(request, headers);
         try{
             ResponseEntity<SummaryResponseF> res = restTemplate.exchange(endpoint_summary, HttpMethod.POST, requestEntity, SummaryResponseF.class);
             if(res.getBody()==null){
