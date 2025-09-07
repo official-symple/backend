@@ -60,16 +60,7 @@ public class LastEmotionAsyncService {
         System.out.println("mission 받기 : "+responseF2.getMission());
         session.setMission(responseF2.getMission());
 
-        AdviceRequestF requestF3 = AdviceRequestF.builder()
-                .messages(requestF.getMessages())
-                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
-                .persona(session.getDuckType().getValue())
-                .formal(session.getIsFormal())
-                .nickname(session.getHost().getNickname())
-                .build();
-        AdviceResponse responseF3 = getAdvice(requestF3);
-        System.out.println("advice 받기 : "+responseF3.getAdvice());
-        session.setAdvice(responseF3.getAdvice());
+
         sessionRepository.save(session);
         return;
     }
@@ -103,7 +94,23 @@ public class LastEmotionAsyncService {
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
-
+    @Transactional
+    @Async
+    public void saveAdvice(Member host, Long sessionId){
+        Session session = sessionRepository.findById(sessionId).orElse(null);
+        AdviceRequestF requestF3 = AdviceRequestF.builder()
+                .messages(MessageFormatF.fromSession(session))
+                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
+                .persona(session.getDuckType().getValue())
+                .formal(session.getIsFormal())
+                .nickname(session.getHost().getNickname())
+                .build();
+        AdviceResponse responseF3 = getAdvice(requestF3);
+        System.out.println("advice 받기 : "+responseF3.getAdvice());
+        session.setAdvice(responseF3.getAdvice());
+        sessionRepository.save(session);
+        return;
+    }
     private AdviceResponse getAdvice(AdviceRequestF request){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
