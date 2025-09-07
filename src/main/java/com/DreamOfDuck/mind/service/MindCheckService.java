@@ -46,7 +46,7 @@ public class MindCheckService {
         LocalDateTime now = LocalDateTime.now(userZone);
         TimePeriod timePeriod = TimePeriod.of(now);
         //접근 가능한 시간 이후면 에러처리
-        if(!checkTime(member, userZone, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
+        if(checkTime(member, userZone, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
         //6 to 6
         if(now.toLocalTime().isBefore(LocalTime.of(6,0))){
             now=now.minusDays(1);
@@ -102,9 +102,17 @@ public class MindCheckService {
         }
         //에러 처리
         if(timePeriod==TimePeriod.DAY){
-            return !now.toLocalTime().isBefore(dayTime) && !now.toLocalTime().isAfter(dayTime.plusHours(1));
+            return now.toLocalTime().isBefore(dayTime) || now.toLocalTime().isAfter(dayTime.plusHours(1));
         }else{
-            return !now.toLocalTime().isBefore(nightTime.minusHours(1)) && !now.toLocalTime().isAfter(nightTime.plusHours(1));
+            LocalDateTime nightDateTime = LocalDateTime.of(now.toLocalDate(), nightTime);
+            if(now.toLocalTime().isAfter(LocalTime.MIDNIGHT)) nightDateTime=nightDateTime.minusDays(1);
+            log.info(nightDateTime.toString());
+            LocalDateTime start = nightDateTime.minusHours(1);
+            LocalDateTime end = nightDateTime.plusHours(1);
+            log.info(start.toString());
+            log.info(end.toString());
+            log.info(now.toString());
+            return now.isBefore(start) || now.isAfter(end);
         }
     }
     @Transactional
