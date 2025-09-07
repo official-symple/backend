@@ -7,6 +7,7 @@ import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
 import com.DreamOfDuck.talk.dto.response.MessageFormat;
 import com.DreamOfDuck.talk.dto.response.MessageResponse;
+import com.DreamOfDuck.talk.dto.response.MessageResponseList;
 import com.DreamOfDuck.talk.dto.response.SessionResponse;
 import com.DreamOfDuck.talk.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class MessageController {
     private final MessageService messageService;
     private final MemberService memberService;
+
     @PostMapping("")
     @Operation(summary = "메시지 생성", description = "메시지를 생성할 때 사용하는 API")
     @ApiResponses(value={
@@ -35,6 +37,17 @@ public class MessageController {
     public ResponseEntity<?> createMessage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MessageCreateRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         MessageResponse response = messageService.save(member, request);
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/chat")
+    @Operation(summary = "메시지 생성 new version", description = "메시지를 생성할 때 사용하는 API, version new")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MessageResponseList.class)
+            )})
+    })
+    public ResponseEntity<?> createMessageNew(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MessageCreateRequest request){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        MessageResponseList response = messageService.saveNew(member, request);
         return ResponseEntity.ok(response);
     }
 
@@ -55,4 +68,5 @@ public class MessageController {
         messageService.delete(member, id);
         return ResponseEntity.ok("성공적으로 메시지을 삭제했습니다.");
     }
+
 }

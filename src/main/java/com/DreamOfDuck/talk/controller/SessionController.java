@@ -29,7 +29,7 @@ public class SessionController {
     private final MemberService memberService;
 
 
-    @PostMapping()
+    @PostMapping("")
     @Operation(summary = "세션 생성", description = "세션을 생성할 때 사용하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = SessionResponse.class)

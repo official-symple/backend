@@ -18,6 +18,8 @@ jwt:
 fastApi:
   talk:
     endpoint: http://${AI_HOST}:${AI_PORT}/chat
+  newtalk:
+    endpoint: http://${AI_HOST}:${AI_PORT}/newchat
   summary:
     endpoint: http://${AI_HOST}:${AI_PORT}/summary
   mission:

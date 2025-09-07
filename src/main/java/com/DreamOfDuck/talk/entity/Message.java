@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,6 +30,11 @@ public class Message extends TimeStamp {
     @Lob
     @NotNull
     private String content;
+
+    @Lob
+    @NotNull
+    private List<String> contents;
+
 
     //==연관관계 메서드==//
     public void addSession(Session session) {
