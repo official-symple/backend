@@ -28,7 +28,7 @@ public class MindCheckReport {
                 .date(mindChecks.getDate())
                 .dayOfWeek(mindChecks.getDate().getDayOfWeek().toString().toLowerCase())
                 .dayResult(mindChecks.getDayMindCheck()==null?null:MindCheckResultResponse.of(mindChecks.getDayMindCheck()))
-                .dayResult(mindChecks.getNightMindCheck()==null?null:MindCheckResultResponse.of(mindChecks.getNightMindCheck()))
+                .nightResult(mindChecks.getNightMindCheck()==null?null:MindCheckResultResponse.of(mindChecks.getNightMindCheck()))
                 .build();
     }
 }
