@@ -21,8 +21,8 @@ public class MindCheckResultResponse {
     boolean question2;
     @Schema(example="true")
     boolean question3;
-    @Schema(example="흥분돼")
-    String emotion;
+    @Schema(example="1")
+    int emotionId;
     @Schema(example="2025-09-06T17:30:45")
     LocalDateTime dateTime;
 
@@ -31,7 +31,7 @@ public class MindCheckResultResponse {
                 .question1(mindCheck.isQuestion1())
                 .question2(mindCheck.isQuestion2())
                 .question3(mindCheck.isQuestion3())
-                .emotion(mindCheck.getEmotion().getText())
+                .emotionId(mindCheck.getEmotion().getId())
                 .dateTime(mindCheck.getCreateTime())
                 .build();
     }
