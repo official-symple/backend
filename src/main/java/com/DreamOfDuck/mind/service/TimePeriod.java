@@ -13,12 +13,12 @@ enum TimePeriod {
         LocalTime t = time.toLocalTime();
 
         // 낮: 06:00 ~ 13:00
-        if (!t.isBefore(LocalTime.of(6, 0)) && !t.isAfter(LocalTime.of(13, 0))) {
+        if (!t.isBefore(LocalTime.of(6, 0)) && !t.isAfter(LocalTime.of(14, 0))) {
             return DAY;
         }
 
         // 밤: 18:00 ~ 23:59 || 00:00 ~ 04:00
-        if (!t.isBefore(LocalTime.of(18, 0)) || !t.isAfter(LocalTime.of(4, 0))) {
+        if (!t.isBefore(LocalTime.of(17, 0)) || !t.isAfter(LocalTime.of(5, 0))) {
             return NIGHT;
         }
 

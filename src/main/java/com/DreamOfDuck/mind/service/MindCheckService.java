@@ -100,7 +100,7 @@ public class MindCheckService {
             dayTime = mindCheckTime.getDayTime();
             nightTime = mindCheckTime.getNightTime();
         }
-        //에러 처리
+
         if(timePeriod==TimePeriod.DAY){
             return now.toLocalTime().isBefore(dayTime) || now.toLocalTime().isAfter(dayTime.plusHours(1));
         }else{
@@ -140,7 +140,13 @@ public class MindCheckService {
             Optional<MindCheckTime> existing = mindCheckTimes.stream()
                     .filter(time -> time.getDayOfWeek() == day)
                     .findFirst();
-
+            //에러처리
+            if (!request.getDayTime().isBefore(LocalTime.of(6, 0)) && !request.getDayTime().isAfter(LocalTime.of(13, 0))) {
+                throw new CustomException(ErrorCode.IMPOSSIBLE_PERIOD);
+            }
+            if (!request.getNightTime().isBefore(LocalTime.of(18, 0)) || !request.getNightTime().isAfter(LocalTime.of(4, 0))) {
+                throw new CustomException(ErrorCode.IMPOSSIBLE_PERIOD);
+            }
             if (existing.isPresent()) {
                 existing.get().setDayTime(request.getDayTime());
                 existing.get().setNightTime(request.getNightTime());
