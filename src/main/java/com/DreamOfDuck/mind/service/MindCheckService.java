@@ -105,7 +105,7 @@ public class MindCheckService {
             return now.toLocalTime().isBefore(dayTime) || now.toLocalTime().isAfter(dayTime.plusHours(1));
         }else{
             LocalDateTime nightDateTime = LocalDateTime.of(now.toLocalDate(), nightTime);
-            if(now.toLocalTime().isAfter(LocalTime.MIDNIGHT)) nightDateTime=nightDateTime.minusDays(1);
+            if(now.toLocalTime().isAfter(LocalTime.MIDNIGHT) && now.toLocalTime().isBefore(LocalTime.of(6, 0))) nightDateTime=nightDateTime.minusDays(1);
             log.info(nightDateTime.toString());
             LocalDateTime start = nightDateTime.minusHours(1);
             LocalDateTime end = nightDateTime.plusHours(1);
