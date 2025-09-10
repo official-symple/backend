@@ -176,10 +176,10 @@ public class MindCheckService {
         //오늘 마음체크 미완료인데 요청한 경우
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         ZonedDateTime userNow = ZonedDateTime.now(userZone);
-        LocalDate currentDate = userNow.toLocalDate();
-        if(currentDate.equals(now) && (mindChecks.getNightMindCheck()==null || mindChecks.getDayMindCheck()==null)){
-            throw new CustomException(ErrorCode.CHECK_TOMORROW);
-        }
+//        LocalDate currentDate = userNow.toLocalDate();
+//        if(currentDate.equals(now) && (mindChecks.getNightMindCheck()==null || mindChecks.getDayMindCheck()==null)){
+//            throw new CustomException(ErrorCode.CHECK_TOMORROW);
+//        }
         MindCheckReport response = MindCheckReport.of(mindChecks);
         float score=0;
         if(mindChecks.getNightMindCheck()!=null && mindChecks.getDayMindCheck()!=null){
