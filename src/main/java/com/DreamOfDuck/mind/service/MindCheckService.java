@@ -139,12 +139,17 @@ public class MindCheckService {
                     .filter(time -> time.getDayOfWeek() == day)
                     .findFirst();
             //에러처리
-            if (!request.getDayTime().isBefore(LocalTime.of(6, 0)) && !request.getDayTime().isAfter(LocalTime.of(13, 0))) {
+            if (request.getDayTime().isBefore(LocalTime.of(6, 0)) || request.getDayTime().isAfter(LocalTime.of(13, 0))) {
                 throw new CustomException(ErrorCode.IMPOSSIBLE_PERIOD);
             }
-            if (!request.getNightTime().isBefore(LocalTime.of(18, 0)) || !request.getNightTime().isAfter(LocalTime.of(4, 0))) {
+            LocalTime night = request.getNightTime();
+            if (!((night.equals(LocalTime.of(18,0)) || night.isAfter(LocalTime.of(18,0)))
+                    || (night.isBefore(LocalTime.of(4,0)) || night.equals(LocalTime.of(4,0))))) {
                 throw new CustomException(ErrorCode.IMPOSSIBLE_PERIOD);
             }
+
+
+
             if (existing.isPresent()) {
                 existing.get().setDayTime(request.getDayTime());
                 existing.get().setNightTime(request.getNightTime());
@@ -161,9 +166,31 @@ public class MindCheckService {
         return getMindCheckTimes(member);
     }
     public List<MindCheckTimeResponse> getMindCheckTimes(Member member) {
-        return member.getMindCheckTimes().stream()
-                .map(MindCheckTimeResponse::of)
+        List<MindCheckTime> times = member.getMindCheckTimes();
+
+        Map<DayOfWeek, MindCheckTime> timeMap = new HashMap<>();
+        if (times != null) {
+            for (MindCheckTime t : times) {
+                timeMap.put(t.getDayOfWeek(), t);
+            }
+        }
+
+        List<MindCheckTimeResponse> result = Arrays.stream(DayOfWeek.values())
+                .map(day -> {
+                    MindCheckTime t = timeMap.get(day);
+                    if (t == null) {
+                        t = MindCheckTime.builder()
+                                .dayOfWeek(day)
+                                .dayTime(LocalTime.of(8, 0))
+                                .nightTime(LocalTime.of(23, 0))
+                                .host(member)
+                                .build();
+                    }
+                    return MindCheckTimeResponse.of(t);
+                })
                 .collect(Collectors.toList());
+
+        return result;
     }
 
     public MindCheckReport getMindCheckResult(Member member, LocalDate now) {
