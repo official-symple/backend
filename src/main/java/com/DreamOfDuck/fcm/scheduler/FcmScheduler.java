@@ -38,6 +38,7 @@ public class FcmScheduler {
         List<Member> members = memberRepository.findAllWithMindCheckTimes();
 
         for (Member member : members) {
+            if(member.getPushAlarm()!=null && !member.getPushAlarm().isReminder()) continue;
             try {
                 ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
                 ZonedDateTime userNow = ZonedDateTime.now(userZone);
