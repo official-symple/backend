@@ -80,7 +80,7 @@ public class MindCheckController {
     @GetMapping("/report/2weeks/{date}")
     @Operation(summary = "2주간 마음체크 받기", description = "2주간 마음체크를 받는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReportPeriod.class)
             )})
     })
     public MindCheckReportPeriod getMindCheckReportPer2Weeks(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -90,7 +90,7 @@ public class MindCheckController {
     @GetMapping("/report/month/{date}")
     @Operation(summary = "한달간 마음체크 받기", description = "한달간 마음체크를 받는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReportPeriod.class)
             )})
     })
     public MindCheckReportPeriod getMindCheckReportPerMonth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
