@@ -6,6 +6,7 @@ import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.*;
 import com.DreamOfDuck.account.repository.MemberRepository;
+import com.DreamOfDuck.fcm.entity.PushAlarm;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
@@ -76,6 +77,7 @@ public class MemberService {
         member.setLocation("Asia/Seoul");
         if(request.getLanguage().equalsIgnoreCase("kor")) member.setDuckname("꽥꽥이");
         else member.setDuckname("Qquack");
+
         memberRepository.save(member);
         return MemberResponse.from(member);
     }

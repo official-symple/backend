@@ -1,5 +1,6 @@
 package com.DreamOfDuck.account.entity;
 
+import com.DreamOfDuck.fcm.entity.PushAlarm;
 import com.DreamOfDuck.feedback.entity.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
 import com.DreamOfDuck.mind.entity.MindCheckTime;
@@ -100,4 +101,7 @@ public class Member extends TimeStamp {
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Item item;
+
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private PushAlarm pushAlarm;
 }
