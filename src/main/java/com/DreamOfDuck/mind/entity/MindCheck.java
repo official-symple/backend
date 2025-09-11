@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class MindCheck{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="mindChecksId")
+    @Column(name="mindCheckId")
     private Long id;
     private boolean question1;
     private boolean question2;
