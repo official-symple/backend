@@ -295,9 +295,9 @@ public class MindCheckService {
                     curReport.getResponseRateOfQ3().equals(pastReport.getResponseRateOfQ3())?"그대로예요.":"늘었어요.";
             curReport.setQuestionResponseTrend("우울 빈도가 "+resultQ1+" 스트레스 빈도는 "+resultQ2+"스트레스 조절 어려움 빈도는 "+resultQ3);
             //가장 자주 고른 감정
-            String curEmotion = curReport.getTop3Emotions().get(0).getEmotion();
+            String curEmotion = Emotion.fromId(curReport.getTop3Emotions().get(0).getEmotion()).getText();
             String curEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
-            String pastEmotion = pastReport.getTop3Emotions().get(0).getEmotion();
+            String pastEmotion = Emotion.fromId(pastReport.getTop3Emotions().get(0).getEmotion()).getText();
             String pastEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
             if(curEmotion.equals(pastEmotion)){
                 curReport.setTopEmotionTrend(pastEmotionType+" '"+pastEmotion+"'에서 "+curEmotionType+" '"+curEmotion+"'로 그대로예요.");
@@ -490,7 +490,7 @@ public class MindCheckService {
                         .limit(3)
                         .map(entry -> {
                             return new MindCheckReportPeriod.EmotionRatio(
-                                    entry.getKey().getText(),
+                                    entry.getKey().getId(),
                                     (entry.getValue() * 100f) / finalTotalResponses
                             );
                         })

@@ -25,8 +25,8 @@ public class MindCheckResponse {
     @Schema(example="true")
     boolean question3;
 
-    @Schema(example="흥분돼")
-    String emotion;
+    @Schema(example="1")
+    int emotion;
 
 
 
@@ -36,7 +36,7 @@ public class MindCheckResponse {
                 .question1(mindCheck.isQuestion1())
                 .question2(mindCheck.isQuestion2())
                 .question3(mindCheck.isQuestion3())
-                .emotion(mindCheck.getEmotion().getText())
+                .emotion(mindCheck.getEmotion().getId())
                 .build();
     }
 }

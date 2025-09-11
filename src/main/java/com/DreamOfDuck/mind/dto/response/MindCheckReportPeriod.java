@@ -33,15 +33,15 @@ public class MindCheckReportPeriod {
     @Schema(example="60")
     float negativeEmotionRate;
     @Schema(example="{\n" +
-            "      \"emotion\": \"즐거워\",\n" +
+            "      \"emotion\": \"0\",\n" +
             "      \"ratio\": 9.090909\n" +
             "    },\n" +
             "    {\n" +
-            "      \"emotion\": \"평온해\",\n" +
+            "      \"emotion\": \"1\",\n" +
             "      \"ratio\": 9.090909\n" +
             "    },\n" +
             "    {\n" +
-            "      \"emotion\": \"흥분돼\",\n" +
+            "      \"emotion\": \"2\",\n" +
             "      \"ratio\": 9.090909\n" +
             "    }")
     private List<EmotionRatio> top3Emotions;
@@ -58,7 +58,7 @@ public class MindCheckReportPeriod {
     @Data
     @AllArgsConstructor
     public static class EmotionRatio {
-        private String emotion;
+        private int emotion;
         private float ratio;
     }
 }

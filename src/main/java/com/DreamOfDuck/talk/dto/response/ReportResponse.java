@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 public class ReportResponse {
     @Schema(example="2025-05-08")
     LocalDate date;
-    @Schema(example="돈")
-    String cause;
+    @Schema(example="0")
+    Integer cause;
     @Schema(example="[1,10, 30]")
     List<Integer> emotions;
     @Schema(example="4")
@@ -34,7 +34,7 @@ public class ReportResponse {
     public static ReportResponse from(Session session){
         return ReportResponse.builder()
                 .date(session.getUpdatedAt().toLocalDate())
-                .cause(session.getCause().getText())
+                .cause(session.getCause().getId())
                 .emotions(session.getEmotion().stream().map(Emotion::getId).collect(Collectors.toList()))
                 .lastEmotion(session.getLastEmotion().getId())
                 .problem(session.getProblem())
