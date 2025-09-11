@@ -192,11 +192,44 @@ public class MindCheckService {
         return response;
     }
     public MindCheckReportPeriod getMindCheckResultPer2Weeks(Member member, LocalDate now) {
-
-        MindCheckReportPeriod curReport = getReportPeriod(member, now);
-        MindCheckReportPeriod pastReport = getReportPeriod(member, now.minusDays(14));
-        if(pastReport.getResult()!=null){
+        ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
+        LocalDate userNowDate = LocalDate.now(userZone);
+        //14일이 안되는 경우
+        if(now.plusDays(13).isAfter(userNowDate)) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_RECORDS);
+        }
+        List<MindChecks> mindChecks11 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(10));
+        List<MindChecks> mindChecks3 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(11), now.plusDays(13));
+        MindCheckReportPeriod curReport = getReportPeriod(member, mindChecks3, mindChecks11);
+        List<MindChecks> mindChecks11_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(14), now.minusDays(4));
+        List<MindChecks> mindChecks3_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(3), now.minusDays(1));
+        MindCheckReportPeriod pastReport = getReportPeriod(member, mindChecks3_2, mindChecks11_2);
+        if(pastReport.getResult()!=null) {
             //전체 결과
+            return getMindCheckTrend(curReport, pastReport);
+        }
+        return curReport;
+    }
+    public MindCheckReportPeriod getMindCheckResultPer1Month(Member member, LocalDate now) {
+        ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
+        LocalDate userNowDate = LocalDate.now(userZone);
+        //14일이 안되는 경우
+        if(now.plusDays(29).isAfter(userNowDate)) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_RECORDS);
+        }
+        List<MindChecks> mindChecks20 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(19));
+        List<MindChecks> mindChecks10 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(20), now.plusDays(29));
+        MindCheckReportPeriod curReport = getReportPeriod(member, mindChecks10, mindChecks20);
+        List<MindChecks> mindChecks20_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(30), now.minusDays(11));
+        List<MindChecks> mindChecks10_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(10), now.minusDays(1));
+        MindCheckReportPeriod pastReport = getReportPeriod(member, mindChecks10_2, mindChecks20_2);
+        if(pastReport.getResult()!=null) {
+            //전체 결과
+            return getMindCheckTrend(curReport, pastReport);
+        }
+        return curReport;
+    }
+    private MindCheckReportPeriod getMindCheckTrend(MindCheckReportPeriod curReport, MindCheckReportPeriod pastReport){
             String curResult=curReport.getResult();
             String pastResult=pastReport.getResult();
             String[] results = {"고위험", "위험", "주의", "안정"};
@@ -296,25 +329,17 @@ public class MindCheckService {
                 nightResult="로 그대로예요.";
             }
             curReport.setResponseRateTrend("마음체크 응답률은 "+(int)diff1+"%"+entireResult+"\n 아침 응답률은 "+(int)diff2+"%"+dayResult+", 밤 응답률은 "+(int)diff3+"%"+nightResult);
-
-        }
-        return curReport;
+            return curReport;
     }
-    private MindCheckReportPeriod getReportPeriod(Member member, LocalDate now) {
-        ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
-        LocalDate userNowDate = LocalDate.now(userZone);
-        //14일이 안되는 경우
-        if(now.plusDays(13).isAfter(userNowDate)) {
-            throw new CustomException(ErrorCode.NOT_ENOUGH_RECORDS);
-        }
 
-        List<MindChecks> mindChecks11 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(10));
-        List<MindChecks> mindChecks3 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(11), now.plusDays(13));
-        if(mindChecks11.isEmpty() && mindChecks3.isEmpty()){
+
+    private MindCheckReportPeriod getReportPeriod(Member member, List<MindChecks> mindChecks1, List<MindChecks> mindChecks2) {
+
+        if(mindChecks1.isEmpty() && mindChecks2.isEmpty()){
             return new MindCheckReportPeriod();
         }
-        //최근 3일
-        float score3=0;
+        //가중치 높은 list
+        float score1=0;
         int cntPositiveEmotion=0;
         int cntQuestion1=0;
         int cntQuestion2=0;
@@ -323,10 +348,10 @@ public class MindCheckService {
         float totalResponses = 0;
         int dayResponse = 0;
         int nightResponse = 0;
-        for(int i=0; i<mindChecks3.size(); i++){
-            MindChecks mindCheck = mindChecks3.get(i);
+        for(int i=0; i<mindChecks1.size(); i++){
+            MindChecks mindCheck = mindChecks1.get(i);
             if(mindCheck.getDayMindCheck()!=null && mindCheck.getNightMindCheck()!=null) {
-                score3+= (float)(mindCheck.getDayMindCheck().getScore()*0.5+mindCheck.getNightMindCheck().getScore()*0.5);
+                score1+= (float)(mindCheck.getDayMindCheck().getScore()*0.5+mindCheck.getNightMindCheck().getScore()*0.5);
                 totalResponses+=2;
                 emotionCountMap.put(mindCheck.getDayMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getDayMindCheck().getEmotion(), 0)+1);
                 emotionCountMap.put(mindCheck.getNightMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getNightMindCheck().getEmotion(), 0)+1);
@@ -341,7 +366,7 @@ public class MindCheckService {
                 if(mindCheck.getDayMindCheck().isQuestion3() || mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
 
             }else if(mindCheck.getDayMindCheck()!=null){
-                score3+= (float)(mindCheck.getDayMindCheck().getScore());
+                score1+= (float)(mindCheck.getDayMindCheck().getScore());
                 totalResponses++;
                 emotionCountMap.put(mindCheck.getDayMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getDayMindCheck().getEmotion(), 0)+1);
                 dayResponse++;
@@ -353,7 +378,7 @@ public class MindCheckService {
                 if(mindCheck.getDayMindCheck().isQuestion3()) cntQuestion3++;
 
             }else if(mindCheck.getNightMindCheck()!=null){
-                score3+= (float)(mindCheck.getNightMindCheck().getScore());
+                score1+= (float)(mindCheck.getNightMindCheck().getScore());
                 emotionCountMap.put(mindCheck.getNightMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getNightMindCheck().getEmotion(), 0)+1);
                 totalResponses++;
                 nightResponse++;
@@ -365,13 +390,13 @@ public class MindCheckService {
                 if(mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
             }
         }
-        if(!mindChecks3.isEmpty()) score3/=mindChecks3.size();
-        //11일
-        float score11=0;
-        for(int i=0; i<mindChecks11.size(); i++){
-            MindChecks mindCheck = mindChecks11.get(i);
+        if(!mindChecks1.isEmpty()) score1/=mindChecks1.size();
+        //가중치 적은 list
+        float score2=0;
+        for(int i=0; i<mindChecks2.size(); i++){
+            MindChecks mindCheck = mindChecks2.get(i);
             if(mindCheck.getDayMindCheck()!=null && mindCheck.getNightMindCheck()!=null) {
-                score11+= (float)(mindCheck.getDayMindCheck().getScore()*0.5+mindCheck.getNightMindCheck().getScore()*0.5);
+                score2+= (float)(mindCheck.getDayMindCheck().getScore()*0.5+mindCheck.getNightMindCheck().getScore()*0.5);
                 totalResponses+=2;
                 emotionCountMap.put(mindCheck.getDayMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getDayMindCheck().getEmotion(), 0)+1);
                 emotionCountMap.put(mindCheck.getNightMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getNightMindCheck().getEmotion(), 0)+1);
@@ -386,7 +411,7 @@ public class MindCheckService {
                 if(mindCheck.getDayMindCheck().isQuestion3() || mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
 
             }else if(mindCheck.getDayMindCheck()!=null){
-                score11+= (float)(mindCheck.getDayMindCheck().getScore());
+                score2+= (float)(mindCheck.getDayMindCheck().getScore());
                 totalResponses++;
                 emotionCountMap.put(mindCheck.getDayMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getDayMindCheck().getEmotion(), 0)+1);
                 dayResponse++;
@@ -398,7 +423,7 @@ public class MindCheckService {
                 if(mindCheck.getDayMindCheck().isQuestion3()) cntQuestion3++;
 
             }else if(mindCheck.getNightMindCheck()!=null){
-                score11+= (float)(mindCheck.getNightMindCheck().getScore());
+                score2+= (float)(mindCheck.getNightMindCheck().getScore());
                 emotionCountMap.put(mindCheck.getNightMindCheck().getEmotion(), emotionCountMap.getOrDefault(mindCheck.getNightMindCheck().getEmotion(), 0)+1);
                 totalResponses++;
                 nightResponse++;
@@ -410,8 +435,8 @@ public class MindCheckService {
                 if(mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
             }
         }
-        if(!mindChecks11.isEmpty()) score11/=mindChecks11.size();
-        float score=(float)(score3*0.5+score11*0.5);
+        if(!mindChecks2.isEmpty()) score2/=mindChecks2.size();
+        float score=(float)(score1*0.5+score2*0.5);
         //결과 저장
         MindCheckReportPeriod response = new MindCheckReportPeriod();
         //결과
@@ -421,7 +446,7 @@ public class MindCheckService {
         response.setResponseRateOfQ2(cntQuestion2);
         response.setResponseRateOfQ3(cntQuestion3);
         //마음체크 응답률
-        log.info(String.valueOf(totalResponses));
+
         response.setResponseRate((float)(totalResponses/28f*100));
         response.setDayResponseRate((float)(dayResponse/totalResponses*100));
         response.setNightResponseRate((float)(nightResponse/totalResponses*100));

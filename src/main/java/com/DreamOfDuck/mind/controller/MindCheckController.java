@@ -95,7 +95,7 @@ public class MindCheckController {
     })
     public MindCheckReportPeriod getMindCheckReportPerMonth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return mindCheckService.getMindCheckResultPer2Weeks(member, date);
+        return mindCheckService.getMindCheckResultPer1Month(member, date);
     }
 
 
