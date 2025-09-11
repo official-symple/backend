@@ -23,12 +23,14 @@ public class MindCheckReport {
     String result;
     MindCheckResultResponse dayResult;
     MindCheckResultResponse nightResult;
+    boolean canView;
     public static MindCheckReport of(MindChecks mindChecks) {
         return MindCheckReport.builder()
                 .date(mindChecks.getDate())
                 .dayOfWeek(mindChecks.getDate().getDayOfWeek().toString().toLowerCase())
                 .dayResult(mindChecks.getDayMindCheck()==null?null:MindCheckResultResponse.of(mindChecks.getDayMindCheck()))
                 .nightResult(mindChecks.getNightMindCheck()==null?null:MindCheckResultResponse.of(mindChecks.getNightMindCheck()))
+                .canView(mindChecks.getNightMindCheck()!=null && mindChecks.getDayMindCheck()!=null)
                 .build();
     }
 }
