@@ -7,10 +7,7 @@ import lombok.Data;
 @Data
 @Schema(description = "score create request")
 public class ScoreCreateRequest {
-    @Schema(example="true")
-    boolean reminder;
-    @Schema(example="true")
-    boolean resultCheck;
-    @Schema(example="true")
-    boolean random;
+    @NotNull
+    @Schema(example="7632")
+    Long score;
 }

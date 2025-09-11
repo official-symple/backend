@@ -26,6 +26,7 @@ public class PushAlarmService {
                     .reminder(request.isReminder())
                     .build();
             pushAlarmRepository.save(newPushAlarm);
+            member.setPushAlarm(newPushAlarm);
             return PushAlarmResponse.from(newPushAlarm);
         }else{
             pushAlarm.setReminder(request.isReminder());
@@ -35,6 +36,15 @@ public class PushAlarmService {
         }
     }
     public PushAlarmResponse getAlarm(Member member) {
-        return PushAlarmResponse.from(member.getPushAlarm());
+        PushAlarm pushAlarm = member.getPushAlarm();
+        if(pushAlarm == null) {
+            return PushAlarmResponse.builder()
+                    .resultCheck(true)
+                    .reminder(true)
+                    .random(true)
+                    .build();
+        }else{
+            return PushAlarmResponse.from(pushAlarm);
+        }
     }
 }
