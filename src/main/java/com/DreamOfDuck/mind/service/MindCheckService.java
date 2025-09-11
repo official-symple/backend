@@ -194,110 +194,110 @@ public class MindCheckService {
     public MindCheckReportPeriod getMindCheckResultPer2Weeks(Member member, LocalDate now) {
 
         MindCheckReportPeriod curReport = getReportPeriod(member, now);
-        MindCheckReportPeriod pastReport = getReportPeriod(member, now.minusDays(14));
-        if(pastReport.getResponseRate()!=0){
-            //전체 결과
-            String curResult=curReport.getResult();
-            String pastResult=pastReport.getResult();
-            String[] results = {"고위험", "위험", "주의", "안정"};
-            int curIndex = Arrays.asList(results).indexOf(curResult);
-            int pastIndex = Arrays.asList(results).indexOf(pastResult);
-
-            String result;
-            if(curIndex==pastIndex){
-                result="그대로에요";
-            }else if(curIndex<pastIndex){
-                int diff=pastIndex-curIndex;
-                if(diff==1){
-                    result="한 단계 하락했어요";
-                }else if(diff==2){
-                    result="두 단계 하락했어요";
-                }else{
-                    result="세 단계 하락했어요";
-                }
-            }else{
-                int diff=curIndex-pastIndex;
-                if(diff==1){
-                    result="한 단계 상승했어요";
-                }else if(diff==2){
-                    result="두 단계 상승했어요";
-                }else{
-                    result="세 단계 상승했어요";
-                }
-            }
-            curReport.setResultTrend("지난 2주와 비교했을 때 "+result);
-            //우울, 스트레스, 스트레스 조절 어려움
-            String resultQ1=curReport.getResponseRateOfQ1()<pastReport.getResponseRateOfQ1()?"줄었고":
-                    curReport.getResponseRateOfQ1().equals(pastReport.getResponseRateOfQ1())?"그대로고":"늘었고";
-            String resultQ2=curReport.getResponseRateOfQ2()<pastReport.getResponseRateOfQ2()?"줄었어요.":
-                    curReport.getResponseRateOfQ2().equals(pastReport.getResponseRateOfQ2())?"그대로예요.":"늘었어요.";
-            String resultQ3=curReport.getResponseRateOfQ3()<pastReport.getResponseRateOfQ3()?"줄었어요.":
-                    curReport.getResponseRateOfQ3().equals(pastReport.getResponseRateOfQ3())?"그대로예요.":"늘었어요.";
-            curReport.setQuestionResponseTrend("우울 빈도가 "+resultQ1+" 스트레스 빈도는 "+resultQ2+"스트레스 조절 어려움 빈도는 "+resultQ3);
-            //가장 자주 고른 감정
-            String curEmotion = curReport.getTop3Emotions().get(0).getEmotion();
-            String curEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
-            String pastEmotion = pastReport.getTop3Emotions().get(0).getEmotion();
-            String pastEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
-            if(curEmotion.equals(pastEmotion)){
-                curReport.setTopEmotionTrend(pastEmotionType+" '"+pastEmotion+"'에서 "+curEmotionType+" '"+curEmotion+"'로 그대로예요.");
-            }else{
-                curReport.setTopEmotionTrend(pastEmotionType+" '"+pastEmotion+"'에서 "+curEmotionType+" '"+curEmotion+"'로 달라졌어요.");
-            }
-            //부정 감정 비율
-            float pastNegativeEmotionRate = pastReport.getNegativeEmotionRate();
-            float curNegativeEmotionRate = curReport.getNegativeEmotionRate();
-            if(pastNegativeEmotionRate<curNegativeEmotionRate){
-                float diff = curNegativeEmotionRate - pastNegativeEmotionRate;
-                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", diff)+"% 증가했어요.");
-            }else if(pastNegativeEmotionRate>curNegativeEmotionRate){
-                float diff = pastNegativeEmotionRate - curNegativeEmotionRate;
-                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", diff)+"% 감소했어요.");
-            }else{
-                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", curNegativeEmotionRate)+"%로 그대로예요.");
-            }
-            //마음체크 응답률
-            float pastReportResponse = pastReport.getResponseRate();
-            float pastDayReportResponse = pastReport.getDayResponseRate();
-            float pastNightReportResponse = pastReport.getNightResponseRate();
-            float curReportResponse = curReport.getResponseRate();
-            float curDayReportResponse = curReport.getDayResponseRate();
-            float curNightReportResponse = curReport.getNightResponseRate();
-            float diff1, diff2, diff3;
-            String entireResult, dayResult, nightResult;
-            if(pastReportResponse<curDayReportResponse){
-                diff1=curReportResponse-pastReportResponse;
-                entireResult="가 늘었어요.";
-            }else if(pastReportResponse>curDayReportResponse){
-                diff1=pastReportResponse-curReportResponse;
-                entireResult="가 감소했어요.";
-            }else{
-                diff1=pastReportResponse;
-                entireResult="로 그대로예요.";
-            }
-            if(pastDayReportResponse<curDayReportResponse){
-                diff2=curDayReportResponse-pastDayReportResponse;
-                dayResult="가 늘었고";
-            }else if(pastDayReportResponse>curDayReportResponse){
-                diff2=pastDayReportResponse-curDayReportResponse;
-                dayResult="가 줄었고";
-            }else{
-                diff2=pastDayReportResponse;
-                dayResult="로 그대로고";
-            }
-            if(pastNightReportResponse<curNightReportResponse){
-                diff3=curNightReportResponse-pastNightReportResponse;
-                nightResult="가 늘었어요.";
-            }else if(pastNightReportResponse>curNightReportResponse){
-                diff3=pastNightReportResponse-curNightReportResponse;
-                nightResult="가 줄었어요.";
-            }else{
-                diff3=pastNightReportResponse;
-                nightResult="로 그대로예요.";
-            }
-            curReport.setResponseRateTrend("마음체크 응답률은 "+(int)diff1+"%"+entireResult+"\n 아침 응답률은 "+(int)diff2+"%"+dayResult+", 밤 응답률은 "+(int)diff3+"%"+nightResult);
-
-        }
+        //MindCheckReportPeriod pastReport = getReportPeriod(member, now.minusDays(14));
+//        if(pastReport.getResult()==null){
+//            //전체 결과
+//            String curResult=curReport.getResult();
+//            String pastResult=pastReport.getResult();
+//            String[] results = {"고위험", "위험", "주의", "안정"};
+//            int curIndex = Arrays.asList(results).indexOf(curResult);
+//            int pastIndex = Arrays.asList(results).indexOf(pastResult);
+//
+//            String result;
+//            if(curIndex==pastIndex){
+//                result="그대로에요";
+//            }else if(curIndex<pastIndex){
+//                int diff=pastIndex-curIndex;
+//                if(diff==1){
+//                    result="한 단계 하락했어요";
+//                }else if(diff==2){
+//                    result="두 단계 하락했어요";
+//                }else{
+//                    result="세 단계 하락했어요";
+//                }
+//            }else{
+//                int diff=curIndex-pastIndex;
+//                if(diff==1){
+//                    result="한 단계 상승했어요";
+//                }else if(diff==2){
+//                    result="두 단계 상승했어요";
+//                }else{
+//                    result="세 단계 상승했어요";
+//                }
+//            }
+//            curReport.setResultTrend("지난 2주와 비교했을 때 "+result);
+//            //우울, 스트레스, 스트레스 조절 어려움
+//            String resultQ1=curReport.getResponseRateOfQ1()<pastReport.getResponseRateOfQ1()?"줄었고":
+//                    curReport.getResponseRateOfQ1().equals(pastReport.getResponseRateOfQ1())?"그대로고":"늘었고";
+//            String resultQ2=curReport.getResponseRateOfQ2()<pastReport.getResponseRateOfQ2()?"줄었어요.":
+//                    curReport.getResponseRateOfQ2().equals(pastReport.getResponseRateOfQ2())?"그대로예요.":"늘었어요.";
+//            String resultQ3=curReport.getResponseRateOfQ3()<pastReport.getResponseRateOfQ3()?"줄었어요.":
+//                    curReport.getResponseRateOfQ3().equals(pastReport.getResponseRateOfQ3())?"그대로예요.":"늘었어요.";
+//            curReport.setQuestionResponseTrend("우울 빈도가 "+resultQ1+" 스트레스 빈도는 "+resultQ2+"스트레스 조절 어려움 빈도는 "+resultQ3);
+//            //가장 자주 고른 감정
+//            String curEmotion = curReport.getTop3Emotions().get(0).getEmotion();
+//            String curEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
+//            String pastEmotion = pastReport.getTop3Emotions().get(0).getEmotion();
+//            String pastEmotionType = Emotion.fromText(curEmotion).getId()>=7?"부정 감정인":"긍정 감정인";
+//            if(curEmotion.equals(pastEmotion)){
+//                curReport.setTopEmotionTrend(pastEmotionType+" '"+pastEmotion+"'에서 "+curEmotionType+" '"+curEmotion+"'로 그대로예요.");
+//            }else{
+//                curReport.setTopEmotionTrend(pastEmotionType+" '"+pastEmotion+"'에서 "+curEmotionType+" '"+curEmotion+"'로 달라졌어요.");
+//            }
+//            //부정 감정 비율
+//            float pastNegativeEmotionRate = pastReport.getNegativeEmotionRate();
+//            float curNegativeEmotionRate = curReport.getNegativeEmotionRate();
+//            if(pastNegativeEmotionRate<curNegativeEmotionRate){
+//                float diff = curNegativeEmotionRate - pastNegativeEmotionRate;
+//                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", diff)+"% 증가했어요.");
+//            }else if(pastNegativeEmotionRate>curNegativeEmotionRate){
+//                float diff = pastNegativeEmotionRate - curNegativeEmotionRate;
+//                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", diff)+"% 감소했어요.");
+//            }else{
+//                curReport.setNegativeEmotionTrend("부정 감정의 비율이 "+String.format("%.2f", curNegativeEmotionRate)+"%로 그대로예요.");
+//            }
+//            //마음체크 응답률
+//            float pastReportResponse = pastReport.getResponseRate();
+//            float pastDayReportResponse = pastReport.getDayResponseRate();
+//            float pastNightReportResponse = pastReport.getNightResponseRate();
+//            float curReportResponse = curReport.getResponseRate();
+//            float curDayReportResponse = curReport.getDayResponseRate();
+//            float curNightReportResponse = curReport.getNightResponseRate();
+//            float diff1, diff2, diff3;
+//            String entireResult, dayResult, nightResult;
+//            if(pastReportResponse<curDayReportResponse){
+//                diff1=curReportResponse-pastReportResponse;
+//                entireResult="가 늘었어요.";
+//            }else if(pastReportResponse>curDayReportResponse){
+//                diff1=pastReportResponse-curReportResponse;
+//                entireResult="가 감소했어요.";
+//            }else{
+//                diff1=pastReportResponse;
+//                entireResult="로 그대로예요.";
+//            }
+//            if(pastDayReportResponse<curDayReportResponse){
+//                diff2=curDayReportResponse-pastDayReportResponse;
+//                dayResult="가 늘었고";
+//            }else if(pastDayReportResponse>curDayReportResponse){
+//                diff2=pastDayReportResponse-curDayReportResponse;
+//                dayResult="가 줄었고";
+//            }else{
+//                diff2=pastDayReportResponse;
+//                dayResult="로 그대로고";
+//            }
+//            if(pastNightReportResponse<curNightReportResponse){
+//                diff3=curNightReportResponse-pastNightReportResponse;
+//                nightResult="가 늘었어요.";
+//            }else if(pastNightReportResponse>curNightReportResponse){
+//                diff3=pastNightReportResponse-curNightReportResponse;
+//                nightResult="가 줄었어요.";
+//            }else{
+//                diff3=pastNightReportResponse;
+//                nightResult="로 그대로예요.";
+//            }
+//            curReport.setResponseRateTrend("마음체크 응답률은 "+(int)diff1+"%"+entireResult+"\n 아침 응답률은 "+(int)diff2+"%"+dayResult+", 밤 응답률은 "+(int)diff3+"%"+nightResult);
+//
+//        }
         return curReport;
     }
     private MindCheckReportPeriod getReportPeriod(Member member, LocalDate now) {
@@ -310,8 +310,9 @@ public class MindCheckService {
 
         List<MindChecks> mindChecks11 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(10));
         List<MindChecks> mindChecks3 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(11), now.plusDays(13));
-        if(mindChecks3==null && mindChecks11==null) throw new CustomException(ErrorCode.NULL_MIND_CHECK);
-
+        if(mindChecks11.isEmpty() && mindChecks3.isEmpty()){
+            return new MindCheckReportPeriod();
+        }
         //최근 3일
         float score3=0;
         int cntPositiveEmotion=0;
@@ -364,7 +365,7 @@ public class MindCheckService {
                 if(mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
             }
         }
-        score3/=mindChecks3.size();
+        if(!mindChecks3.isEmpty()) score3/=mindChecks3.size();
         //11일
         float score11=0;
         for(int i=0; i<mindChecks11.size(); i++){
@@ -409,7 +410,7 @@ public class MindCheckService {
                 if(mindCheck.getNightMindCheck().isQuestion3()) cntQuestion3++;
             }
         }
-        score11/=mindChecks11.size();
+        if(!mindChecks11.isEmpty()) score11/=mindChecks11.size();
         float score=(float)(score3*0.5+score11*0.5);
         //결과 저장
         MindCheckReportPeriod response = new MindCheckReportPeriod();
