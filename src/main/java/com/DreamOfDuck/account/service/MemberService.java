@@ -74,7 +74,8 @@ public class MemberService {
         member.setFeather(0);
         member.setLv(1);
         member.setLocation("Asia/Seoul");
-        member.setDuckname("꽥꽥이");
+        if(request.getLanguage().equalsIgnoreCase("kor")) member.setDuckname("꽥꽥이");
+        else member.setDuckname("Qquack");
         memberRepository.save(member);
         return MemberResponse.from(member);
     }
