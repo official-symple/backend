@@ -6,6 +6,7 @@ import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
 import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
 import com.DreamOfDuck.mind.dto.response.MindCheckReport;
+import com.DreamOfDuck.mind.dto.response.MindCheckReportPeriod;
 import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.service.MindCheckService;
@@ -72,8 +73,30 @@ public class MindCheckController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
             )})
     })
-    public MindCheckReport useItem(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public MindCheckReport getMindCheckReport(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return mindCheckService.getMindCheckResult(member, date);
     }
+    @GetMapping("/report/2weeks/{date}")
+    @Operation(summary = "2주간 마음체크 받기", description = "2주간 마음체크를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
+            )})
+    })
+    public MindCheckReportPeriod getMindCheckReportPer2Weeks(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return mindCheckService.getMindCheckResultPer2Weeks(member, date);
+    }
+    @GetMapping("/report/month/{date}")
+    @Operation(summary = "한달간 마음체크 받기", description = "한달간 마음체크를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = MindCheckReport.class)
+            )})
+    })
+    public MindCheckReportPeriod getMindCheckReportPerMonth(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return mindCheckService.getMindCheckResultPer2Weeks(member, date);
+    }
+
+
 }

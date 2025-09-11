@@ -65,8 +65,9 @@ public enum ErrorCode {
     IMPOSSIBLE_PERIOD(-700, "해당 시간대에는 마음 체크에 진입할 수 없습니다.", 400),
     NOT_PERMISSION_ACCESS(-701, "설정한 시간이 지났으므로로 마음체크에 접근할 수 없습니다.", 403),
     ALREADY_EXIST(-702, "해당 날짜, 해당 시간 대의 마음체크는 이미 완료했습니다.", 400),
-    NULL_MIND_CHECK(-701, "해당 날짜의 마음체크를 하지 않았습니다.", 406),
-    CHECK_TOMORROW(-702, "오늘 마음체크를 완료하지 못했습니다. 다음날 리포트를 확인할 수 있어요",400);
+    NULL_MIND_CHECK(-703, "해당 날짜의 마음체크를 하지 않았습니다.", 406),
+    CHECK_TOMORROW(-704, "오늘 마음체크를 완료하지 못했습니다. 다음날 리포트를 확인할 수 있어요",400),
+    NOT_ENOUGH_RECORDS(-705, "아직 마음체크 기록이 충분하지 않아요.", 400);
     private final int errorCode;
     private final String message;
     private final int httpCode;

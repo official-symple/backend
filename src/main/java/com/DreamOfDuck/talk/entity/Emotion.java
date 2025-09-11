@@ -57,4 +57,12 @@ public enum Emotion {
         }
         return emotion;
     }
+    public static Emotion fromText(String text) {
+        for (Emotion emotion : Emotion.values()) {
+            if (emotion.getText().equals(text)) {
+                return emotion;
+            }
+        }
+        throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
+    }
 }
