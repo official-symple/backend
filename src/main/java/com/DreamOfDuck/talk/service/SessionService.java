@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +56,9 @@ public class SessionService {
         sessionRepository.save(session);
         host.setHeart(host.getHeart()+2);
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
-        eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), LocalDate.now()));
+        ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
+        LocalDate now = LocalDate.now(userZone);
+        eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), now));
         host.getAttendedDates().add(LocalDate.now());
         return SessionResponse.from(session);
     }
