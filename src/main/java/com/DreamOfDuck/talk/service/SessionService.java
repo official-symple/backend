@@ -1,6 +1,6 @@
 package com.DreamOfDuck.talk.service;
 
-import com.DreamOfDuck.account.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.global.exception.CustomException;

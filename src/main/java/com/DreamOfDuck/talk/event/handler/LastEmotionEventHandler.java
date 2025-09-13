@@ -1,6 +1,5 @@
 package com.DreamOfDuck.talk.event.handler;
 
-import com.DreamOfDuck.account.dto.request.HeartRequest;
 import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
 import com.DreamOfDuck.talk.service.LastEmotionAsyncService;
 import lombok.RequiredArgsConstructor;

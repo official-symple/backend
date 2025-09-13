@@ -2,12 +2,14 @@ package com.DreamOfDuck.account.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
-import com.DreamOfDuck.account.dto.response.HomeResponse;
+import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.dto.request.HeartRequest;
+import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
-import com.DreamOfDuck.talk.dto.response.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

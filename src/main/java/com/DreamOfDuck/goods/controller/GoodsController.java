@@ -1,10 +1,10 @@
 package com.DreamOfDuck.goods.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
-import com.DreamOfDuck.account.dto.response.AttendanceByMonthResponse;
-import com.DreamOfDuck.account.dto.response.AttendanceResponse;
-import com.DreamOfDuck.account.dto.response.HomeResponse;
-import com.DreamOfDuck.account.dto.response.MemberResponse;
+import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
+import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
+import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -46,7 +47,17 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getAttendanceByMonth(member, yearMonth);
     }
-    @GetMapping("/attendance")
+    @GetMapping("/attendance/{date}")
+    @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
+            )})
+    })
+    public AttendanceResponse breakIce(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.breakIce(member, date);
+    }
+    @PostMapping("/attendance/")
     @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)

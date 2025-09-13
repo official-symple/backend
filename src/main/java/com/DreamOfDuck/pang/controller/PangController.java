@@ -1,7 +1,5 @@
 package com.DreamOfDuck.pang.controller;
 
-import com.DreamOfDuck.account.dto.request.ScoreRequest;
-import com.DreamOfDuck.account.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;

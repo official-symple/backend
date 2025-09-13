@@ -32,6 +32,7 @@ public enum ErrorCode {
     NICKNAME_LEN(-305, "닉네임 길이를 2자이상 14자 이하로 설정해주세요", 400),
     NICKNAME_EXIST(-306, "이미 존재하는 닉네임입니다.", 400),
     GOOGLE_REQUEST_TOKEN_ERROR(-307, "구글 토큰 에러, 401", 401),
+    ATTENDANCE_EXIST(-308, "해당 날짜엔 이미 출셕하였습니다.", 400),
 
     //Talk
     NOT_FOUND_CAUSE(-400, "해당 원인은 존재하지 않습니다.", 406),

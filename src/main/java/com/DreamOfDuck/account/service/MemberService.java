@@ -2,16 +2,16 @@ package com.DreamOfDuck.account.service;
 
 import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
-import com.DreamOfDuck.account.dto.response.HomeResponse;
+import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.dto.request.HeartRequest;
+import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import com.DreamOfDuck.account.dto.response.MemberResponse;
 import com.DreamOfDuck.account.entity.*;
 import com.DreamOfDuck.account.repository.MemberRepository;
-import com.DreamOfDuck.fcm.entity.PushAlarm;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
-import com.DreamOfDuck.mind.entity.MindCheckTime;
-import com.DreamOfDuck.mind.entity.MindChecks;
 import com.DreamOfDuck.talk.entity.Cause;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Service

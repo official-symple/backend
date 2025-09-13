@@ -1,4 +1,4 @@
-package com.DreamOfDuck.account.dto.response;
+package com.DreamOfDuck.goods.dto.response;
 
 import com.DreamOfDuck.account.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;

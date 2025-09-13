@@ -1,8 +1,7 @@
 package com.DreamOfDuck.mind.service;
 
-import com.DreamOfDuck.account.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.service.GoodsService;
