@@ -123,11 +123,7 @@ public class MemberService {
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
     }
-    @Transactional
-    public void addAttendance(Member member, LocalDate date){
-        member.getAttendedDates().add(date);
-        memberRepository.save(member);
-    }
+
 
     @Transactional
     public HomeResponse updateHeart(Member member, HeartRequest request) {

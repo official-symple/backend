@@ -17,11 +17,14 @@ public class AttendanceResponse {
     Integer curAttendance;
     @Schema(example="180")
     Integer longestAttendance;
+    @Schema(example="10")
+    Integer featherCnt;
 
     public static AttendanceResponse fromMember(Member member) {
         return AttendanceResponse.builder()
                 .curAttendance(member.getCurStreak())
                 .longestAttendance(member.getLongestStreak())
+                .featherCnt(0)
                 .build();
     }
 }

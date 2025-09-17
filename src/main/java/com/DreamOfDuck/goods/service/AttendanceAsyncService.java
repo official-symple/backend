@@ -1,5 +1,6 @@
 package com.DreamOfDuck.goods.service;
 
+import com.DreamOfDuck.account.entity.Attendance;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
@@ -14,6 +15,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,14 +29,19 @@ public class AttendanceAsyncService {
     @Async
     public void addAttendance(String email, LocalDate curDate) {
         Member member = memberService.findMemberByEmail(email);
-        Set<LocalDate> attendedDates = member.getAttendedDates();
+        Set<Attendance> attendedDates = member.getAttendedDates();
 
-        if (attendedDates.contains(curDate)) {
+        boolean alreadyAttended = attendedDates.stream()
+                .anyMatch(a -> a.getDate().equals(curDate));
+        if (alreadyAttended) {
             return;
         }
-        goodsService.addAttendance(member, curDate);
+        goodsService.addAttendance(member, curDate, false);
         // 정렬된 TreeSet으로 변환해서 streak 계산
-        NavigableSet<LocalDate> sortedDates = new TreeSet<>(attendedDates);
+        attendedDates.add(Attendance.builder().date(curDate).isIce(false).build());
+        NavigableSet<LocalDate> sortedDates = attendedDates.stream()
+                .map(Attendance::getDate)
+                .collect(Collectors.toCollection(TreeSet::new));
         Integer newCurStreak = calculateCurrentStreak(sortedDates, curDate, member.getCurStreak());
         member.setCurStreak(newCurStreak);
         //longest streak

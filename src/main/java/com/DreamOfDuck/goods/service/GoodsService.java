@@ -1,6 +1,7 @@
 package com.DreamOfDuck.goods.service;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.account.entity.Attendance;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Role;
 import com.DreamOfDuck.global.exception.CustomException;
@@ -35,8 +36,9 @@ public class GoodsService {
             25000, 27000, 29000, 31000, 33000, 35000
     };
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void addAttendance(Member member, LocalDate date){
-        member.getAttendedDates().add(date);
+    public void addAttendance(Member member, LocalDate date, Boolean isIce){
+
+        member.getAttendedDates().add(Attendance.builder().date(date).isIce(isIce).build());
     }
 
     @Transactional
@@ -141,15 +143,17 @@ public class GoodsService {
         if(member.getAttendedDates().contains(date)){
             throw new CustomException(ErrorCode.ATTENDANCE_EXIST);
         }
-        addAttendance(member, date);
-        Set<LocalDate> attendances = member.getAttendedDates();
+        addAttendance(member, date, true);
+        Set<LocalDate> attendances = member.getAttendedDates().stream().map(Attendance::getDate).collect(Collectors.toSet());
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         LocalDate now = LocalDate.now(userZone);
         NavigableSet<LocalDate> sortedDates = new TreeSet<>(attendances).descendingSet();
-        updateStreak(member, sortedDates, now);
-        return AttendanceResponse.fromMember(member);
+        Integer feather = updateStreak(member, sortedDates, now);
+        AttendanceResponse res = AttendanceResponse.fromMember(member);
+        res.setFeatherCnt(feather);
+        return res;
     }
-    private void updateStreak(Member member, NavigableSet<LocalDate> sortedDates, LocalDate now) {
+    private Integer updateStreak(Member member, NavigableSet<LocalDate> sortedDates, LocalDate now) {
         LocalDate lld = null;
         Integer longestStreak = 0;
         Integer cnt=0;
@@ -169,11 +173,13 @@ public class GoodsService {
                 }
             }
         }
+        Integer feather=0;
         if(member.getLongestStreak()<=longestStreak){
             member.setLongestStreak(longestStreak);
             member.setLastDayOfLongestStreak(lld);
             FeatherRequest request = new FeatherRequest();
-            request.setFeather(checkAttendanceReward(longestStreak));
+            feather=checkAttendanceReward(longestStreak);
+            request.setFeather(feather);
             updateFeather(member, request);
         }
         if(Objects.requireNonNull(lld).equals(now)){
@@ -181,6 +187,7 @@ public class GoodsService {
                 member.setCurStreak(longestStreak);
             }
         }
+        return feather;
 
     }
     public Integer checkAttendanceReward(Integer streak) {
@@ -205,10 +212,11 @@ public class GoodsService {
     public List<AttendanceByMonthResponse> getAttendanceByMonth(Member member, YearMonth yearMonth){
         return member.getAttendedDates()
                 .stream()
-                .filter(d->d.getYear()==yearMonth.getYear() && d.getMonth()==yearMonth.getMonth())
+                .filter(info->info.getDate().getYear()==yearMonth.getYear() && info.getDate().getMonth()==yearMonth.getMonth())
                 .sorted()
-                .map(d->AttendanceByMonthResponse.builder()
-                        .attendedDate(d)
+                .map(info->AttendanceByMonthResponse.builder()
+                        .attendedDate(info.getDate())
+                        .isIce(info.getIsIce()==null?false:info.getIsIce())
                         .build())
                 .collect(Collectors.toList());
     }

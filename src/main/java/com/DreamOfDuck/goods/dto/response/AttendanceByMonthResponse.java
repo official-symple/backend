@@ -16,5 +16,7 @@ import java.time.LocalDate;
 public class AttendanceByMonthResponse {
     @Schema(example="2025-08-25")
     LocalDate attendedDate;
+    @Schema(example="false")
+    boolean isIce;
 
 }

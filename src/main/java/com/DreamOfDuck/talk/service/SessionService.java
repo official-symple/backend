@@ -59,7 +59,6 @@ public class SessionService {
         ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
         LocalDate now = LocalDate.now(userZone);
         eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), now));
-        host.getAttendedDates().add(LocalDate.now());
         return SessionResponse.from(session);
     }
     @Transactional

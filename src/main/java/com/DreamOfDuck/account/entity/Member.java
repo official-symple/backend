@@ -61,7 +61,7 @@ public class Member extends TimeStamp {
     @ElementCollection
     @CollectionTable(name = "member_attendance", joinColumns = @JoinColumn(name = "member_id"))
     @Column(name = "attendance_date")
-    private Set<LocalDate> attendedDates = new TreeSet<>();
+    private Set<Attendance> attendedDates = new TreeSet<>();
     private Integer curStreak=0;
     private Integer longestStreak=0;
     private LocalDate LastDayOfLongestStreak;
