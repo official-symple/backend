@@ -1,5 +1,6 @@
 package com.DreamOfDuck.account.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Attendance implements Comparable<Attendance> {
+    @Column(name = "attendance_date")
     private LocalDate date;
+
     private Boolean isIce;
 
     @Override
