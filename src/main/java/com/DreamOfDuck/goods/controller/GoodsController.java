@@ -4,6 +4,7 @@ import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.dto.response.FeatherRewardResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
@@ -47,8 +48,8 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getAttendanceByMonth(member, yearMonth);
     }
-    @GetMapping("/attendance/{date}")
-    @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
+    @PostMapping("/attendance/ice/{date}")
+    @Operation(summary = "얼음 깨기", description = "얼음을 깨는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
             )})
@@ -57,7 +58,7 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.breakIce(member, date);
     }
-    @PostMapping("/attendance/")
+    @PostMapping("/attendance")
     @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
@@ -67,6 +68,17 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getAttendance(member);
     }
+    @PostMapping("/attendance/reward")
+    @Operation(summary = "출석 깃털 보상 받기", description = "출석으로 인한 깃털 보상받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = FeatherRewardResponse.class)
+            )})
+    })
+    public FeatherRewardResponse getFeatherByAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return goodsService.getFeatherByAttendance(member);
+    }
+
     @PostMapping("/heart/ad")
     @Operation(summary = "광고,하트 업데이트", description = "광고보고 하트를 업데이트하는 API")
     @ApiResponses(value={
@@ -161,5 +173,7 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.updateDuckname(member, request);
     }
+
+
 
 }

@@ -65,6 +65,7 @@ public class MemberService {
         //출석
         member.setLongestStreak(0);
         member.setCurStreak(0);
+        member.setFeatherByAttendance(0);
         //꽥팡
         member.setMaxScore(0);
         member.setCntPlaying(0L);

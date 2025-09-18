@@ -9,11 +9,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Embeddable
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Data
-public class Attendance {
+public class Attendance implements Comparable<Attendance> {
     private LocalDate date;
     private Boolean isIce;
+
+    @Override
+    public int compareTo(Attendance o) {
+        return o.date.compareTo(this.date);
+    }
 }
+

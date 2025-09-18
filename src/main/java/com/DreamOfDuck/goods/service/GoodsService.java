@@ -10,6 +10,7 @@ import com.DreamOfDuck.goods.dto.request.DiaRequest;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
+import com.DreamOfDuck.goods.dto.response.FeatherRewardResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -139,55 +140,80 @@ public class GoodsService {
 
     @Transactional
     public AttendanceResponse breakIce(Member member, LocalDate date) {
-
-        if(member.getAttendedDates().contains(date)){
+        Set<Attendance> attendedDates = member.getAttendedDates();
+        boolean alreadyAttended = attendedDates.stream()
+                .anyMatch(a -> a.getDate().equals(date));
+        if (alreadyAttended) {
             throw new CustomException(ErrorCode.ATTENDANCE_EXIST);
         }
         addAttendance(member, date, true);
-        Set<LocalDate> attendances = member.getAttendedDates().stream().map(Attendance::getDate).collect(Collectors.toSet());
+        attendedDates.add(Attendance.builder().date(date).isIce(true).build());
+        NavigableSet<LocalDate> sortedDates = attendedDates.stream()
+                .map(Attendance::getDate)
+                .collect(Collectors.toCollection(TreeSet::new)).descendingSet();
+
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         LocalDate now = LocalDate.now(userZone);
-        NavigableSet<LocalDate> sortedDates = new TreeSet<>(attendances).descendingSet();
-        Integer feather = updateStreak(member, sortedDates, now);
+
+        updateStreak(member, sortedDates, now);
         AttendanceResponse res = AttendanceResponse.fromMember(member);
-        res.setFeatherCnt(feather);
+
+
+
         return res;
     }
-    private Integer updateStreak(Member member, NavigableSet<LocalDate> sortedDates, LocalDate now) {
-        LocalDate lld = null;
-        Integer longestStreak = 0;
-        Integer cnt=0;
-        for(LocalDate date : sortedDates){
-            if(lld==null) {
-                lld=date;
-                cnt++;
-            }
-            else{
-                if(lld.minusDays(1).equals(date)){
-                    cnt++;
+    private void updateStreak(Member member, NavigableSet<LocalDate> sortedDates, LocalDate now) {
+        //오늘 포함 최장 연속 출석 업뎃
+        Integer curStreak = 0;
+        if (!sortedDates.isEmpty() && sortedDates.first().equals(now)) {
+            LocalDate prev = null;
+            for(LocalDate date : sortedDates) {
+                if(prev==null) {
+                    curStreak++;
+                    prev=date;
                 }
                 else{
-                    if(cnt>longestStreak) longestStreak=cnt;
-                    lld=date;
-                    cnt=0;
+                    if(date.plusDays(1).equals(prev)) {
+                        curStreak++;
+                        prev=date;
+                    }
+                    else{
+                        break;
+                    }
                 }
+                log.info(String.valueOf(prev));
             }
         }
+        member.setCurStreak(curStreak);
+        //최장 연속 출석 업뎃
+        LocalDate lld = null;
+        int cnt = 0;
+        int longestStreak = 0;
+        LocalDate prev = null;
+
+        for(LocalDate date : sortedDates){
+            if(prev == null || !prev.minusDays(1).equals(date)) cnt = 1;
+            else cnt++;
+            prev = date;
+
+            if(cnt > longestStreak){
+                longestStreak = cnt;
+                lld = date;
+            }
+        }
+
         Integer feather=0;
         if(member.getLongestStreak()<=longestStreak){
+            feather=checkAttendanceReward(longestStreak);
             member.setLongestStreak(longestStreak);
             member.setLastDayOfLongestStreak(lld);
-            FeatherRequest request = new FeatherRequest();
-            feather=checkAttendanceReward(longestStreak);
-            request.setFeather(feather);
-            updateFeather(member, request);
-        }
-        if(Objects.requireNonNull(lld).equals(now)){
-            if(member.getCurStreak()<longestStreak){
-                member.setCurStreak(longestStreak);
+            //깃털 추가
+            if(member.getFeatherByAttendance()==null){
+                member.setFeatherByAttendance(feather);
+            }else {
+                member.setFeatherByAttendance(member.getFeatherByAttendance() + feather);
             }
         }
-        return feather;
 
     }
     public Integer checkAttendanceReward(Integer streak) {
@@ -222,5 +248,17 @@ public class GoodsService {
     }
     public AttendanceResponse getAttendance(Member member){
         return AttendanceResponse.fromMember(member);
+    }
+    @Transactional
+    public FeatherRewardResponse getFeatherByAttendance(Member member){
+        Integer feather = member.getFeatherByAttendance();
+        if(feather==null) feather=0;
+        member.setFeatherByAttendance(0);
+        FeatherRequest req = new FeatherRequest();
+        req.setFeather(feather);
+        updateFeather(member, req);
+        FeatherRewardResponse res = FeatherRewardResponse.builder()
+                .featherReward(feather).build();
+        return res;
     }
 }

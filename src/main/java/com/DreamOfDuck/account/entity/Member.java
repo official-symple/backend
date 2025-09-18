@@ -60,11 +60,11 @@ public class Member extends TimeStamp {
     //출석
     @ElementCollection
     @CollectionTable(name = "member_attendance", joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "attendance_date")
     private Set<Attendance> attendedDates = new TreeSet<>();
     private Integer curStreak=0;
     private Integer longestStreak=0;
     private LocalDate LastDayOfLongestStreak;
+    private Integer featherByAttendance=0;
     //재화
     private Integer heart;
     private Integer dia;

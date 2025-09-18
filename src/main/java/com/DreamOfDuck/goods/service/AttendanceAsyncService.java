@@ -47,10 +47,12 @@ public class AttendanceAsyncService {
         //longest streak
         updateLongestStreak(member, curDate, newCurStreak);
         //reward
-        Integer updatedFeather = goodsService.checkAttendanceReward(newCurStreak);
-        FeatherRequest request = new FeatherRequest();
-        request.setFeather(updatedFeather);
-        goodsService.updateFeather(member, request);
+        Integer feather = goodsService.checkAttendanceReward(newCurStreak);
+        if(member.getFeatherByAttendance()==null){
+            member.setFeatherByAttendance(feather);
+        }else{
+            member.setFeatherByAttendance(member.getFeatherByAttendance()+feather);
+        }
     }
     private Integer calculateCurrentStreak(NavigableSet<LocalDate> sortedDates, LocalDate curDate, Integer prevStreak) {
         if (sortedDates.isEmpty()) {
