@@ -11,51 +11,45 @@ import java.util.Map;
 @Getter
 @RequiredArgsConstructor
 public enum Emotion {
-    EMOTION1(0, "흥분돼"),
-    EMOTION2(1, "행복해"),
-    EMOTION3(2, "기뻐"),
-    EMOTION4(3, "즐거워"),
-    EMOTION5(4, "편안해"),
-    EMOTION6(5, "만족스러워"),
-    EMOTION7(6, "평온해"),
-    EMOTION8(7, "긴장돼"),
-    EMOTION9(8, "비참해"),
-    EMOTION10(9, "슬퍼"),
-    EMOTION11(10, "우울해"),
-    EMOTION12(11, "지루해"),
-    EMOTION13(12, "풀이 죽었어"),
-    EMOTION14(13, "피곤해"),
-    EMOTION15(14, "외로워"),
-    EMOTION16(15, "후회돼"),
-    EMOTION17(16, "죄책감 들어"),
-    EMOTION18(17, "지쳐"),
-    EMOTION19(18, "낙심했어"),
-    EMOTION20(19, "괴로워"),
-    EMOTION21(20, "귀찮아"),
-    EMOTION22(21, "두려워"),
-    EMOTION23(22, "화나"),
-    EMOTION24(23, "깜짝 놀랐어"),
-    EMOTION25(24, "언짢아"),
-    EMOTION26(25, "불안해"),
-    EMOTION27(26, "혼란스러워"),
-    EMOTION28(27, "불쾌해");
+    EMOTION1(0, "흥분돼", "excited"),
+    EMOTION2(1, "행복해", "happy"),
+    EMOTION3(2, "기뻐", "glad"),
+    EMOTION4(3, "즐거워", "contented"),
+    EMOTION5(4, "편안해", "calm"),
+    EMOTION6(5, "만족스러워", "satisfied"),
+    EMOTION7(6, "평온해", "relaxed"),
+    EMOTION8(7, "긴장돼", "nervous"),
+    EMOTION9(8, "비참해", "miserable"),
+    EMOTION10(9, "슬퍼", "sad"),
+    EMOTION11(10, "우울해", "depressed"),
+    EMOTION12(11, "지루해", "bored"),
+    EMOTION13(12, "풀이 죽었어", "discouraged"),
+    EMOTION14(13, "피곤해", "sleepy"),
+    EMOTION15(14, "외로워", "lonely"),
+    EMOTION16(15, "후회돼", "regretful"),
+    EMOTION17(16, "죄책감 들어", "guilty"),
+    EMOTION18(17, "지쳐", "tired"),
+    EMOTION19(18, "낙심했어", "discouraged"),
+    EMOTION20(19, "괴로워", "lonely"),
+    EMOTION21(20, "귀찮아", "annoyed"),
+    EMOTION22(21, "두려워", "afraid"),
+    EMOTION23(22, "화나", "angry"),
+    EMOTION24(23, "깜짝 놀랐어", "surprised"),
+    EMOTION25(24, "언짢아", "upset"),
+    EMOTION26(25, "불안해", "anxious"),
+    EMOTION27(26, "혼란스러워", "confused"),
+    EMOTION28(27, "불쾌해", "unpleasant");
 
     private final Integer id;
     private final String text;
-    //성능개선 위해 map사용 -> O(1)
-    private static final Map<Integer, Emotion> EMOTION_MAP = new HashMap<>();
-    static {
-        for (Emotion emotion : Emotion.values()) {
-            EMOTION_MAP.put(emotion.getId(), emotion);
-        }
-    }
-
+    private final String engText;
     public static Emotion fromId(Integer id) {
-        Emotion emotion = EMOTION_MAP.get(id);
-        if (emotion == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
+        for (Emotion emotion : Emotion.values()) {
+            if (emotion.getId().equals(id)) {
+                return emotion;
+            }
         }
-        return emotion;
+        throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
     }
     public static Emotion fromText(String text) {
         for (Emotion emotion : Emotion.values()) {

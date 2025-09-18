@@ -1,5 +1,6 @@
 package com.DreamOfDuck.mind.service;
 
+import com.DreamOfDuck.account.entity.Language;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
@@ -227,15 +228,17 @@ public class MindCheckService {
         if(now.plusDays(13).isAfter(userNowDate)) {
             throw new CustomException(ErrorCode.NOT_ENOUGH_RECORDS);
         }
+
         List<MindChecks> mindChecks11 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(10));
         List<MindChecks> mindChecks3 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(11), now.plusDays(13));
         MindCheckReportPeriod curReport = getReportPeriod(member, mindChecks3, mindChecks11);
+        if(curReport.getResult()==null) throw new CustomException(ErrorCode.NULL_MIND_CHECK);
         List<MindChecks> mindChecks11_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(14), now.minusDays(4));
         List<MindChecks> mindChecks3_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(3), now.minusDays(1));
         MindCheckReportPeriod pastReport = getReportPeriod(member, mindChecks3_2, mindChecks11_2);
         if(pastReport.getResult()!=null) {
-            //전체 결과
-            return getMindCheckTrend(curReport, pastReport);
+            if(member.getLanguage()==Language.ENG) return getMindCheckTrendEng(curReport, pastReport);
+            else return getMindCheckTrend(curReport, pastReport);
         }
         return curReport;
     }
@@ -249,13 +252,118 @@ public class MindCheckService {
         List<MindChecks> mindChecks20 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now, now.plusDays(19));
         List<MindChecks> mindChecks10 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.plusDays(20), now.plusDays(29));
         MindCheckReportPeriod curReport = getReportPeriod(member, mindChecks10, mindChecks20);
+        if(curReport.getResult()==null) throw new CustomException(ErrorCode.NULL_MIND_CHECK);
         List<MindChecks> mindChecks20_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(30), now.minusDays(11));
         List<MindChecks> mindChecks10_2 = mindChecksRepository.findByHostAndDateBetweenOrderByDateDesc(member, now.minusDays(10), now.minusDays(1));
         MindCheckReportPeriod pastReport = getReportPeriod(member, mindChecks10_2, mindChecks20_2);
         if(pastReport.getResult()!=null) {
-            //전체 결과
-            return getMindCheckTrend(curReport, pastReport);
+            if(member.getLanguage()==Language.ENG) return getMindCheckTrendEng(curReport, pastReport);
+            else return getMindCheckTrend(curReport, pastReport);
         }
+        return curReport;
+
+    }
+    private MindCheckReportPeriod getMindCheckTrendEng(MindCheckReportPeriod curReport, MindCheckReportPeriod pastReport){
+        String curResult=curReport.getResult();
+        String pastResult=pastReport.getResult();
+        String[] results = {"고위험", "위험", "주의", "안정"};
+        int curIndex = Arrays.asList(results).indexOf(curResult);
+        int pastIndex = Arrays.asList(results).indexOf(pastResult);
+
+        String result;
+        if(curIndex==pastIndex){
+            result="remains the same";
+        }else if(curIndex<pastIndex){
+            int diff=pastIndex-curIndex;
+            if(diff==1){
+                result="decreased by one level";
+            }else if(diff==2){
+                result="decreased by two levels";
+            }else{
+                result="decreased by three levels";
+            }
+        }else{
+            int diff=curIndex-pastIndex;
+            if(diff==1){
+                result="increased by one level";
+            }else if(diff==2){
+                result="increased by two levels";
+            }else{
+                result="increased by three levels";
+            }
+        }
+        curReport.setResultTrend("Compared to the last 2 weeks, it "+result);
+        //우울, 스트레스, 스트레스 조절 어려움
+        String resultQ1=curReport.getResponseRateOfQ1()<pastReport.getResponseRateOfQ1()?"decreased":
+                curReport.getResponseRateOfQ1().equals(pastReport.getResponseRateOfQ1())?"stayed the same.":"increased.";
+        String resultQ2=curReport.getResponseRateOfQ2()<pastReport.getResponseRateOfQ2()?"decreased.":
+                curReport.getResponseRateOfQ2().equals(pastReport.getResponseRateOfQ2())?"stayed the same.":"increased.";
+        String resultQ3=curReport.getResponseRateOfQ3()<pastReport.getResponseRateOfQ3()?"decreased.":
+                curReport.getResponseRateOfQ3().equals(pastReport.getResponseRateOfQ3())?"stayed the same.":"increased.";
+        curReport.setQuestionResponseTrend("Frequency of depression "+resultQ1+", difficulty managing stress "+resultQ2+", and stress frequency "+resultQ3);
+        //가장 자주 고른 감정
+        log.info(String.valueOf(curReport.getTop3Emotions().get(0).getEmotion()));
+        String curEmotion = Emotion.fromId(curReport.getTop3Emotions().get(0).getEmotion()).getEngText();
+        String curEmotionType = Emotion.fromText(curEmotion).getId()>=7?"the negative emotion":"the positive emotion";
+        String pastEmotion = Emotion.fromId(pastReport.getTop3Emotions().get(0).getEmotion()).getEngText();
+        String pastEmotionType = Emotion.fromText(curEmotion).getId()>=7?"the positive emotion":"the negative emotion";
+        if(curEmotion.equals(pastEmotion)){
+            curReport.setTopEmotionTrend("The most frequently chosen emotion stayed the same.");
+        }else{
+            curReport.setTopEmotionTrend("Changed from "+pastEmotionType+" '"+pastEmotion+"' to the "+curEmotionType+" '"+curEmotion);
+        }
+        //부정 감정 비율
+        float pastNegativeEmotionRate = pastReport.getNegativeEmotionRate();
+        float curNegativeEmotionRate = curReport.getNegativeEmotionRate();
+        if(pastNegativeEmotionRate<curNegativeEmotionRate){
+            float diff = curNegativeEmotionRate - pastNegativeEmotionRate;
+            curReport.setNegativeEmotionTrend("The portion of negative emotions increased by "+String.format("%.2f", diff)+"%.");
+        }else if(pastNegativeEmotionRate>curNegativeEmotionRate){
+            float diff = pastNegativeEmotionRate - curNegativeEmotionRate;
+            curReport.setNegativeEmotionTrend("The portion of negative emotions decreased by "+String.format("%.2f", diff)+"%.");
+        }else{
+            curReport.setNegativeEmotionTrend("The proportion of negative emotions stayed the same.");
+        }
+        //마음체크 응답률
+        float pastReportResponse = pastReport.getResponseRate();
+        float pastDayReportResponse = pastReport.getDayResponseRate();
+        float pastNightReportResponse = pastReport.getNightResponseRate();
+        float curReportResponse = curReport.getResponseRate();
+        float curDayReportResponse = curReport.getDayResponseRate();
+        float curNightReportResponse = curReport.getNightResponseRate();
+        float diff1, diff2, diff3;
+        String entireResult, dayResult, nightResult;
+        if(pastReportResponse<curDayReportResponse){
+            diff1=curReportResponse-pastReportResponse;
+            entireResult="increased by " +(int)diff1+"%!";
+        }else if(pastReportResponse>curDayReportResponse){
+            diff1=pastReportResponse-curReportResponse;
+            entireResult="decreased by " +(int)diff1+"%!";
+        }else{
+            diff1=pastReportResponse;
+            entireResult="stayed the same!";
+        }
+        if(pastDayReportResponse<curDayReportResponse){
+            diff2=curDayReportResponse-pastDayReportResponse;
+            dayResult="went up " +(int)diff2+"%";
+        }else if(pastDayReportResponse>curDayReportResponse){
+            diff2=pastDayReportResponse-curDayReportResponse;
+            dayResult="decreased by " +(int)diff2+"%";
+        }else{
+            diff2=pastDayReportResponse;
+            dayResult="stayed the same";
+        }
+        if(pastNightReportResponse<curNightReportResponse){
+            diff3=curNightReportResponse-pastNightReportResponse;
+            nightResult="increased by " +(int)diff3+"%.";
+        }else if(pastNightReportResponse>curNightReportResponse){
+            diff3=pastNightReportResponse-curNightReportResponse;
+            nightResult="decreased by " +(int)diff3+"%.";
+        }else{
+            diff3=pastNightReportResponse;
+            nightResult="remained unchanged";
+        }
+        curReport.setResponseRateTrend("Overall response rate "+entireResult+"\n Morning response rate "+dayResult+", and evening response rate "+nightResult);
         return curReport;
     }
     private MindCheckReportPeriod getMindCheckTrend(MindCheckReportPeriod curReport, MindCheckReportPeriod pastReport){

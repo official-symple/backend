@@ -58,7 +58,7 @@ public class MindCheckReportPeriod {
     @Data
     @AllArgsConstructor
     public static class EmotionRatio {
-        private int emotion;
+        private Integer emotion;
         private float ratio;
     }
 }
