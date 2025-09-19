@@ -304,9 +304,9 @@ public class MindCheckService {
         //가장 자주 고른 감정
         log.info(String.valueOf(curReport.getTop3Emotions().get(0).getEmotion()));
         String curEmotion = Emotion.fromId(curReport.getTop3Emotions().get(0).getEmotion()).getEngText();
-        String curEmotionType = Emotion.fromText(curEmotion).getId()>=7?"the negative emotion":"the positive emotion";
+        String curEmotionType = Emotion.fromEngText(curEmotion).getId()>=7?"the negative emotion":"the positive emotion";
         String pastEmotion = Emotion.fromId(pastReport.getTop3Emotions().get(0).getEmotion()).getEngText();
-        String pastEmotionType = Emotion.fromText(curEmotion).getId()>=7?"the positive emotion":"the negative emotion";
+        String pastEmotionType = Emotion.fromEngText(curEmotion).getId()>=7?"the positive emotion":"the negative emotion";
         if(curEmotion.equals(pastEmotion)){
             curReport.setTopEmotionTrend("The most frequently chosen emotion stayed the same.");
         }else{

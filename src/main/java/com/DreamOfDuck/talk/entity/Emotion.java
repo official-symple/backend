@@ -4,10 +4,11 @@ import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 @Getter
 @RequiredArgsConstructor
 public enum Emotion {
@@ -49,6 +50,7 @@ public enum Emotion {
                 return emotion;
             }
         }
+        log.info("can't find emotion having id "+id);
         throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
     }
     public static Emotion fromText(String text) {
@@ -57,6 +59,16 @@ public enum Emotion {
                 return emotion;
             }
         }
+        log.info("can't find emotion having text "+text);
+        throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
+    }
+    public static Emotion fromEngText(String text) {
+        for (Emotion emotion : Emotion.values()) {
+            if (emotion.getEngText().equals(text)) {
+                return emotion;
+            }
+        }
+        log.info("can't find emotion having text "+text);
         throw new CustomException(ErrorCode.NOT_FOUND_EMOTION);
     }
 }
