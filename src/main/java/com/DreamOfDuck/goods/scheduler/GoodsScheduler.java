@@ -4,6 +4,8 @@ import com.DreamOfDuck.account.entity.Language;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Subscribe;
 import com.DreamOfDuck.account.repository.MemberRepository;
+import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.service.GoodsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoodsScheduler {
     private final MemberRepository memberRepository;
+    private final GoodsService goodsService;
+
     @Async
     @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
     @Transactional
@@ -69,4 +73,26 @@ public class GoodsScheduler {
             }
         }
     }
+    @Async
+    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+    @Transactional
+    public void resetMonthlyDataByMemberLocation() {
+        List<Member> members = memberRepository.findAll();
+
+        for (Member member : members) {
+            if(member.getSubscribe()==Subscribe.FREE || member.getSubscribe()==Subscribe.BASIC || member.getSubscribe()==null ) continue;
+            try {
+                log.info("====== 매월 1일 00:00 - 월별 데이터 초기화 작업 시작 ======");
+                DiaRequest diaRequest = new DiaRequest();
+                if(member.getSubscribe()==Subscribe.PRO) diaRequest.setDia(100);
+                else if(member.getSubscribe()==Subscribe.PREMIUM) diaRequest.setDia(300);
+                goodsService.plusDia(member, diaRequest);
+            } catch (Exception e) {
+                // location 값이 잘못됐거나 예외 발생 시 로그
+                log.error("Invalid time zone for member {}: {}", member.getId(), member.getLocation(), e);
+            }
+        }
+    }
+
+
 }
