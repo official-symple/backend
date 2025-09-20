@@ -62,6 +62,7 @@ public class MemberService {
         else if(sum<=9) member.setTotalStatus("가벼운 우울");
         else if(sum<=19) member.setTotalStatus("중간 정도의 우울");
         else member.setTotalStatus("심한 우울");
+        member.setSubscribe(Subscribe.FREE);
         //출석
         member.setLongestStreak(0);
         member.setCurStreak(0);
@@ -70,10 +71,11 @@ public class MemberService {
         member.setMaxScore(0);
         member.setCntPlaying(0L);
 
-        member.setHeart(2);
+        member.setHeart(6);
         member.setDia(0);
         member.setFeather(0);
         member.setLv(1);
+        member.setCntTalk(2);
         member.setLocation("Asia/Seoul");
         if(request.getLanguage().equalsIgnoreCase("kor")) member.setDuckname("꽥꽥이");
         else member.setDuckname("Qquack");

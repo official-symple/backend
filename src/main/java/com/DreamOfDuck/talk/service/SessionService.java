@@ -1,5 +1,6 @@
 package com.DreamOfDuck.talk.service;
 
+import com.DreamOfDuck.account.entity.Subscribe;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
@@ -31,6 +32,9 @@ public class SessionService {
     private final GoodsService goodsService;
     @Transactional
     public SessionResponse save(Member host, SessionCreateRequest request){
+        Integer cntTalk=host.getCntTalk()==null?2:host.getCntTalk();
+        if(cntTalk<=0 && host.getSubscribe()!= Subscribe.PREMIUM) throw new CustomException(ErrorCode.NOT_ENOUGH_CNT_TALK);
+        goodsService.minusCntTalk(host);
         Session session = Session.builder()
                 .duckType(Talker.fromValue(request.getDuckType()))
                 .isFormal(request.getIsFormal())

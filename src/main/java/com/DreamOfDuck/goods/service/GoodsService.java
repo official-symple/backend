@@ -4,6 +4,7 @@ import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.entity.Attendance;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.entity.Subscribe;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
@@ -59,7 +60,14 @@ public class GoodsService {
     }
     @Transactional
     public HomeResponse minusHeart(Member member, Integer cnt) {
-        if(member.getRole()!= Role.ROLE_ADMIN) member.setHeart(member.getHeart()-cnt);
+        if(member.getRole()== Role.ROLE_USER && (member.getSubscribe()== Subscribe.FREE || member.getSubscribe()==Subscribe.BASIC || member.getSubscribe()==null)) member.setHeart(member.getHeart()-cnt);
+        HomeResponse res = HomeResponse.from(member);
+        res.setRequiredFeather(levelRequirements[member.getLv()]);
+        return res;
+    }
+    @Transactional
+    public HomeResponse minusCntTalk(Member member) {
+        if(member.getRole()== Role.ROLE_USER && member.getSubscribe()!=Subscribe.PREMIUM) member.setHeart(member.getHeart()-1);
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;

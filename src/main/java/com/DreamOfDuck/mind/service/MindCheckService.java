@@ -1,6 +1,7 @@
 package com.DreamOfDuck.mind.service;
 
 import com.DreamOfDuck.account.entity.Language;
+import com.DreamOfDuck.account.entity.Subscribe;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
@@ -194,6 +195,7 @@ public class MindCheckService {
     }
 
     public MindCheckReport getMindCheckResult(Member member, LocalDate now) {
+
         MindChecks mindChecks = mindChecksRepository.findByHostAndDate(member, now).stream().findFirst().orElse(null);
         //에러처리
         //null인 경우
@@ -222,6 +224,7 @@ public class MindCheckService {
         return response;
     }
     public MindCheckReportPeriod getMindCheckResultPer2Weeks(Member member, LocalDate now) {
+        if(member.getSubscribe()==null || member.getSubscribe()== Subscribe.BASIC || member.getSubscribe()==Subscribe.FREE) throw new CustomException(ErrorCode.UPGRADE_SUBSCRIBE);
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         LocalDate userNowDate = LocalDate.now(userZone);
         //14일이 안되는 경우
@@ -243,6 +246,7 @@ public class MindCheckService {
         return curReport;
     }
     public MindCheckReportPeriod getMindCheckResultPer1Month(Member member, LocalDate now) {
+        if(member.getSubscribe()==null || member.getSubscribe()== Subscribe.BASIC || member.getSubscribe()==Subscribe.FREE) throw new CustomException(ErrorCode.UPGRADE_SUBSCRIBE);
         ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
         LocalDate userNowDate = LocalDate.now(userZone);
         //14일이 안되는 경우

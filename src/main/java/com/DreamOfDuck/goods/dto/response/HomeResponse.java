@@ -23,6 +23,8 @@ public class HomeResponse {
     Integer feather;
     @Schema(example="1")
     Integer lv;
+    @Schema(example="2")
+    Integer cntTalk;
     @Schema(example="20")
     Integer requiredFeather;
 
@@ -33,6 +35,7 @@ public class HomeResponse {
                 .dia(member.getDia())
                 .feather(member.getFeather())
                 .lv(member.getLv())
+                .cntTalk(member.getCntTalk())
                 .build();
     }
 }

@@ -42,6 +42,8 @@ public class MemberResponse {
     String totalStatus;
     @Schema(example="1100")
     Integer maxScore;
+    @Schema(example="free")
+    String subscribe;
 
     public static MemberResponse from(Member member){
         return MemberResponse.builder()
@@ -57,6 +59,7 @@ public class MemberResponse {
                 .status(member.getStatus())
                 .totalStatus(member.getTotalStatus())
                 .maxScore(member.getMaxScore())
+                .subscribe(member.getSubscribe()==null?"free":member.getSubscribe().toString().toLowerCase())
                 .build();
     }
 }

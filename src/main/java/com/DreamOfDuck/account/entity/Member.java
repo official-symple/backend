@@ -47,7 +47,8 @@ public class Member extends TimeStamp {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Cause concern;
-
+    @Enumerated(EnumType.STRING)
+    private Subscribe subscribe;
 
     @ElementCollection
     @CollectionTable(name = "member_status", joinColumns = @JoinColumn(name = "member_id"))
@@ -70,6 +71,7 @@ public class Member extends TimeStamp {
     private Integer dia;
     private Integer feather;
     private Integer lv;
+    private Integer cntTalk;
     //캐릭터-스토어 이후 분리하기
     private String duckname;
     private String location;

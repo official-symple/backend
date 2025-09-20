@@ -48,6 +48,7 @@ public enum ErrorCode {
     MISSION_ING(-410, "미션 생성 중이에요...ing", 406),
     ADVICE_ING(-411, "ADVICE 생성 중이에요..ing", 406),
     SUMMARY_ING(-412, "리포트 생성 중이에요..ing", 406),
+    NOT_ENOUGH_CNT_TALK(-413, "오늘 가능한 꽥톡 횟수를 초과했습니다.", 400),
 
     //Record
     RECORD_ALREADY_EXIST(-500, "해당 회원의 해당 날자 기록은 이미 존재합니다.", 400),
@@ -68,7 +69,8 @@ public enum ErrorCode {
     ALREADY_EXIST(-702, "해당 날짜, 해당 시간 대의 마음체크는 이미 완료했습니다.", 400),
     NULL_MIND_CHECK(-703, "해당 날짜(기간)의 마음체크를 하지 않았습니다.", 406),
     CHECK_TOMORROW(-704, "오늘 마음체크를 완료하지 못했습니다. 다음날 리포트를 확인할 수 있어요",400),
-    NOT_ENOUGH_RECORDS(-705, "아직 마음체크 기록이 충분하지 않아요.", 400);
+    NOT_ENOUGH_RECORDS(-705, "아직 마음체크 기록이 충분하지 않아요.", 400),
+    UPGRADE_SUBSCRIBE(-706, "구독 정보를 업그레이드 후 이용해주세요", 400);
     private final int errorCode;
     private final String message;
     private final int httpCode;
