@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +28,7 @@ public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send";
     private final ObjectMapper objectMapper;
 
+    @Async("threadPoolTaskExecutor")
     public void sendMessageTo(String deviceToken, FcmRequest fcmRequest) throws IOException {
         log.info("Sending FCM message");
         fcmRequest.setDeviceToken(deviceToken);

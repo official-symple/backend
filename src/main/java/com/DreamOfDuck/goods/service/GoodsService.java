@@ -15,6 +15,7 @@ import com.DreamOfDuck.goods.dto.response.FeatherRewardResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class GoodsService {
             13000, 14500, 16000, 17500, 19000, 21000, 23000,
             25000, 27000, 29000, 31000, 33000, 35000
     };
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addAttendance(Member member, LocalDate date, Boolean isIce){
 
@@ -72,6 +74,7 @@ public class GoodsService {
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
     }
+
     @Transactional
     public HomeResponse plusDia(Member member, DiaRequest request) {
         member.setDia(member.getDia()+request.getDia());
@@ -79,6 +82,20 @@ public class GoodsService {
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
     }
+
+    @Async("threadPoolTaskExecutor")
+    @Transactional
+    public void plusDiaAsync(Member member, DiaRequest request) {
+        member.setDia(member.getDia()+request.getDia());
+    }
+
+    @Async("threadPoolTaskExecutor")
+    @Transactional
+    public void setHeartAsync(Member member, Integer cnt) {
+        member.setHeart(cnt);
+    }
+
+
     @Transactional
     public HomeResponse minusDia(Member member, DiaRequest request) {
         member.setDia(member.getDia()-request.getDia());

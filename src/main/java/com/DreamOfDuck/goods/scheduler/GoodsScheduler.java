@@ -24,7 +24,6 @@ public class GoodsScheduler {
     private final MemberRepository memberRepository;
     private final GoodsService goodsService;
 
-    @Async("threadPoolTaskExecutor")
     @Scheduled(cron = "0 0 * * * *") // 매 분마다 체크
     @Transactional
     public void resetHeartByMemberLocation() {
@@ -38,8 +37,8 @@ public class GoodsScheduler {
 
                 // 자정(00:00)에 초기화
                 if (userLocalTime.getHour() == 0 && userLocalTime.getMinute() == 0) {
-                    if(member.getSubscribe()== Subscribe.FREE || member.getSubscribe()==null) member.setHeart(6);
-                    else if(member.getSubscribe()==Subscribe.BASIC) member.setHeart(10);
+                    if(member.getSubscribe()== Subscribe.FREE || member.getSubscribe()==null) goodsService.setHeartAsync(member,6);
+                    else if(member.getSubscribe()==Subscribe.BASIC) goodsService.setHeartAsync(member,10);
                 }
 
             } catch (Exception e) {
@@ -48,7 +47,7 @@ public class GoodsScheduler {
             }
         }
     }
-    @Async("threadPoolTaskExecutor")
+
     @Scheduled(cron = "0 0 * * * *") // 매 분마다 체크
     @Transactional
     public void resetCntTalkByMemberLocation() {
@@ -73,7 +72,7 @@ public class GoodsScheduler {
             }
         }
     }
-    @Async("threadPoolTaskExecutor")
+
     @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
     @Transactional
     public void resetMonthlyDataByMemberLocation() {
