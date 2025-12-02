@@ -24,8 +24,8 @@ public class GoodsScheduler {
     private final MemberRepository memberRepository;
     private final GoodsService goodsService;
 
-    @Async
-    @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
+    @Async("threadPoolTaskExecutor")
+    @Scheduled(cron = "0 0 * * * *") // 매 분마다 체크
     @Transactional
     public void resetHeartByMemberLocation() {
         List<Member> members = memberRepository.findAll();
@@ -48,8 +48,8 @@ public class GoodsScheduler {
             }
         }
     }
-    @Async
-    @Scheduled(cron = "0 * * * * *") // 매 분마다 체크
+    @Async("threadPoolTaskExecutor")
+    @Scheduled(cron = "0 0 * * * *") // 매 분마다 체크
     @Transactional
     public void resetCntTalkByMemberLocation() {
         List<Member> members = memberRepository.findAll();
@@ -73,7 +73,7 @@ public class GoodsScheduler {
             }
         }
     }
-    @Async
+    @Async("threadPoolTaskExecutor")
     @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
     @Transactional
     public void resetMonthlyDataByMemberLocation() {

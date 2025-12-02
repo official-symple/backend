@@ -33,7 +33,7 @@ public class FcmScheduler {
     private final FcmService fcmService; // 실제 FCM 전송 서비스
 
     // 매 분마다 체크
-    @Async
+    @Async("threadPoolTaskExecutor")
     @Scheduled(cron = "0 * * * * *") // 매 분 실행
     public void sendMindCheckPush() {
         List<Member> members = memberRepository.findAllWithMindCheckTimes();

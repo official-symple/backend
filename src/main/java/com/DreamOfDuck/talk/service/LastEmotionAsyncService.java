@@ -36,7 +36,7 @@ public class LastEmotionAsyncService {
     private String endpoint_advice;
 
     @Transactional
-    @Async
+    @Async("threadPoolTaskExecutor")
     public void saveReportAndMission(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId).orElse(null);
 
@@ -95,7 +95,7 @@ public class LastEmotionAsyncService {
         }
     }
     @Transactional
-    @Async
+    @Async("threadPoolTaskExecutor")
     public void saveAdvice(Member host, Long sessionId){
         Session session = sessionRepository.findById(sessionId).orElse(null);
         AdviceRequestF requestF3 = AdviceRequestF.builder()

@@ -26,7 +26,7 @@ public class AttendanceAsyncService {
     private final GoodsService goodsService;
 
     @Transactional
-    @Async
+    @Async("threadPoolTaskExecutor")
     public void addAttendance(String email, LocalDate curDate) {
         Member member = memberService.findMemberByEmail(email);
         Set<Attendance> attendedDates = member.getAttendedDates();
