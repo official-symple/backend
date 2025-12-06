@@ -13,6 +13,7 @@ import com.DreamOfDuck.talk.entity.*;
 import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
+@Slf4j
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -59,6 +61,7 @@ public class SessionService {
         session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
         sessionRepository.save(session);
         host.setHeart(host.getHeart()+2);
+        log.info("create event of last emotion");
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
         ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
         LocalDate now = LocalDate.now(userZone);

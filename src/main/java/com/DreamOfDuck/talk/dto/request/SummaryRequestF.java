@@ -15,7 +15,18 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "summary create request")
 public class SummaryRequestF {
+    @NotNull
+    Integer persona;
+
+    Boolean formal;
+
     String language;
+
+    List<String> emotion;
+
+    String emotion_cause;
+
     @NotNull
     List<MessageFormatF> messages;
+
 }

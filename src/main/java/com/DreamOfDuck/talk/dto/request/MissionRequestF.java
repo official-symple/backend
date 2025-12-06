@@ -27,4 +27,8 @@ public class MissionRequestF {
 
     @NotNull
     String nickname;
+
+    String emotion_cause;
+    List<String> emotion;
+
 }

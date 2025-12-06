@@ -43,6 +43,10 @@ public class LastEmotionAsyncService {
         SummaryRequestF requestF = SummaryRequestF.builder()
                 .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .messages(MessageFormatF.fromSession(session))
+                .emotion_cause(session.getCause().getText())
+                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
+                .persona(session.getDuckType().getValue())
+                .formal(session.getIsFormal())
                 .build();
 
         SummaryResponseF responseF = getSummary(requestF);
@@ -55,6 +59,8 @@ public class LastEmotionAsyncService {
                 .formal(session.getIsFormal())
                 .summary(responseF.getProblem())
                 .nickname(session.getHost().getNickname())
+                .emotion_cause(session.getCause().getText())
+                .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .build();
         MissionResponse responseF2 = getMission(requestF2);
         System.out.println("mission 받기 : "+responseF2.getMission());
@@ -69,6 +75,7 @@ public class LastEmotionAsyncService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<SummaryRequestF> requestEntity = new HttpEntity<>(request, headers);
         try{
+            log.info("try to connect with chat gpt");
             ResponseEntity<SummaryResponseF> res = restTemplate.exchange(endpoint_summary, HttpMethod.POST, requestEntity, SummaryResponseF.class);
             if(res.getBody()==null){
                 throw new RuntimeException("fastApi로 부터 응답이 없습니다.");
