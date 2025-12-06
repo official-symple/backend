@@ -43,7 +43,7 @@ public class LastEmotionAsyncService {
         SummaryRequestF requestF = SummaryRequestF.builder()
                 .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
                 .messages(MessageFormatF.fromSession(session))
-                .emotion_cause(session.getCause().getText())
+                .emotionCause(session.getCause().getText())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
