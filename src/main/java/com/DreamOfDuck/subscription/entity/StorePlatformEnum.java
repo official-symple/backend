@@ -1,6 +1,6 @@
 package com.DreamOfDuck.subscription.entity;
 
-public enum StorePlatform {
+public enum StorePlatformEnum {
     APPLE,
     GOOGLE
 }

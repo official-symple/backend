@@ -1,12 +1,14 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import com.DreamOfDuck.subscription.config.IapProperties;
-import com.DreamOfDuck.subscription.entity.StorePlatform;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
+import com.DreamOfDuck.subscription.config.IapProperties;
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * IMPORTANT: This is a clean abstraction layer.
@@ -18,32 +20,33 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
     private final IapProperties properties;
 
     @Override
-    public StorePlatform supports() {
-        return StorePlatform.GOOGLE;
+    public StorePlatformEnum supports() {
+        return StorePlatformEnum.GOOGLE;
     }
 
     @Override
     public VerificationResult verify(VerificationCommand command) {
-        // Stub: validate shape only.
         if (!StringUtils.hasText(command.getPurchaseToken()) || !StringUtils.hasText(command.getProductId())) {
             return VerificationResult.builder().valid(false).rawResponse("missing_token_or_product").build();
         }
 
-        // TODO: use properties.getGoogle().getServiceAccountJson() + properties.getGoogle().getPackageName()
-        LocalDateTime expiresAt = LocalDateTime.now().plusDays(30);
-        String subId = StringUtils.hasText(command.getStoreSubscriptionId())
-                ? command.getStoreSubscriptionId()
-                : safeKey("google_token", command.getPurchaseToken());
+        // TODO: Implement real Google Play Developer API verification
+        // Use purchaseToken to verify with Google, extract subscription info
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = now.plusDays(30);
         String txId = StringUtils.hasText(command.getStoreTransactionId())
                 ? command.getStoreTransactionId()
-                : subId;
+                : safeKey("google_tx", command.getPurchaseToken());
+        String origTxId = txId; // In real implementation, extract from Google response
 
         return VerificationResult.builder()
                 .valid(true)
+                .startedAt(now)
                 .expiresAt(expiresAt)
                 .autoRenewing(true)
-                .storeSubscriptionId(subId)
+                .isTrialPeriod(false) // Extract from Google response in real implementation
                 .storeTransactionId(txId)
+                .originalTransactionId(origTxId)
                 .rawResponse("stub_ok:pkg=" + properties.getGoogle().getPackageName())
                 .build();
     }
@@ -54,5 +57,3 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
         return prefix + ":" + trimmed.substring(0, len);
     }
 }
-
-

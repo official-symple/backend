@@ -1,12 +1,14 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import com.DreamOfDuck.subscription.config.IapProperties;
-import com.DreamOfDuck.subscription.entity.StorePlatform;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
+import com.DreamOfDuck.subscription.config.IapProperties;
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * IMPORTANT: This is a clean abstraction layer.
@@ -18,32 +20,33 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
     private final IapProperties properties;
 
     @Override
-    public StorePlatform supports() {
-        return StorePlatform.APPLE;
+    public StorePlatformEnum supports() {
+        return StorePlatformEnum.APPLE;
     }
 
     @Override
     public VerificationResult verify(VerificationCommand command) {
-        // Stub: validate shape only.
         if (!StringUtils.hasText(command.getReceiptData())) {
             return VerificationResult.builder().valid(false).rawResponse("missing_receipt").build();
         }
 
-        // TODO: use properties.getApple().getSharedSecret() + Apple verification endpoints.
-        LocalDateTime expiresAt = LocalDateTime.now().plusDays(30);
-        String subId = StringUtils.hasText(command.getStoreSubscriptionId())
-                ? command.getStoreSubscriptionId()
-                : safeKey("apple_receipt", command.getReceiptData());
+        // TODO: Implement real Apple StoreKit 2 verification
+        // Parse receipt data, verify with Apple's server, extract transaction info
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = now.plusDays(30);
         String txId = StringUtils.hasText(command.getStoreTransactionId())
                 ? command.getStoreTransactionId()
-                : subId;
+                : safeKey("apple_tx", command.getReceiptData());
+        String origTxId = txId; // In real implementation, extract from receipt
 
         return VerificationResult.builder()
                 .valid(true)
+                .startedAt(now)
                 .expiresAt(expiresAt)
                 .autoRenewing(true)
-                .storeSubscriptionId(subId)
+                .isTrialPeriod(false) // Extract from receipt in real implementation
                 .storeTransactionId(txId)
+                .originalTransactionId(origTxId)
                 .rawResponse("stub_ok:sandbox=" + properties.getApple().isSandbox())
                 .build();
     }
@@ -54,5 +57,3 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
         return prefix + ":" + trimmed.substring(0, len);
     }
 }
-
-

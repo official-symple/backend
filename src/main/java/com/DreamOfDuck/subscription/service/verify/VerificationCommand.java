@@ -1,13 +1,14 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import com.DreamOfDuck.subscription.entity.StorePlatform;
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class VerificationCommand {
-    private StorePlatform platform;
+    private StorePlatformEnum platform;
     private String productId;
 
     // Apple
@@ -16,9 +17,6 @@ public class VerificationCommand {
     // Google
     private String purchaseToken;
 
-    // Optional client-provided ids (used as hints / logging)
+    // Optional client-provided transaction id
     private String storeTransactionId;
-    private String storeSubscriptionId;
 }
-
-

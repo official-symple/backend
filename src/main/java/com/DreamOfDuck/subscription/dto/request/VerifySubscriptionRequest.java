@@ -1,13 +1,14 @@
 package com.DreamOfDuck.subscription.dto.request;
 
-import com.DreamOfDuck.subscription.entity.StorePlatform;
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class VerifySubscriptionRequest {
-    private StorePlatform platform;
+    private StorePlatformEnum platform;
     private String productId;
 
     // Apple
@@ -16,9 +17,6 @@ public class VerifySubscriptionRequest {
     // Google
     private String purchaseToken;
 
-    // Optional hints
+    // Optional
     private String storeTransactionId;
-    private String storeSubscriptionId;
 }
-
-

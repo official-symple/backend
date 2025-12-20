@@ -1,28 +1,42 @@
 package com.DreamOfDuck.talk.service;
 
-import com.DreamOfDuck.account.entity.Subscribe;
-import com.DreamOfDuck.goods.dto.request.FeatherRequest;
-import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
-import com.DreamOfDuck.global.exception.CustomException;
-import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.goods.service.GoodsService;
-import com.DreamOfDuck.talk.dto.request.*;
-import com.DreamOfDuck.talk.dto.response.*;
-import com.DreamOfDuck.talk.entity.*;
-import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
-import com.DreamOfDuck.talk.repository.SessionRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
+import com.DreamOfDuck.goods.service.GoodsService;
+import com.DreamOfDuck.talk.dto.request.FeedbackRequest;
+import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
+import com.DreamOfDuck.talk.dto.request.SessionUpdateRequest;
+import com.DreamOfDuck.talk.dto.response.AdviceResponse;
+import com.DreamOfDuck.talk.dto.response.FeedbackResponse;
+import com.DreamOfDuck.talk.dto.response.MissionResponse;
+import com.DreamOfDuck.talk.dto.response.ReportResponse;
+import com.DreamOfDuck.talk.dto.response.SessionResponse;
+import com.DreamOfDuck.talk.dto.response.SessionResponseList;
+import com.DreamOfDuck.talk.entity.Cause;
+import com.DreamOfDuck.talk.entity.Emotion;
+import com.DreamOfDuck.talk.entity.LastEmotion;
+import com.DreamOfDuck.talk.entity.Session;
+import com.DreamOfDuck.talk.entity.Talker;
+import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
+import com.DreamOfDuck.talk.repository.SessionRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly=true)
@@ -35,7 +49,7 @@ public class SessionService {
     @Transactional
     public SessionResponse save(Member host, SessionCreateRequest request){
         Integer cntTalk=host.getCntTalk()==null?2:host.getCntTalk();
-        if(cntTalk<=0 && host.getSubscribe()!= Subscribe.PREMIUM) throw new CustomException(ErrorCode.NOT_ENOUGH_CNT_TALK);
+        if(cntTalk<=0 && host.getRole() != Role.ROLE_PREMIUM) throw new CustomException(ErrorCode.NOT_ENOUGH_CNT_TALK);
         goodsService.minusCntTalk(host);
         Session session = Session.builder()
                 .duckType(Talker.fromValue(request.getDuckType()))

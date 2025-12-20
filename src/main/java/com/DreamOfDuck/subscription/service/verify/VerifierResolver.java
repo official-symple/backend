@@ -1,15 +1,16 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import com.DreamOfDuck.subscription.entity.StorePlatform;
-import org.springframework.stereotype.Component;
-
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+
 @Component
 public class VerifierResolver {
-    private final Map<StorePlatform, StoreSubscriptionVerifier> verifiers = new EnumMap<>(StorePlatform.class);
+    private final Map<StorePlatformEnum, StoreSubscriptionVerifier> verifiers = new EnumMap<>(StorePlatformEnum.class);
 
     public VerifierResolver(List<StoreSubscriptionVerifier> verifierList) {
         for (StoreSubscriptionVerifier verifier : verifierList) {
@@ -17,7 +18,7 @@ public class VerifierResolver {
         }
     }
 
-    public StoreSubscriptionVerifier get(StorePlatform platform) {
+    public StoreSubscriptionVerifier get(StorePlatformEnum platform) {
         return verifiers.get(platform);
     }
 }

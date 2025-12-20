@@ -1,9 +1,9 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import com.DreamOfDuck.subscription.entity.StorePlatform;
+import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
 
 public interface StoreSubscriptionVerifier {
-    StorePlatform supports();
+    StorePlatformEnum supports();
     VerificationResult verify(VerificationCommand command);
 }
 

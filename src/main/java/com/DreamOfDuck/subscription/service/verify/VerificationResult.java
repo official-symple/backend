@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 @Builder
 public class VerificationResult {
     private boolean valid;
+    private LocalDateTime startedAt;
     private LocalDateTime expiresAt;
     private Boolean autoRenewing;
-    private String storeSubscriptionId;
+    private Boolean isTrialPeriod;
     private String storeTransactionId;
+    private String originalTransactionId;
     private String rawResponse;
 }
-
-

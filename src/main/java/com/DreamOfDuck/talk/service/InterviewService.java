@@ -1,17 +1,18 @@
 package com.DreamOfDuck.talk.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.InterviewCreateRequest;
 import com.DreamOfDuck.talk.dto.response.InterviewResponse;
 import com.DreamOfDuck.talk.entity.Interview;
 import com.DreamOfDuck.talk.repository.InterviewRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j

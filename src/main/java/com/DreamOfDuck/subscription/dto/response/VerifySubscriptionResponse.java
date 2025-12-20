@@ -1,6 +1,5 @@
 package com.DreamOfDuck.subscription.dto.response;
 
-import com.DreamOfDuck.account.entity.Subscribe;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,8 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class VerifySubscriptionResponse {
     private boolean success;
-    private Subscribe plan;
+    private LocalDateTime startedAt;
     private LocalDateTime expiresAt;
+    private Boolean isTrialPeriod;
 }
-
-
