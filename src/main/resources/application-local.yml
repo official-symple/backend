@@ -18,6 +18,8 @@ spring:
   thymeleaf:
     cache: false
 logging:
+  file:
+    name: logs/dreaming-duck.log
   level:
     root: info
 
