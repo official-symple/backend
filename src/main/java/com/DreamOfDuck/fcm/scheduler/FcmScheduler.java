@@ -33,6 +33,8 @@ public class FcmScheduler {
     private final MemberService memberService;
     private final FcmService fcmService; // 실제 FCM 전송 서비스
 
+    private static final LocalTime DEFAULT_MORNING_TIME = LocalTime.of(9, 0); // 오전 9시
+    private static final LocalTime DEFAULT_NIGHT_TIME = LocalTime.of(19, 0);  // 오후 7시
     // 매 분마다 체크
     @Scheduled(cron = "0 * * * * *")
     public void sendMindCheckPush() {
@@ -57,32 +59,32 @@ public class FcmScheduler {
                 // ==========================================
                 // Case 1: 아침 알림 (정시)
                 // ==========================================
-                List<Member> morningTargets = memberRepository.findMorningTargets(zoneId, dayOfWeek, nowTime);
+                List<Member> morningTargets = memberRepository.findMorningTargets(zoneId, dayOfWeek, nowTime, DEFAULT_MORNING_TIME);
                 sendBatch(morningTargets, NotificationType.MORNING_START);
 
                 // ==========================================
                 // Case 2: 밤 알림 (정시)
                 // ==========================================
-                List<Member> nightTargets = memberRepository.findNightTargets(zoneId, dayOfWeek, nowTime);
+                List<Member> nightTargets = memberRepository.findNightTargets(zoneId, dayOfWeek, nowTime, DEFAULT_NIGHT_TIME);
                 sendBatch(nightTargets, NotificationType.NIGHT_START);
 
                 // ==========================================
                 // Case 3: 아침 마감 10분 전 (현재시간 == 설정시간 + 50분) -> (설정시간 == 현재시간 - 50분)
                 // ==========================================
                 LocalTime targetTimeForWarning = nowTime.minusMinutes(50);
-                List<Member> warningTargets = memberRepository.findNotCheckedTargets(zoneId, dayOfWeek, targetTimeForWarning, todayDate);
+                List<Member> warningTargets = memberRepository.findNotCheckedTargets(zoneId, dayOfWeek, targetTimeForWarning, DEFAULT_MORNING_TIME, todayDate);
                 sendBatch(warningTargets, NotificationType.MORNING_DEADLINE);
 
                 // ==========================================
                 // Case 4: 아침 마감 후 3시간 (미완료자 독려)
                 // ==========================================
                 LocalTime targetTimeForMissed = nowTime.minusHours(3);
-                List<Member> missedTargets = memberRepository.findNotCheckedTargets(zoneId, dayOfWeek, targetTimeForMissed, todayDate);
+                List<Member> missedTargets = memberRepository.findNotCheckedTargets(zoneId, dayOfWeek, targetTimeForMissed, DEFAULT_MORNING_TIME, todayDate);
                 sendBatch(missedTargets, NotificationType.MORNING_MISSED);
 
 
                 // ==========================================
-                // Case 5: 16시 스트릭 알림 (특수 케이스)
+                // Case 5: 22시 스트릭 알림 (특수 케이스)
                 // ==========================================
                 if (nowTime.getHour() == 22 && nowTime.getMinute() == 0) {
                     List<Member> allMember = memberRepository.findAll();
