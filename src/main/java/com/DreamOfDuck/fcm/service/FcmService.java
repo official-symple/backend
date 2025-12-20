@@ -228,25 +228,40 @@ public class FcmService {
     }
 
     public void sendMessageTo(String deviceToken, FcmRequest fcmRequest) throws IOException {
-        log.info("Sending FCM message");
-        fcmRequest.setDeviceToken(deviceToken);
+        FcmMessage.Notification notification = FcmMessage.Notification.builder()
+                .title(fcmRequest.getTitle())
+                .body(fcmRequest.getBody())
+                .image(null) // 필요시 설정
+                .build();
 
-        String message = makeMessage(fcmRequest);
+        FcmMessage.Message messagePayload = FcmMessage.Message.builder()
+                .token(deviceToken)
+                .notification(notification)
+                .build();
+
+        FcmMessage fcmMessage = FcmMessage.builder()
+                .validateOnly(false)
+                .message(messagePayload)
+                .build();
+
         RestTemplate restTemplate = new RestTemplate();
-
-        restTemplate.getMessageConverters()
-                .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAccessToken());
 
-        HttpEntity entity = new HttpEntity<>(message, headers);
+        HttpEntity<FcmMessage> entity = new HttpEntity<>(fcmMessage, headers);
 
-        String API_URL = "https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send";
-        ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
-        log.info("success to send request");
-        System.out.println(response.getStatusCode());
+        String projectId = "duck-s-dream"; // firebase.json의 project_id와 같아야 함
+        String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
+            log.info("success to send request. Status: {}", response.getStatusCode());
+        } catch (Exception e) {
+            log.error("FCM Send Error: ", e);
+            throw new RuntimeException("FCM 전송 실패");
+        }
     }
 
     private String getAccessToken() throws IOException {
