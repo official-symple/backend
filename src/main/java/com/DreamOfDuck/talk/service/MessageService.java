@@ -1,29 +1,38 @@
 package com.DreamOfDuck.talk.service;
 
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.MessageCreateRequest;
 import com.DreamOfDuck.talk.dto.request.MessageFormatF;
 import com.DreamOfDuck.talk.dto.request.MessageRequestF;
-import com.DreamOfDuck.talk.dto.response.*;
+import com.DreamOfDuck.talk.dto.response.MessageFormat;
+import com.DreamOfDuck.talk.dto.response.MessageFormatList;
+import com.DreamOfDuck.talk.dto.response.MessageResponse;
+import com.DreamOfDuck.talk.dto.response.MessageResponseF;
+import com.DreamOfDuck.talk.dto.response.MessageResponseList;
+import com.DreamOfDuck.talk.dto.response.MessageResponseListF;
 import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Message;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.entity.Talker;
 import com.DreamOfDuck.talk.repository.MessageRepository;
 import com.DreamOfDuck.talk.repository.SessionRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(readOnly=true)

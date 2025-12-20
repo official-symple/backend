@@ -70,7 +70,12 @@ public enum ErrorCode {
     NULL_MIND_CHECK(-703, "해당 날짜(기간)의 마음체크를 하지 않았습니다.", 406),
     CHECK_TOMORROW(-704, "오늘 마음체크를 완료하지 못했습니다. 다음날 리포트를 확인할 수 있어요",400),
     NOT_ENOUGH_RECORDS(-705, "아직 마음체크 기록이 충분하지 않아요.", 400),
-    UPGRADE_SUBSCRIBE(-706, "구독 정보를 업그레이드 후 이용해주세요", 400);
+    UPGRADE_SUBSCRIBE(-706, "구독 정보를 업그레이드 후 이용해주세요", 400),
+
+    // Subscription / IAP
+    IAP_INVALID_REQUEST(-800, "인앱 결제 요청 값이 올바르지 않습니다.", 422),
+    IAP_VERIFICATION_FAILED(-801, "영수증(구매) 검증에 실패했습니다.", 400),
+    IAP_PLAN_NOT_FOUND(-802, "구독 플랜 정보를 찾을 수 없습니다.", 406);
     private final int errorCode;
     private final String message;
     private final int httpCode;
