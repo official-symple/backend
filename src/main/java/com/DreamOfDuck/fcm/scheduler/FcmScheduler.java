@@ -84,7 +84,7 @@ public class FcmScheduler {
                 // ==========================================
                 // Case 5: 16시 스트릭 알림 (특수 케이스)
                 // ==========================================
-                if (nowTime.getHour() == 16 && nowTime.getMinute() == 0) {
+                if (nowTime.getHour() == 22 && nowTime.getMinute() == 0) {
                     List<Member> allMember = memberRepository.findAll();
                     sendBatch(missedTargets, NotificationType.STREAK_REWARD);
                 }

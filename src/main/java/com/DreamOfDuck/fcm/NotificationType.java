@@ -7,5 +7,6 @@ public enum NotificationType {
     MORNING_MISSED,
     MORNING_COMPLETED,// 아침 마감 후 (미완료자)
     NIGHT_MISSED,       // 밤 마감 후 (미완료자)
-    STREAK_REWARD       // 16시 스트릭 보상
+    STREAK_REWARD,
+    RETENTION
 }
