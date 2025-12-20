@@ -50,6 +50,9 @@ public class MemberService {
         if(request.getNickname().length()>14 || request.getNickname().length()<2){
             throw new CustomException(ErrorCode.NICKNAME_LEN);
         }
+        if(memberRepository.existsByNickname(request.getNickname())){
+            throw new CustomException(ErrorCode.NICKNAME_EXIST);
+        }
         member.setNickname(request.getNickname());
         member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         member.setConcern(Cause.fromId(request.getConcern()));
@@ -90,7 +93,12 @@ public class MemberService {
         }
         if(request.getIsMarketing()!=null) member.setIsMarketing(request.getIsMarketing());
         if(request.getBirthday()!=null) member.setBirthday(request.getBirthday());
-        if(request.getNickname()!=null) member.setNickname(request.getNickname());
+        if(request.getNickname()!=null){
+            if(memberRepository.existsByNickname(request.getNickname())){
+                throw new CustomException(ErrorCode.NICKNAME_EXIST);
+            }
+            member.setNickname(request.getNickname());
+        }
         if(request.getGender()!=null) member.setGender(Gender.valueOf(request.getGender().toUpperCase()));
         if(request.getConcern()!=null) member.setConcern(Cause.fromId(request.getConcern()));
         if(request.getStatus()!=null){
