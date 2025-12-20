@@ -2,6 +2,7 @@ package com.DreamOfDuck.account.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
+import com.DreamOfDuck.account.dto.response.NicknameResponse;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.request.HeartRequest;
@@ -46,7 +47,15 @@ public class MemberController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return memberService.updateMemberInfo(member, request);
     }
-
+    @GetMapping("/check/{nickname}")
+    @Operation(summary = "닉네임 중복 확인", description = "닉네임을 수정할 때 사용하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = NicknameResponse.class)
+            )})
+    })
+    public NicknameResponse checkNickName(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("nickname") String nickname) {
+        return memberService.checkNickname(nickname);
+    }
     @GetMapping("")
     @Operation(summary = "개인정보 받기", description = "개인정보를 받을 때 사용하는 API")
     @ApiResponses(value={

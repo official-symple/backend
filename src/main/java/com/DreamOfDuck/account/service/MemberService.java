@@ -2,6 +2,7 @@ package com.DreamOfDuck.account.service;
 
 import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
+import com.DreamOfDuck.account.dto.response.NicknameResponse;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.request.HeartRequest;
@@ -135,7 +136,11 @@ public class MemberService {
         return res;
     }
 
-
+    public NicknameResponse checkNickname(String nickname){
+        NicknameResponse res = new NicknameResponse();
+        res.setIsExistNickname(memberRepository.existsByNickname(nickname));
+        return res;
+    }
     @Transactional
     public HomeResponse updateHeart(Member member, HeartRequest request) {
         member.setHeart(request.getHeart());
