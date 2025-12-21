@@ -33,8 +33,8 @@ public class FcmScheduler {
     private final MemberService memberService;
     private final FcmService fcmService; // 실제 FCM 전송 서비스
 
-    private static final LocalTime DEFAULT_MORNING_TIME = LocalTime.of(9, 0); // 오전 9시
-    private static final LocalTime DEFAULT_NIGHT_TIME = LocalTime.of(19, 0);  // 오후 7시
+    private static final LocalTime DEFAULT_MORNING_TIME = LocalTime.of(8, 0); // 오전 9시
+    private static final LocalTime DEFAULT_NIGHT_TIME = LocalTime.of(23, 0);  // 오후 7시
     // 매 분마다 체크
     @Scheduled(cron = "0 * * * * *")
     public void sendMindCheckPush() {
