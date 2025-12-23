@@ -1,5 +1,11 @@
 package com.DreamOfDuck.account.entity;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.DreamOfDuck.fcm.entity.PushAlarm;
 import com.DreamOfDuck.feedback.entity.Feedback;
 import com.DreamOfDuck.global.entity.TimeStamp;
@@ -12,14 +18,25 @@ import com.DreamOfDuck.record.entity.Health;
 import com.DreamOfDuck.talk.entity.Cause;
 import com.DreamOfDuck.talk.entity.Interview;
 import com.DreamOfDuck.talk.entity.Session;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.*;
 
 @Data
 @Entity
@@ -42,6 +59,7 @@ public class Member extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Language language;
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Role role;
     private Boolean isMarketing;
     private Gender gender;

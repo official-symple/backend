@@ -39,6 +39,10 @@ public class MemberService {
         return memberRepository.findByEmail(email).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_EXIST));
     }
 
+    public Member findMemberById(Long id){
+        return memberRepository.findById(id).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_EXIST));
+    }
+
     @Transactional
     public MemberResponse join(Member member, MemberCreateRequest request) {
         if(member.getRole()== Role.ROLE_USER){
