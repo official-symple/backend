@@ -1,14 +1,15 @@
 package com.DreamOfDuck.account.dto.response;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.DreamOfDuck.account.entity.Member;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Builder
@@ -50,7 +51,7 @@ public class MemberResponse {
                 .memberId(member.getId())
                 .isMarketing(member.getIsMarketing())
                 .nickname(member.getNickname())
-                .birthday(member.getBirthday())
+                // .birthday(member.getBirthday())
                 .role(member.getRole() != null ? member.getRole().toString() : null)
                 .gender(member.getGender() != null ? member.getGender().toString() : null)
                 .language(member.getLanguage() != null ? member.getLanguage().toString().toLowerCase() : null)
