@@ -1,11 +1,7 @@
 package com.DreamOfDuck.account.config;
 
-import com.DreamOfDuck.account.filter.JWTFilter;
-import com.DreamOfDuck.account.filter.LoginFilter;
-import com.DreamOfDuck.account.jwt.JWTProvider;
-import com.DreamOfDuck.account.jwt.JWTUtil;
-import com.DreamOfDuck.account.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +19,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.DreamOfDuck.account.filter.JWTFilter;
+import com.DreamOfDuck.account.filter.LoginFilter;
+import com.DreamOfDuck.account.jwt.JWTProvider;
+import com.DreamOfDuck.account.jwt.JWTUtil;
+import com.DreamOfDuck.account.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -70,9 +72,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login/**", "/reissue", "/logout").permitAll()
-                        .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout").hasAnyRole("GUEST", "USER", "ADMIN")
+                        .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout").hasAnyRole("GUEST", "USER", "PREMIUM", "ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                        .anyRequest().hasAnyRole("USER", "ADMIN"))
+                        .anyRequest().hasAnyRole("USER", "PREMIUM", "ADMIN"))
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
