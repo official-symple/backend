@@ -87,9 +87,11 @@ public class SubscriptionService {
         );
         iapTransactionRepository.save(transaction);
 
-        // Update member role to PREMIUM
-        member.setRole(Role.ROLE_PREMIUM);
-        memberRepository.save(member);
+        // Update member role to PREMIUM - reload member to ensure it's in persistence context
+        Member managedMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
+        managedMember.setRole(Role.ROLE_PREMIUM);
+        memberRepository.save(managedMember);
 
         return VerifySubscriptionResponse.builder()
                 .success(true)
