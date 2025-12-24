@@ -1,8 +1,9 @@
 package com.DreamOfDuck.subscription.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
@@ -15,10 +16,29 @@ public class IapProperties {
     @Setter
     public static class Apple {
         /**
-         * App Store Connect shared secret (for subscription receipt verification).
-         * Keep it in `application-secret.properties`.
+         * App Store Connect API Key file content (.p8 file as string).
+         * Can be stored in GitHub Secrets or application-secret.properties.
+         * Include the full PEM content including -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY-----
          */
-        private String sharedSecret;
+        private String keyFileContent;
+        
+        /**
+         * App Store Connect API Key ID (10-character string).
+         * Found in App Store Connect > Users and Access > Integrations > Keys
+         */
+        private String keyId;
+        
+        /**
+         * App Store Connect Issuer ID (UUID format).
+         * Found in App Store Connect > Users and Access > Integrations > Keys
+         */
+        private String issuerId;
+        
+        /**
+         * Bundle ID of your app.
+         */
+        private String bundleId;
+        
         private boolean sandbox = true;
     }
 

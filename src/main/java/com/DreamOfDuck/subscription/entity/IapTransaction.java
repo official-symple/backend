@@ -75,7 +75,7 @@ public class IapTransaction extends TimeStamp {
     private LocalDateTime verifiedAt;
 
     @Lob
-    @Column(name = "raw_response")
+    @Column(name = "raw_response", columnDefinition = "TEXT")
     private String rawResponse;
 
     public boolean isActive() {

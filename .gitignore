@@ -42,3 +42,4 @@ out/
 .env.dev
 firebase.json
 logs
+**/apple/*.p8

@@ -25,5 +25,8 @@ logging:
 
 iap:
   apple:
-    sharedSecret: ${SHARED_SECRET}
+    keyFileContent: ${APPLE_KEY_FILE_CONTENT}  # .p8 file content as string (include BEGIN/END lines)
+    keyId: ${APPLE_KEY_ID}  # 10-character Key ID from App Store Connect
+    issuerId: ${APPLE_ISSUER_ID}  # UUID format Issuer ID from App Store Connect
+    bundleId: ${APPLE_BUNDLE_ID}  # Your app's bundle ID
     sandbox: true
