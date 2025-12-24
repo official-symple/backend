@@ -23,3 +23,7 @@ logging:
   level:
     root: info
 
+iap:
+  apple:
+    sharedSecret: ${SHARED_SECRET}
+    sandbox: true

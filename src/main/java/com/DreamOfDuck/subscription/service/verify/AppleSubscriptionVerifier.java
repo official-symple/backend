@@ -54,14 +54,26 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                     .excludeOldTransactions(false)
                     .build();
 
+            log.info("Sending Apple receipt verification request to URL: {}", url);
+
+            log.info("Apple receipt verification request receiptData: {}", request.getReceiptData());
+            log.info("Apple receipt verification request password: {}", request.getPassword());
+            log.info("Apple receipt verification request: {}", request.getExcludeOldTransactions());
+            
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<AppleReceiptRequest> entity = new HttpEntity<>(request, headers);
 
             ResponseEntity<AppleReceiptResponse> response = restTemplate.exchange(
                     url, HttpMethod.POST, entity, AppleReceiptResponse.class);
+            log.info("Apple receipt verification response body: {}", 
+                    objectMapper.writeValueAsString(response.getBody()));
 
             AppleReceiptResponse receiptResponse = response.getBody();
+            log.info("Apple receipt verification response body: {}", receiptResponse);
+            log.info("Apple receipt verification response status: {}",
+                    receiptResponse != null ? receiptResponse.getStatus() : "null");
             if (receiptResponse == null) {
                 log.error("Apple receipt verification returned null response");
                 return VerificationResult.builder()
