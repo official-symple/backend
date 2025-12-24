@@ -41,6 +41,26 @@ jobs:
         name: "firebase.json"
         json: ${{ secrets.FIREBASE_KEY }}
         dir: 'src/main/resources'
+    
+    - name: Create .env file
+      run: |
+        cat > .env << EOF
+        DB_HOST=${{ secrets.DB_HOST }}
+        DB_PORT=${{ secrets.DB_PORT }}
+        DB_SCHEMA=${{ secrets.DB_SCHEMA }}
+        DB_USERNAME=${{ secrets.DB_USERNAME }}
+        DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+        REDIS_HOST=${{ secrets.REDIS_HOST }}
+        REDIS_PORT=${{ secrets.REDIS_PORT }}
+        REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+        JWT_SECRET=${{ secrets.JWT_SECRET }}
+        AI_HOST=${{ secrets.AI_HOST }}
+        AI_PORT=${{ secrets.AI_PORT }}
+        APPLE_KEY_FILE_CONTENT=${{ secrets.APPLE_KEY_FILE_CONTENT }}
+        APPLE_KEY_ID=${{ secrets.APPLE_KEY_ID }}
+        APPLE_ISSUER_ID=${{ secrets.APPLE_ISSUER_ID }}
+        APPLE_BUNDLE_ID=${{ secrets.APPLE_BUNDLE_ID }}
+        EOF
         
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
