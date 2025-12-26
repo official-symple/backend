@@ -62,9 +62,9 @@ public class MindCheckService {
         mindCheckRepository.save(mindCheck);
         //calculate score
         int cnt=0;
-        if(request.isQuestion1()) cnt++;
-        if(request.isQuestion2()) cnt++;
-        if(request.isQuestion3()) cnt++;
+        if(!request.isQuestion1()) cnt++;
+        if(!request.isQuestion2()) cnt++;
+        if(!request.isQuestion3()) cnt++;
         float score=100*cnt/3;
         mindCheck.setScore(score);
 
@@ -99,7 +99,10 @@ public class MindCheckService {
             dayTime = mindCheckTime.getDayTime();
             nightTime = mindCheckTime.getNightTime();
         }
-
+        log.info(dayTime.toString());
+        log.info(nightTime.toString());
+        log.info(timePeriod.toString());
+        log.info(now.toString());
         if(timePeriod==TimePeriod.DAY){
             return now.toLocalTime().isBefore(dayTime) || now.toLocalTime().isAfter(dayTime.plusHours(1));
         }else{
