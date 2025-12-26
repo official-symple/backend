@@ -24,36 +24,46 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT DISTINCT m.location FROM Member m WHERE m.location IS NOT NULL")
     List<String> findDistinctLocations();
 
-    // 2. [아침 알림] 해당 지역 + 해당 요일 + 해당 시간에 알림 설정한 유저 조회
-    @Query("SELECT m FROM Member m " +
-            "JOIN m.mindCheckTimes t " +
+
+    @Query("SELECT DISTINCT m FROM Member m " +
+            "LEFT JOIN m.mindCheckTimes t " + // LEFT JOIN으로 변경 (설정 없는 유저 포함)
             "WHERE (m.location = :zone OR (:zone = 'Asia/Seoul' AND m.location IS NULL)) " +
-            "AND t.dayOfWeek = :dayOfWeek " +
-            "AND t.dayTime = :targetTime ")
+            "AND (" +
+            "   (t.dayOfWeek = :dayOfWeek AND t.dayTime = :targetTime) " + // 1. 설정이 있고 시간이 맞는 경우
+            "   OR " +
+            "   (t IS NULL AND :targetTime = :defaultTime) " + // 2. 설정이 없고(NULL) 현재 시간이 기본 시간인 경우
+            ")")
     List<Member> findMorningTargets(@Param("zone") String zone,
                                     @Param("dayOfWeek") DayOfWeek dayOfWeek,
-                                    @Param("targetTime") LocalTime targetTime);
+                                    @Param("targetTime") LocalTime targetTime,
+                                    @Param("defaultTime") LocalTime defaultTime);
 
-    // 3. [밤 알림]
-    @Query("SELECT m FROM Member m " +
-            "JOIN m.mindCheckTimes t " +
+    @Query("SELECT DISTINCT m FROM Member m " +
+            "LEFT JOIN m.mindCheckTimes t " +
             "WHERE (m.location = :zone OR (:zone = 'Asia/Seoul' AND m.location IS NULL)) " +
-            "AND t.dayOfWeek = :dayOfWeek " +
-            "AND t.nightTime = :targetTime ")
+            "AND (" +
+            "   (t.dayOfWeek = :dayOfWeek AND t.nightTime = :targetTime) " +
+            "   OR " +
+            "   (t IS NULL AND :targetTime = :defaultTime) " +
+            ")")
     List<Member> findNightTargets(@Param("zone") String zone,
                                   @Param("dayOfWeek") DayOfWeek dayOfWeek,
-                                  @Param("targetTime") LocalTime targetTime);
+                                  @Param("targetTime") LocalTime targetTime,
+                                  @Param("defaultTime") LocalTime defaultTime);
 
-    // 4. [마감 임박/미완료 알림]
-    // 조건: 알림 시간 일치 + 오늘 아직 마음 체크를 안 한 사람 (SubQuery 사용)
-    @Query("SELECT m FROM Member m " +
-            "JOIN m.mindCheckTimes t " +
+
+    @Query("SELECT DISTINCT m FROM Member m " +
+            "LEFT JOIN m.mindCheckTimes t " +
             "WHERE (m.location = :zone OR (:zone = 'Asia/Seoul' AND m.location IS NULL)) " +
-            "AND t.dayOfWeek = :dayOfWeek " +
-            "AND t.dayTime = :targetTime " +
+            "AND (" +
+            "   (t.dayOfWeek = :dayOfWeek AND t.dayTime = :targetTime) " +
+            "   OR " +
+            "   (t IS NULL AND :targetTime = :defaultTime) " +
+            ") " +
             "AND NOT EXISTS (SELECT mc FROM MindChecks mc WHERE mc.host = m AND mc.date = :today)")
     List<Member> findNotCheckedTargets(@Param("zone") String zone,
                                        @Param("dayOfWeek") DayOfWeek dayOfWeek,
                                        @Param("targetTime") LocalTime targetTime,
+                                       @Param("defaultTime") LocalTime defaultTime,
                                        @Param("today") LocalDate today);
 }

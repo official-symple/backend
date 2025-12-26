@@ -79,7 +79,7 @@ public class FcmService {
     private String getMessageBody(Member member, NotificationType type, boolean isKor) {
 
         String nickname = member.getNickname();
-
+        String duckname = member.getDuckname();
         switch (type) {
             case MORNING_START:
                 if (isKor) {
@@ -183,39 +183,169 @@ public class FcmService {
             case STREAK_REWARD:
                 ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
                 LocalDate today = LocalDate.now(userZone);
-                int streak = getConsecutiveMindChecks(member, today);
+                MindChecks checkToday = mindChecksRepository.findByHostAndDate(member, today)
+                        .stream().findFirst().orElse(null);
 
-                if (streak >= 10) {
+                if(checkToday==null){
+                    int streak = getConsecutiveAbsenceDays(member, today);
+                    if(streak==1){
+                        return isKor?
+                                "오늘 접속하지 않으면 불꽃이 사라져요. "+duckname+"가 "+nickname+"님을 보고싶어해요!":
+                                "If you don’t check in today, your flame goes out. "+duckname+" misses you, "+nickname+"!";
+                    }else if(streak==2){
+                        if (isKor) {
+                            String[] msgs = {
+                                    "운동도 꾸준히 해야 효과가 보이는 것처럼 마음도 꾸준히 챙겨야 해요! 오늘 마음은 어때요?",
+                                    duckname+" 가 기다리고 있어요. 오늘 "+nickname +"님의 마음은 어때요?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        } else {
+                            String[] msgs = {
+                                    "Like exercise, care works when it’s consistent. How are you feeling today?",
+                                    duckname+" is waiting. How is your heart today, " + nickname + "?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        }
+                    }else if(streak==3){
+                        if (isKor) {
+                            String[] msgs = {
+                                    "마지막으로 만난지 3일이 지났어요… "+duckname+"은 "+nickname+"님이 너무 보고싶어요.",
+                                    "그동안 무슨 일이 있었는지 궁금해요. 잠시 들러서 마음을 남겨주세요."
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        } else {
+                            String[] msgs = {
+                                    "It’s been 3 days since we last met… "+duckname+" really misses you, "+nickname+".",
+                                    "Wondering how you’ve been. Drop by for a quick check-in."
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        }
+                    }else if(streak==5){
+                        if (isKor) {
+                            String[] msgs = {
+                                    "차트에 빈칸이 점점 늘어나고 있어요! 오늘부터 다시 이어가면 어떨까요?",
+                                    "오랜만이에요! "+duckname+"은 아직 "+nickname+"님과의 추억을 기억해요. 오늘 다시 시작해볼까요?",
+                                    "자니? 나 "+duckname+"인데.. 그냥 "+nickname+" 생각이 나서.."
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        } else {
+                            String[] msgs = {
+                                    "It’s been a while! " + duckname +" still remembers our moments, "+nickname+". Shall we start again today?",
+                                    "Are you up? It’s "+duckname+"… just thinking of you, "+nickname+".",
+                                    "Your chart is getting more gaps. How about picking it back up today?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        }
+                    }else if(streak==7){
+                        if (isKor) {
+                            String[] msgs = {
+                                    "일주일 동안 비어 있었어요. "+duckname+"가 그리워해요.",
+                                    nickname+"! 이젠 "+duckname+"이 없이도 괜찮은 거예요?",
+                                    "오랜만이라 더 반갑게 맞이하고 싶어요. 오늘 다시 마음건강을 챙겨볼까요?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        } else {
+                            String[] msgs = {
+                                    "It’s been a week. "+duckname+" misses you.",
+                                    nickname+"! Are you doing okay without "+duckname+"?",
+                                    "We’d love to welcome you back. Want to care for your mind again today?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        }
+                    }else if(streak>=14){
+                        if (isKor) {
+                            String[] msgs = {
+                                    streak+"일 동안 "+duckname+"를 만나지 못했어요. 잠깐만 다시 만나러 와주시면 안될까요?",
+                                    duckname+"님이 떠난 지 "+streak+"일이 지났어요. "+duckname+"는 여전히 여기서 기다리고 있어요.",
+                                    "시간이 흘러도 "+duckname+"은 "+nickname+" 님을 잊지 않았어요. 괜찮은 거예요?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        } else {
+                            String[] msgs = {
+                                    "It’s been "+streak+" days since you met " + duckname + ". Could you stop by for a moment today?",
+                                    "It’s been {n} days since you last visited, " + nickname + ". " + duckname + " is still here waiting.",
+                                    "Even as time passes, "+duckname+" hasn’t forgotten you, " + nickname + ". Everything okay?"
+                            };
+                            return msgs[random.nextInt(msgs.length)];
+                        }
+                    }
+
+                }
+
+                int streak = getConsecutiveMindChecks(member, today);
+                if (streak >= 50) {
                     return isKor ?
-                            "아침 마음 기록 " + streak + "일째! " + member.getDuckname() + "도 뿌듯해해요." :
-                            "Morning check-in day " + streak + "!\n" + member.getDuckname() + "is proud of you, too.";
+                            streak + "일 연속 기록이라니! 놀라운 꾸준함이에요." :
+                            streak + " days straight—your consistency is remarkable.";
+                }
+                else if (streak == 30) {
+                    return isKor ?
+                            "한 달 동안 매일 기록! 오리와 함께 멋진 기록을 세웠어요." :
+                            "A full month of daily check-ins! You’ve set a remarkable record with your duck.";
+                }
+                else if (streak == 20) {
+                    return isKor ?
+                            "20일 연속 기록, 이제 습관이 완전히 자리 잡았어요." :
+                            "20-day streak—this habit is truly sticking.";
+                }else if (streak == 14) {
+                    return isKor ?
+                            "2주 동안 빠짐없이 기록, 대단한 성취예요." :
+                            "Two full weeks without a miss—what an achievement.";
+                }else if (streak == 10) {
+                    return isKor ?
+                            "10일 연속 기록! 마음 근육이 단단해지고 있어요." :
+                            "10 days in a row! Your emotional muscles are getting stronger.";
                 } else if (streak == 7) {
                     return isKor ?
                             "1주일째 아침 마음체크 중! \n멋진 꾸준함이에요." :
                             "One full week of morning check-ins! Love the consistency.";
-                } else if (streak == 3) {
+                } else if (streak == 5) {
+                    return isKor ?
+                            "벌써 5일 연속 기록, "+duckname+"가 기뻐하고 있어요." :
+                            "Already a 5-day streak—"+duckname+" is delighted.";
+                }else if (streak == 3) {
                     return isKor ?
                             "3일째 아침 마음체크 성공! \n패턴이 눈에 보이기 시작했어요." :
                             "Morning check-ins 3 days in a row! Your pattern is starting to show.";
+                }else if (streak ==1) {
+                    return isKor ?
+                            "다시 시작하는 오늘, 새로운 불꽃과 함께 마음을 가꿔볼까요?":
+                            "Starting again today—let’s tend your mind with a new flame.";
+                }else{
+                    return isKor ?
+                            "불꽃이 활활 타오르고 있어요. 오늘도 " + duckname + " 보러와줄거죠?" :
+                            "Your flame is burning bright. Will you come see " + duckname + " today?";
                 }
-                return null; // 조건에 안 맞으면 안 보냄
             default:
                 return null;
         }
     }
     private int getConsecutiveMindChecks(Member member, LocalDate today) {
         int streak = 0;
-        // 오늘부터 역순으로 날짜를 빼가며 연속 체크 확인
         for (int i = 0; ; i++) {
             LocalDate date = today.minusDays(i);
-            // 해당 날짜에 기록이 있는지 DB 조회 (Lazy Loading 주의: @Transactional 필요)
             MindChecks check = mindChecksRepository.findByHostAndDate(member, date)
                     .stream().findFirst().orElse(null);
 
             if (check != null && check.getDayMindCheck() != null) {
                 streak++;
             } else {
-                break; // 기록이 끊기면 루프 종료
+                break;
+            }
+        }
+        return streak;
+    }
+    private int getConsecutiveAbsenceDays(Member member, LocalDate today) {
+        int streak = 0;
+        for (int i = 0; ; i++) {
+            LocalDate date = today.minusDays(i);
+            MindChecks check = mindChecksRepository.findByHostAndDate(member, date)
+                    .stream().findFirst().orElse(null);
+
+            if (check == null) {
+                streak++;
+            } else {
+                break;
             }
         }
         return streak;
