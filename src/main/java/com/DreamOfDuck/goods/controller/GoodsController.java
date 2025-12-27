@@ -72,14 +72,13 @@ public class GoodsController {
     }
 
     @PostMapping("/attendance")
-    @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
+    @Operation(summary = "출석하기", description = "출석하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
             )})
     })
     public FeatherRewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-
         return goodsService.addAttendance(member, LocalDate.now());
     }
 

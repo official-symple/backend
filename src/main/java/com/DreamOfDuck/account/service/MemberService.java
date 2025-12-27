@@ -12,7 +12,7 @@ import com.DreamOfDuck.account.entity.*;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
+
 import com.DreamOfDuck.talk.entity.Cause;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +129,7 @@ public class MemberService {
         else if(member.getMaxScore()<request.getScore()){
             member.setMaxScore(request.getScore());
         }
-        eventPublisher.publishEvent(new AttendanceCreatedEvent(member.getEmail(), LocalDate.now()));
+
         memberRepository.save(member);
         return MemberResponse.from(member);
     }

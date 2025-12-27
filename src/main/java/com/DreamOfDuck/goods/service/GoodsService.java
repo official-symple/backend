@@ -64,13 +64,13 @@ public class GoodsService {
         //longest streak
         updateLongestStreak(member, date, newCurStreak);
         //reward
-        Integer feather = goodsService.checkAttendanceReward(newCurStreak);
+        Integer feather = checkAttendanceReward(newCurStreak);
         if(member.getFeatherByAttendance()==null){
             member.setFeatherByAttendance(feather);
         }else{
             member.setFeatherByAttendance(member.getFeatherByAttendance()+feather);
         }
-
+        return getFeatherByAttendance(member);
     }
     private Integer calculateCurrentStreak(NavigableSet<LocalDate> sortedDates, LocalDate curDate, Integer prevStreak) {
         if (sortedDates.isEmpty()) {
