@@ -16,7 +16,6 @@ import com.DreamOfDuck.account.entity.Role;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
-import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.goods.service.GoodsService;
 import com.DreamOfDuck.talk.dto.request.FeedbackRequest;
 import com.DreamOfDuck.talk.dto.request.SessionCreateRequest;
@@ -79,7 +78,6 @@ public class SessionService {
         eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
         ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
         LocalDate now = LocalDate.now(userZone);
-        eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), now));
         return SessionResponse.from(session);
     }
     @Transactional

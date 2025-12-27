@@ -18,7 +18,6 @@ public class Attendance implements Comparable<Attendance> {
     @Column(name = "attendance_date")
     private LocalDate date;
 
-    private Boolean isIce;
 
     @Override
     public int compareTo(Attendance o) {

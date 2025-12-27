@@ -48,17 +48,9 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getAttendanceByMonth(member, yearMonth);
     }
-    @PostMapping("/attendance/ice/{date}")
-    @Operation(summary = "얼음 깨기", description = "얼음을 깨는 API")
-    @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
-            )})
-    })
-    public AttendanceResponse breakIce(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.breakIce(member, date);
-    }
-    @PostMapping("/attendance")
+
+
+    @GetMapping("/attendance")
     @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
@@ -77,6 +69,18 @@ public class GoodsController {
     public FeatherRewardResponse getFeatherByAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getFeatherByAttendance(member);
+    }
+
+    @PostMapping("/attendance")
+    @Operation(summary = "최장 출석 일수 받기", description = "최장 출석 일수를 받는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
+            )})
+    })
+    public FeatherRewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+
+        return goodsService.addAttendance(member, LocalDate.now());
     }
 
     @PostMapping("/heart/ad")

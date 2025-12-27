@@ -43,12 +43,53 @@ public class GoodsService {
             25000, 27000, 29000, 31000, 33000, 35000
     };
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void addAttendance(Member member, LocalDate date, Boolean isIce){
 
-        member.getAttendedDates().add(Attendance.builder().date(date).isIce(isIce).build());
+    @Transactional
+    public FeatherRewardResponse addAttendance(Member member, LocalDate date) {
+        Set<Attendance> attendedDates = member.getAttendedDates();
+
+        boolean alreadyAttended = attendedDates.stream()
+                .anyMatch(a -> a.getDate().equals(date));
+        if (alreadyAttended) {
+            throw new CustomException(ErrorCode.ATTENDANCE_EXIST);
+        }
+        member.getAttendedDates().add(Attendance.builder().date(date).build());
+        // 정렬된 TreeSet으로 변환해서 streak 계산
+        attendedDates.add(Attendance.builder().date(date).build());
+        NavigableSet<LocalDate> sortedDates = attendedDates.stream()
+                .map(Attendance::getDate)
+                .collect(Collectors.toCollection(TreeSet::new));
+        Integer newCurStreak = calculateCurrentStreak(sortedDates, date, member.getCurStreak());
+        member.setCurStreak(newCurStreak);
+        //longest streak
+        updateLongestStreak(member, date, newCurStreak);
+        //reward
+        Integer feather = goodsService.checkAttendanceReward(newCurStreak);
+        if(member.getFeatherByAttendance()==null){
+            member.setFeatherByAttendance(feather);
+        }else{
+            member.setFeatherByAttendance(member.getFeatherByAttendance()+feather);
+        }
+
     }
+    private Integer calculateCurrentStreak(NavigableSet<LocalDate> sortedDates, LocalDate curDate, Integer prevStreak) {
+        if (sortedDates.isEmpty()) {
+            return 1;
+        }
 
+        LocalDate lastDateBefore = sortedDates.lower(curDate); // curDate보다 바로 전 날짜
+        if (lastDateBefore != null && lastDateBefore.plusDays(1).equals(curDate)) {
+            return prevStreak+1;
+        } else {
+            return 1;
+        }
+    }
+    private void updateLongestStreak(Member member, LocalDate curDate, Integer newCurStreak) {
+        if (newCurStreak > member.getLongestStreak()) {
+            member.setLongestStreak(newCurStreak);
+            member.setLastDayOfLongestStreak(curDate);
+        }
+    }
     @Transactional
     public HomeResponse plusHeart(Member member, Integer cnt) {
         member.setHeart(member.getHeart()+cnt);
@@ -167,30 +208,7 @@ public class GoodsService {
         return res;
     }
 
-    @Transactional
-    public AttendanceResponse breakIce(Member member, LocalDate date) {
-        Set<Attendance> attendedDates = member.getAttendedDates();
-        boolean alreadyAttended = attendedDates.stream()
-                .anyMatch(a -> a.getDate().equals(date));
-        if (alreadyAttended) {
-            throw new CustomException(ErrorCode.ATTENDANCE_EXIST);
-        }
-        addAttendance(member, date, true);
-        attendedDates.add(Attendance.builder().date(date).isIce(true).build());
-        NavigableSet<LocalDate> sortedDates = attendedDates.stream()
-                .map(Attendance::getDate)
-                .collect(Collectors.toCollection(TreeSet::new)).descendingSet();
 
-        ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
-        LocalDate now = LocalDate.now(userZone);
-
-        updateStreak(member, sortedDates, now);
-        AttendanceResponse res = AttendanceResponse.fromMember(member);
-
-
-
-        return res;
-    }
     private void updateStreak(Member member, NavigableSet<LocalDate> sortedDates, LocalDate now) {
         //오늘 포함 최장 연속 출석 업뎃
         Integer curStreak = 0;
@@ -271,14 +289,13 @@ public class GoodsService {
                 .sorted()
                 .map(info->AttendanceByMonthResponse.builder()
                         .attendedDate(info.getDate())
-                        .isIce(info.getIsIce()==null?false:info.getIsIce())
                         .build())
                 .collect(Collectors.toList());
     }
     public AttendanceResponse getAttendance(Member member){
         return AttendanceResponse.fromMember(member);
     }
-    @Transactional
+
     public FeatherRewardResponse getFeatherByAttendance(Member member){
         Integer feather = member.getFeatherByAttendance();
         if(feather==null) feather=0;

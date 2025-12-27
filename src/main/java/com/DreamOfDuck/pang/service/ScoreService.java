@@ -3,7 +3,6 @@ package com.DreamOfDuck.pang.service;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.redis.RedisService;
-import com.DreamOfDuck.goods.event.AttendanceCreatedEvent;
 import com.DreamOfDuck.pang.dto.request.ScoreCreateRequest;
 import com.DreamOfDuck.pang.dto.response.PersonalRecord;
 import com.DreamOfDuck.pang.dto.response.RankingResponse;
@@ -45,7 +44,6 @@ public class ScoreService {
         host.setCntPlaying(host.getCntPlaying()+1);
         ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
         LocalDate now = LocalDate.now(userZone);
-        eventPublisher.publishEvent(new AttendanceCreatedEvent(host.getEmail(), now));
         //resopnse
         Long totalScore=scoreRepository.count();
         Long goePlayer=scoreRepositoryCustom.countByScoreGreaterThanEqual(request.getScore());

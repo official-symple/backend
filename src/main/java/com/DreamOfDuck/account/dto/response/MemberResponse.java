@@ -51,7 +51,7 @@ public class MemberResponse {
                 .memberId(member.getId())
                 .isMarketing(member.getIsMarketing())
                 .nickname(member.getNickname())
-                // .birthday(member.getBirthday())
+                .birthday(member.getBirthday())
                 .role(member.getRole() != null ? member.getRole().toString() : null)
                 .gender(member.getGender() != null ? member.getGender().toString() : null)
                 .language(member.getLanguage() != null ? member.getLanguage().toString().toLowerCase() : null)
