@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import com.DreamOfDuck.goods.dto.response.RewardResponse;
+import com.DreamOfDuck.pang.service.ItemService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,7 +27,6 @@ import com.DreamOfDuck.goods.dto.request.DiaRequest;
 import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
-import com.DreamOfDuck.goods.dto.response.FeatherRewardResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GoodsService {
+    private final ItemService itemService;
     int[] levelRequirements = {
             0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
             4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
@@ -45,7 +47,7 @@ public class GoodsService {
 
 
     @Transactional
-    public FeatherRewardResponse addAttendance(Member member, LocalDate date) {
+    public RewardResponse addAttendance(Member member, LocalDate date) {
         Set<Attendance> attendedDates = member.getAttendedDates();
 
         boolean alreadyAttended = attendedDates.stream()
@@ -54,6 +56,7 @@ public class GoodsService {
             throw new CustomException(ErrorCode.ATTENDANCE_EXIST);
         }
         member.getAttendedDates().add(Attendance.builder().date(date).build());
+
         // 정렬된 TreeSet으로 변환해서 streak 계산
         attendedDates.add(Attendance.builder().date(date).build());
         NavigableSet<LocalDate> sortedDates = attendedDates.stream()
@@ -70,7 +73,8 @@ public class GoodsService {
         }else{
             member.setFeatherByAttendance(member.getFeatherByAttendance()+feather);
         }
-        return getFeatherByAttendance(member);
+
+        return getRewardByAttendance(member);
     }
     private Integer calculateCurrentStreak(NavigableSet<LocalDate> sortedDates, LocalDate curDate, Integer prevStreak) {
         if (sortedDates.isEmpty()) {
@@ -127,19 +131,6 @@ public class GoodsService {
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
     }
-
-    @Async("threadPoolTaskExecutor")
-    @Transactional
-    public void plusDiaAsync(Member member, DiaRequest request) {
-        member.setDia(member.getDia()+request.getDia());
-    }
-
-    @Async("threadPoolTaskExecutor")
-    @Transactional
-    public void setHeartAsync(Member member, Integer cnt) {
-        member.setHeart(cnt);
-    }
-
 
     @Transactional
     public HomeResponse minusDia(Member member, DiaRequest request) {
@@ -295,16 +286,50 @@ public class GoodsService {
     public AttendanceResponse getAttendance(Member member){
         return AttendanceResponse.fromMember(member);
     }
+    @Async("threadPoolTaskExecutor")
+    @Transactional
+    public void plusDiaAsync(Member member, DiaRequest request) {
+        member.setDia(member.getDia()+request.getDia());
+    }
 
-    public FeatherRewardResponse getFeatherByAttendance(Member member){
+    @Async("threadPoolTaskExecutor")
+    @Transactional
+    public void setHeartAsync(Member member, Integer cnt) {
+        member.setHeart(cnt);
+    }
+    private RewardResponse getRewardByAttendance(Member member){
         Integer feather = member.getFeatherByAttendance();
         if(feather==null) feather=0;
         member.setFeatherByAttendance(0);
         FeatherRequest req = new FeatherRequest();
         req.setFeather(feather);
         updateFeather(member, req);
-        FeatherRewardResponse res = FeatherRewardResponse.builder()
-                .featherReward(feather).build();
+        RewardResponse res = RewardResponse.builder()
+                .featherReward(feather)
+                .bubblePang(0L)
+                .breadCrumble(0L)
+                .tornado(0L)
+                .grass(0L)
+                .build();
+        if(member.getRole()==Role.ROLE_PREMIUM){
+            if(member.getItem().getBreadCrumble()==0L){
+                res.setBreadCrumble(1L);
+                itemService.updateBreadCrumble(member);
+            }
+            if(member.getItem().getBubblePang()==0L){
+                res.setBubblePang(1L);
+                itemService.updateBubblePang(member);
+            }
+            if(member.getItem().getTornado()==0L){
+                res.setTornado(1L);
+                itemService.updateTornado(member);
+            }
+            if(member.getItem().getGrass()==0L){
+                res.setGrass(1L);
+                itemService.updateGrass(member);
+            }
+        }
         return res;
     }
+
 }

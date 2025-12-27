@@ -14,4 +14,12 @@ import lombok.NoArgsConstructor;
 public class RewardResponse {
     @Schema(example="10")
     Integer featherReward;
+    @Schema(example="10")
+    Long bubblePang;
+    @Schema(example="10")
+    Long breadCrumble;
+    @Schema(example="10")
+    Long tornado;
+    @Schema(example="10")
+    Long grass;
 }

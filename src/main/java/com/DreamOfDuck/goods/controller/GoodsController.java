@@ -4,11 +4,11 @@ import com.DreamOfDuck.account.dto.request.*;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
-import com.DreamOfDuck.goods.dto.response.FeatherRewardResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
+import com.DreamOfDuck.goods.dto.response.RewardResponse;
 import com.DreamOfDuck.goods.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -60,24 +60,15 @@ public class GoodsController {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.getAttendance(member);
     }
-    @PostMapping("/attendance/reward")
-    @Operation(summary = "출석 깃털 보상 받기", description = "출석으로 인한 깃털 보상받는 API")
-    @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = FeatherRewardResponse.class)
-            )})
-    })
-    public FeatherRewardResponse getFeatherByAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.getFeatherByAttendance(member);
-    }
+
 
     @PostMapping("/attendance")
     @Operation(summary = "출석하기", description = "출석하는 API")
     @ApiResponses(value={
-            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = AttendanceResponse.class)
+            @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = RewardResponse.class)
             )})
     })
-    public FeatherRewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public RewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
         return goodsService.addAttendance(member, LocalDate.now());
     }
