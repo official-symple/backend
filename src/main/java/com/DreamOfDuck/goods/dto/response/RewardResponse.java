@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "feather reward response")
-public class FeatherRewardResponse {
+public class RewardResponse {
     @Schema(example="10")
     Integer featherReward;
 }
