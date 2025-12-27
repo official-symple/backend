@@ -28,14 +28,14 @@ public class GoodsScheduler {
         List<Member> members = memberRepository.findAll();
 
         for (Member member : members) {
-            if(member.getRole() == Role.ROLE_PREMIUM) continue;
             try {
                 ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
                 LocalTime userLocalTime = LocalTime.now(userZone);
 
                 // 자정(00:00)에 초기화
                 if (userLocalTime.getHour() == 0 && userLocalTime.getMinute() == 0) {
-                    goodsService.setHeartAsync(member, 6);
+                    if(member.getRole()==Role.ROLE_PREMIUM) goodsService.setHeartAsync(member, 6);
+                    else if(member.getRole()==Role.ROLE_USER) goodsService.setHeartAsync(member, 2);
                 }
 
             } catch (Exception e) {
