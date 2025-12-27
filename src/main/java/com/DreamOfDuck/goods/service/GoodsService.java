@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.DreamOfDuck.goods.dto.response.RewardResponse;
+import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.pang.service.ItemService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -312,19 +313,20 @@ public class GoodsService {
                 .grass(0L)
                 .build();
         if(member.getRole()==Role.ROLE_PREMIUM){
-            if(member.getItem().getBreadCrumble()==0L){
+            Item item = itemService.getOrCreateItem(member);
+            if(item.getBreadCrumble()==0L){
                 res.setBreadCrumble(1L);
                 itemService.updateBreadCrumble(member);
             }
-            if(member.getItem().getBubblePang()==0L){
+            if(item.getBubblePang()==0L){
                 res.setBubblePang(1L);
                 itemService.updateBubblePang(member);
             }
-            if(member.getItem().getTornado()==0L){
+            if(item.getTornado()==0L){
                 res.setTornado(1L);
                 itemService.updateTornado(member);
             }
-            if(member.getItem().getGrass()==0L){
+            if(item.getGrass()==0L){
                 res.setGrass(1L);
                 itemService.updateGrass(member);
             }

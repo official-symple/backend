@@ -52,7 +52,7 @@ public class ItemService {
     }
 
     // Item이 없으면 새로 생성
-    private Item getOrCreateItem(Member host){
+    public Item getOrCreateItem(Member host){
         Item item = host.getItem();
         if(item == null){
             item = Item.builder()
