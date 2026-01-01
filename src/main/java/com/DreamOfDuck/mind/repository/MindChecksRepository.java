@@ -13,4 +13,6 @@ import java.util.List;
 public interface MindChecksRepository extends JpaRepository<MindChecks, Long> {
     List<MindChecks> findByHostAndDateBetweenOrderByDateDesc( Member host, LocalDate start, LocalDate end );
     List<MindChecks> findByHostAndDate(Member host, LocalDate date);
+
+
 }

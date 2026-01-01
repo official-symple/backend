@@ -55,7 +55,6 @@ public class FcmScheduler {
                 LocalDate todayDate = zoneNow.toLocalDate();
 
                 log.info("Checking Zone: {}, Time: {}", zoneId, nowTime);
-
                 // ==========================================
                 // Case 1: 아침 알림 (정시)
                 // ==========================================
@@ -88,7 +87,7 @@ public class FcmScheduler {
                 // ==========================================
                 if (nowTime.getHour() == 22 && nowTime.getMinute() == 0) {
                     List<Member> allMember = memberRepository.findAll();
-                    sendBatch(missedTargets, NotificationType.STREAK_REWARD);
+                    sendBatch(allMember, NotificationType.STREAK_REWARD);
                 }
 
             } catch (Exception e) {
@@ -107,6 +106,7 @@ public class FcmScheduler {
 
         for (Member member : members) {
             // 여기서 비동기 메서드를 호출하므로 스케줄러는 기다리지 않고 바로 다음으로 넘어갑니다.
+           log.info("member : {}, type : {}", member.getNickname(), type.toString());
             fcmService.sendNotificationAsync(member, type);
         }
     }
