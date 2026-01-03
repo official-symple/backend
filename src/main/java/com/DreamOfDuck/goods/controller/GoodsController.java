@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -70,7 +71,12 @@ public class GoodsController {
     })
     public RewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.addAttendance(member, LocalDate.now());
+        ZoneId userZone = (member.getLocation() != null)
+                ? ZoneId.of(member.getLocation())
+                : ZoneId.of("Asia/Seoul");
+
+        LocalDate today = LocalDate.now(userZone);
+        return goodsService.addAttendance(member, today);
     }
 
     @PostMapping("/heart/ad")
