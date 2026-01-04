@@ -294,7 +294,7 @@ public class GoodsService {
     public void setHeartAsync(Long memberId, Integer cnt) {
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
 
         member.setHeart(cnt);
         log.info("Member {} 하트 리셋 완료: {}", memberId, cnt);
