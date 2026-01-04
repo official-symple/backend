@@ -32,8 +32,8 @@ public class GoodsScheduler {
                 ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
                 int userHour = LocalTime.now(userZone).getHour();
                 if (userHour == 0) {
-                    int heartCount = (member.getRole() == Role.ROLE_PREMIUM) ? 6 : 2;
-                    goodsService.setHeartAsync(member.getId(), heartCount);
+
+                    goodsService.setHeartAsync(member.getId(), 4);
                 }
             } catch (Exception e) {
                 log.error("Error for member {}: {}", member.getId(), e.getMessage());
