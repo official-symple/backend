@@ -29,17 +29,14 @@ public class GoodsScheduler {
 
         for (Member member : members) {
             try {
-                ZoneId userZone = ZoneId.of(member.getLocation()==null?"Asia/Seoul":member.getLocation());
-                LocalTime userLocalTime = LocalTime.now(userZone);
-
-                // 자정(00:00)에 초기화
-                if (userLocalTime.getHour() == 0 && userLocalTime.getMinute() == 0) {
-                    if(member.getRole()==Role.ROLE_PREMIUM) goodsService.setHeartAsync(member, 6);
-                    else if(member.getRole()==Role.ROLE_USER) goodsService.setHeartAsync(member, 2);
+                ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
+                int userHour = LocalTime.now(userZone).getHour();
+                if (userHour == 0) {
+                    int heartCount = (member.getRole() == Role.ROLE_PREMIUM) ? 6 : 2;
+                    goodsService.setHeartAsync(member.getId(), heartCount);
                 }
-
             } catch (Exception e) {
-                log.error("Invalid time zone for member {}: {}", member.getId(), member.getLocation(), e);
+                log.error("Error for member {}: {}", member.getId(), e.getMessage());
             }
         }
     }

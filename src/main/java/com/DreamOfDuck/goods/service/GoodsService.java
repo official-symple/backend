@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.goods.dto.response.RewardResponse;
 import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.pang.service.ItemService;
@@ -39,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class GoodsService {
     private final ItemService itemService;
+    private final MemberRepository memberRepository;
     int[] levelRequirements = {
             0, 150, 300, 450, 600, 1000, 1600, 2200, 2900, 3600,
             4300, 5000, 6000, 7000, 8000, 9000, 10000, 11500,
@@ -289,8 +291,13 @@ public class GoodsService {
     }
     @Async("threadPoolTaskExecutor")
     @Transactional
-    public void plusDiaAsync(Member member, DiaRequest request) {
-        member.setDia(member.getDia()+request.getDia());
+    public void setHeartAsync(Long memberId, Integer cnt) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        member.setHeart(cnt);
+        log.info("Member {} 하트 리셋 완료: {}", memberId, cnt);
     }
 
     @Async("threadPoolTaskExecutor")
