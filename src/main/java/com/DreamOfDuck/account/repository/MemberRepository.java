@@ -19,6 +19,7 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
+    List<Member> findByLocation(String location);
     List<Member> findByLanguage(Language language);
     Boolean existsByNickname(String nickname);
     @Query("SELECT DISTINCT m FROM Member m LEFT JOIN FETCH m.mindCheckTimes")

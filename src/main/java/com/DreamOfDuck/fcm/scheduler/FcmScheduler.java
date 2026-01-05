@@ -38,9 +38,9 @@ public class FcmScheduler {
     // 매 분마다 체크
     @Scheduled(cron = "0 * * * * *")
     public void sendMindCheckPush() {
-        // 1. 존재하는 타임존 목록 가져오기 (캐싱 권장)
+
         List<String> distinctZones = memberRepository.findDistinctLocations();
-        // location이 null인 유저들을 위해 기본값 추가 (DB에 없을 수도 있으므로)
+
         if (!distinctZones.contains("Asia/Seoul")) {
             distinctZones.add("Asia/Seoul");
         }
@@ -81,21 +81,36 @@ public class FcmScheduler {
                 List<Member> missedTargets = memberRepository.findNotCheckedTargets(zoneId, dayOfWeek, targetTimeForMissed, DEFAULT_MORNING_TIME, todayDate);
                 sendBatch(missedTargets, NotificationType.MORNING_MISSED);
 
-
-                // ==========================================
-                // Case 5: 22시 스트릭 알림 (특수 케이스)
-                // ==========================================
-                if (nowTime.getHour() == 22 && nowTime.getMinute() == 0) {
-                    List<Member> allMember = memberRepository.findAll();
-                    sendBatch(allMember, NotificationType.STREAK_REWARD);
-                }
-
             } catch (Exception e) {
                 log.error("Error processing zone {}: {}", zoneId, e.getMessage());
             }
         }
     }
-    // 매 분 실행
+    @Scheduled(cron = "0 0 * * * *")
+    public void sendStreakNotification() {
+
+        List<String> distinctZones = memberRepository.findDistinctLocations();
+        if (!distinctZones.contains("Asia/Seoul")) {
+            distinctZones.add("Asia/Seoul");
+        }
+        for (String zoneId : distinctZones) {
+            try {
+                ZoneId zone = ZoneId.of(zoneId);
+                ZonedDateTime nowInZone = ZonedDateTime.now(zone);
+
+                if (nowInZone.getHour() == 22) {
+                    List<Member> zoneMembers = memberRepository.findByLocation(zoneId);
+
+                    if (!zoneMembers.isEmpty()) {
+                        log.info("Zone {}: 22시 정각입니다. {}명에게 발송합니다.", zoneId, zoneMembers.size());
+                        sendBatch(zoneMembers, NotificationType.STREAK_REWARD);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("타임존 {} 처리 중 오류 발생: {}", zoneId, e.getMessage());
+            }
+        }
+    }
 
     private void sendBatch(List<Member> members, NotificationType type) {
         if (members == null || members.isEmpty()) {
