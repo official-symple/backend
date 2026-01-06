@@ -32,7 +32,6 @@ public class GoodsScheduler {
                 ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
                 int userHour = LocalTime.now(userZone).getHour();
                 if (userHour == 0) {
-
                     goodsService.setHeartAsync(member.getId(), 4);
                 }
             } catch (Exception e) {
@@ -40,6 +39,34 @@ public class GoodsScheduler {
             }
         }
     }
+//    @Scheduled(cron = "0 * * * * *") // 초는 0초에, 매 분마다 실행
+//    @Transactional
+//    public void resetHeartByMemberLocationTest() {
+//        // 1. 현재 한국 시간(또는 서버 시간) 기준으로 10시 40분인지 확인
+//        LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
+//
+//        if (now.getHour() == 22 && now.getMinute() == 48) {
+//            log.info("테스트 스케줄러 실행: 현재 시간은 10시 40분입니다.");
+//
+//            List<Member> members = memberRepository.findAll();
+//
+//            for (Member member : members) {
+//                try {
+//                    // 기존 로직: 각 멤버의 타임존 기준 0시인지 체크
+//                    ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
+//                    int userHour = LocalTime.now(userZone).getHour();
+//
+//                    goodsService.setHeartAsync(member.getId(), 4);
+//                    log.info("Member {} 하트 리셋 완료 (타임존: {})", member.getId(), userZone);
+//                } catch (Exception e) {
+//                    log.error("Error for member {}: {}", member.getId(), e.getMessage());
+//                }
+//            }
+//        } else {
+//            // 조건이 맞지 않을 때 로그를 남기고 싶다면 아래 주석 해제
+//            // log.info("현재 시간 {} : 10시 40분이 아니라서 스킵합니다.", now);
+//        }
+//    }
 
     @Scheduled(cron = "0 0 * * * *") // 매 시간마다 체크
     @Transactional
