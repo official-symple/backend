@@ -1,17 +1,18 @@
 package com.DreamOfDuck.pang.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
-import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
 import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import com.DreamOfDuck.pang.entity.Item;
 import com.DreamOfDuck.pang.repository.ItemRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -72,12 +73,17 @@ public class ItemService {
         Long breadCrumble = item.getBreadCrumble();
         Long tornado = item.getTornado();
         Long bubblePang = item.getBubblePang();
-        if(request.getBreadCrumble()>breadCrumble || request.getTornado()>tornado|| request.getBubblePang()>bubblePang ){
+        Long grass = item.getGrass();
+        if(request.getBreadCrumble()>breadCrumble 
+            || request.getTornado()>tornado
+            || request.getBubblePang()>bubblePang
+            || request.getGrass()>grass){
             throw new CustomException(ErrorCode.NOT_ENOUGH_ITEM);
         }
         item.setBreadCrumble(breadCrumble-request.getBreadCrumble());
         item.setTornado(tornado-request.getTornado());
         item.setBubblePang(bubblePang-request.getBubblePang());
+        item.setGrass(grass-request.getGrass());
         return ItemResponse.fromItem(item);
     }
     @Transactional
