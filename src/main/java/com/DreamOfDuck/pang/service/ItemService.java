@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
 import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import com.DreamOfDuck.pang.entity.Item;
