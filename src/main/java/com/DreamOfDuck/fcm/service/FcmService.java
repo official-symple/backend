@@ -1,7 +1,9 @@
 package com.DreamOfDuck.fcm.service;
 
+import com.DreamOfDuck.account.entity.Attendance;
 import com.DreamOfDuck.account.entity.Language;
 import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.fcm.NotificationType;
 import com.DreamOfDuck.fcm.dto.FcmMessage;
 import com.DreamOfDuck.fcm.dto.FcmRequest;
@@ -34,12 +36,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/duck-s-dream/messages:send";
     private final ObjectMapper objectMapper;
     private final Random random = new Random();
     private final MindChecksRepository mindChecksRepository;
+    private final MemberRepository memberRepository;
 
     @Async("threadPoolTaskExecutor") // ★ 핵심: 여기서 병렬 처리됨
     public void sendNotificationAsync(Member member, NotificationType type) {
@@ -62,12 +64,10 @@ public class FcmService {
                     .deeplink(deeplink)
                     .build();
 
-            // 만약 스트릭 보상의 경우 제목을 따로 설정해야 한다면 아래처럼 분기
             if (type == NotificationType.STREAK_REWARD) {
                 request.setTitle(isKor ? "잘하고 있어요!" : "Keep it up, you got this!");
             }
 
-            // 전송 (FcmService는 동기 메서드여야 함)
             sendMessageTo(member.getDeviceToken(), request);
 
         } catch (Exception e) {
@@ -183,11 +183,11 @@ public class FcmService {
             case STREAK_REWARD:
                 ZoneId userZone = ZoneId.of(member.getLocation() == null ? "Asia/Seoul" : member.getLocation());
                 LocalDate today = LocalDate.now(userZone);
-                MindChecks checkToday = mindChecksRepository.findByHostAndDate(member, today)
-                        .stream().findFirst().orElse(null);
-
+                Attendance checkToday = memberRepository.findAttendanceByMemberAndDate(member, today).orElse(null);
+                log.info(" member {}'s checkToday: {}", member.getNickname(),checkToday);
                 if(checkToday==null){
                     int streak = getConsecutiveAbsenceDays(member, today);
+                    log.info("absence streak: " + streak);
                     if(streak==1){
                         return isKor?
                                 "오늘 접속하지 않으면 불꽃이 사라져요. "+duckname+"가 "+nickname+"님을 보고싶어해요!":
@@ -268,11 +268,12 @@ public class FcmService {
                             };
                             return msgs[random.nextInt(msgs.length)];
                         }
-                    }
+                    }else return null;
 
                 }
 
                 int streak = getConsecutiveMindChecks(member, today);
+                log.info("streak: "+streak);
                 if (streak >= 50) {
                     return isKor ?
                             streak + "일 연속 기록이라니! 놀라운 꾸준함이에요." :
@@ -321,38 +322,37 @@ public class FcmService {
         }
     }
     private int getConsecutiveMindChecks(Member member, LocalDate today) {
-        int streak = 0;
-        for (int i = 0; ; i++) {
-            LocalDate date = today.minusDays(i);
-            MindChecks check = mindChecksRepository.findByHostAndDate(member, date)
-                    .stream().findFirst().orElse(null);
+        List<Attendance> history = memberRepository.findRecentAttendanceByMember(member);
 
-            if (check != null && check.getDayMindCheck() != null) {
+        int streak = 0;
+        LocalDate current = today;
+        for (Attendance a : history) {
+            if (a.getDate().equals(current)) {
                 streak++;
-            } else {
+                current = current.minusDays(1);
+            }else if (a.getDate().isBefore(current)) {
+                break;
+            }else{
                 break;
             }
         }
         return streak;
     }
     private int getConsecutiveAbsenceDays(Member member, LocalDate today) {
-        int streak = 0;
-        for (int i = 0; ; i++) {
-            LocalDate date = today.minusDays(i);
-            MindChecks check = mindChecksRepository.findByHostAndDate(member, date)
-                    .stream().findFirst().orElse(null);
-
-            if (check == null) {
-                streak++;
-            } else {
-                break;
-            }
+        List<Attendance> history = memberRepository.findRecentAttendanceByMember(member);
+        log.info("{}'s attendance days: {}", member.getNickname(), history.size());
+        if (history.isEmpty()) {
+            return 0;
         }
-        return streak;
+
+        LocalDate lastCheckDate = history.get(0).getDate();
+        long absenceDays = java.time.temporal.ChronoUnit.DAYS.between(lastCheckDate, today);
+
+        return (int)absenceDays;
     }
     private String getDeepLink(NotificationType type) {
         if (type == NotificationType.MORNING_MISSED || type == NotificationType.STREAK_REWARD) {
-            return "ducksdream://deeplink/record";
+            return "ducksdream://deeplink";
         }
         return "ducksdream://deeplink/mindCheck";
     }
@@ -404,7 +404,7 @@ public class FcmService {
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
             googleCredentials.refreshIfExpired();
-            log.info("access token: {}",googleCredentials.getAccessToken());
+            //log.info("access token: {}",googleCredentials.getAccessToken());
             return googleCredentials.getAccessToken().getTokenValue();
 
         } catch (IOException e) {

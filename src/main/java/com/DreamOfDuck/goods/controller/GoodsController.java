@@ -1,6 +1,7 @@
 package com.DreamOfDuck.goods.controller;
 
 import com.DreamOfDuck.account.dto.request.*;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -70,7 +72,12 @@ public class GoodsController {
     })
     public RewardResponse setAttendance(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.addAttendance(member, LocalDate.now());
+        ZoneId userZone = (member.getLocation() != null)
+                ? ZoneId.of(member.getLocation())
+                : ZoneId.of("Asia/Seoul");
+
+        LocalDate today = LocalDate.now(userZone);
+        return goodsService.addAttendance(member, today);
     }
 
     @PostMapping("/heart/ad")
@@ -112,7 +119,9 @@ public class GoodsController {
     })
     public HomeResponse updateFeatherByMission(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return goodsService.plusFeather(member, 50);
+        FeatherRequest request = new FeatherRequest();
+        request.setFeather(50);
+        return goodsService.updateFeather(member, request);
     }
     @DeleteMapping("/heart/pang")
     @Operation(summary = "게임시 하트 사용", description = "게임시 하트를 사용하는 API")
