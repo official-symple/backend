@@ -2,20 +2,14 @@ package com.DreamOfDuck.goods.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import com.DreamOfDuck.account.repository.MemberRepository;
-import com.DreamOfDuck.goods.dto.response.RewardResponse;
-import com.DreamOfDuck.pang.entity.Item;
-import com.DreamOfDuck.pang.service.ItemService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.DreamOfDuck.account.dto.request.DFRequest;
@@ -23,6 +17,7 @@ import com.DreamOfDuck.account.dto.request.DucknameRequest;
 import com.DreamOfDuck.account.entity.Attendance;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.repository.MemberRepository;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.goods.dto.request.DiaRequest;
@@ -30,6 +25,9 @@ import com.DreamOfDuck.goods.dto.request.FeatherRequest;
 import com.DreamOfDuck.goods.dto.response.AttendanceByMonthResponse;
 import com.DreamOfDuck.goods.dto.response.AttendanceResponse;
 import com.DreamOfDuck.goods.dto.response.HomeResponse;
+import com.DreamOfDuck.goods.dto.response.RewardResponse;
+import com.DreamOfDuck.pang.entity.Item;
+import com.DreamOfDuck.pang.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,7 +105,7 @@ public class GoodsService {
 
     @Transactional
     public HomeResponse minusHeart(Member member, Integer cnt) {
-        if(member.getRole() != Role.ROLE_PREMIUM) member.setHeart(member.getHeart()-cnt);
+        member.setHeart(member.getHeart()-cnt);
         HomeResponse res = HomeResponse.from(member);
         res.setRequiredFeather(levelRequirements[member.getLv()]);
         return res;
