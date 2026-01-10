@@ -63,6 +63,7 @@ jobs:
       run: docker push ${{ secrets.DOCKER_USERNAME }}/dreaming_duck:dev
 
     - name: Deploy
+      id: deploy
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -94,6 +95,28 @@ jobs:
           EOF
           
           docker compose -f docker-compose.all.yml up -d
+
+    - name: Send Discord notification on success
+      if: success()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        title: "배포 성공 (dev)"
+        description: "✅ dev 환경 배포가 성공적으로 완료되었습니다."
+        color: 0x00ff00
+        username: "GitHub Actions"
+        avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+
+    - name: Send Discord notification on failure
+      if: failure()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        title: "배포 실패 (dev)"
+        description: "❌ dev 환경 배포 중 오류가 발생했습니다."
+        color: 0xff0000
+        username: "GitHub Actions"
+        avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.

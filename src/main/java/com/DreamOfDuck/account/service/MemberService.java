@@ -1,26 +1,35 @@
 package com.DreamOfDuck.account.service;
 
-import com.DreamOfDuck.account.dto.request.*;
-import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
-import com.DreamOfDuck.account.dto.response.NicknameResponse;
-import com.DreamOfDuck.goods.dto.request.DiaRequest;
-import com.DreamOfDuck.goods.dto.request.FeatherRequest;
-import com.DreamOfDuck.goods.dto.request.HeartRequest;
-import com.DreamOfDuck.goods.dto.response.HomeResponse;
-import com.DreamOfDuck.account.dto.response.MemberResponse;
-import com.DreamOfDuck.account.entity.*;
-import com.DreamOfDuck.account.repository.MemberRepository;
-import com.DreamOfDuck.global.exception.CustomException;
-import com.DreamOfDuck.global.exception.ErrorCode;
-
-import com.DreamOfDuck.talk.entity.Cause;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import com.DreamOfDuck.account.dto.request.DucknameRequest;
+import com.DreamOfDuck.account.dto.request.LocationRequest;
+import com.DreamOfDuck.account.dto.request.LvRequest;
+import com.DreamOfDuck.account.dto.request.MemberCreateRequest;
+import com.DreamOfDuck.account.dto.request.MemberUpdateRequest;
+import com.DreamOfDuck.account.dto.request.ScoreRequest;
+import com.DreamOfDuck.account.dto.request.TokenRequest;
+import com.DreamOfDuck.account.dto.response.FcmTokenResponse;
+import com.DreamOfDuck.account.dto.response.MemberResponse;
+import com.DreamOfDuck.account.dto.response.NicknameResponse;
+import com.DreamOfDuck.account.entity.Gender;
+import com.DreamOfDuck.account.entity.Language;
+import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.account.entity.Subscribe;
+import com.DreamOfDuck.account.repository.MemberRepository;
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.goods.dto.request.DiaRequest;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.dto.request.HeartRequest;
+import com.DreamOfDuck.goods.dto.response.HomeResponse;
+import com.DreamOfDuck.talk.entity.Cause;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -85,7 +94,7 @@ public class MemberService {
         member.setLv(1);
         member.setCntTalk(2);
         member.setLocation("Asia/Seoul");
-        if(request.getLanguage().equalsIgnoreCase("kor")) member.setDuckname("꽥꽥이");
+        if(member.getLanguage().equals(Language.KOR)) member.setDuckname("꽥꽥이");
         else member.setDuckname("Qquack");
 
         memberRepository.save(member);
