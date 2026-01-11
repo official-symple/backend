@@ -5,11 +5,9 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
 import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
-import com.DreamOfDuck.mind.dto.response.MindCheckReport;
-import com.DreamOfDuck.mind.dto.response.MindCheckReportPeriod;
-import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
-import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
+import com.DreamOfDuck.mind.dto.response.*;
 import com.DreamOfDuck.mind.service.MindCheckService;
+import com.DreamOfDuck.mind.service.MindCheckTimeService;
 import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
 import com.DreamOfDuck.pang.dto.response.ItemResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +30,7 @@ import java.util.List;
 @RequestMapping("/api/mindcheck")
 public class MindCheckController {
     private final MindCheckService mindCheckService;
+    private final MindCheckTimeService mindCheckTimeService;
     private final MemberService memberService;
 
     @PostMapping("/time")
@@ -43,7 +42,17 @@ public class MindCheckController {
     })
     public List<MindCheckTimeResponse> setMindCheckTime(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody MindCheckTimeRequest request){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return mindCheckService.setMindCheckTime(member, request);
+        return mindCheckTimeService.setMindCheckTime(member, request);
+    }
+    @PostMapping("/check/time")
+    @Operation(summary = "마음체크 푸시알림 시간 가능 여부", description = "마음체크 푸시알림 설정 시간 가능 여부를 확인하는 API")
+    @ApiResponses(value={
+            @ApiResponse(responseCode="200", content = {@Content(
+                    array=@ArraySchema(schema=@Schema(implementation = MindCheckTimeResponse.class))
+            )})
+    })
+    public PossibleTimeResponse isPossibleTime(@Valid @RequestBody MindCheckTimeRequest request){
+        return mindCheckTimeService.isPossibleTime(request);
     }
     @GetMapping("/time")
     @Operation(summary = "마음체크 푸시알림 시간 받기", description = "마음체크 푸시알림 시간 받는 API")
@@ -54,7 +63,7 @@ public class MindCheckController {
     })
     public List<MindCheckTimeResponse> getMindCheckTime(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
-        return mindCheckService.getMindCheckTimes(member);
+        return mindCheckTimeService.getMindCheckTimes(member);
     }
 
     @PostMapping("")
