@@ -48,7 +48,7 @@ public class MindCheckController {
     @Operation(summary = "마음체크 푸시알림 시간 가능 여부", description = "마음체크 푸시알림 설정 시간 가능 여부를 확인하는 API")
     @ApiResponses(value={
             @ApiResponse(responseCode="200", content = {@Content(
-                    array=@ArraySchema(schema=@Schema(implementation = MindCheckTimeResponse.class))
+                    array=@ArraySchema(schema=@Schema(implementation = PossibleTimeResponse.class))
             )})
     })
     public PossibleTimeResponse isPossibleTime(@Valid @RequestBody MindCheckTimeRequest request){
