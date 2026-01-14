@@ -102,7 +102,7 @@ public class MemberService {
     }
     @Transactional
     public MemberResponse updateMemberInfo(Member member, MemberUpdateRequest request) {
-        if(member.getRole()!= Role.ROLE_USER){
+        if(member.getRole()!= Role.ROLE_USER && member.getRole()!= Role.ROLE_PREMIUM){
             throw new CustomException(ErrorCode.DO_SIGNUP_FIRST);
         }
         if(request.getIsMarketing()!=null) member.setIsMarketing(request.getIsMarketing());
