@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MissionRequestF {
+    @Schema(description = "세션 ID (AI 서버 콜백용)")
+    Long sessionId;
+
     @NotNull
     Integer persona;
 
@@ -22,8 +25,7 @@ public class MissionRequestF {
 
     String language;
 
-    @NotNull
-    String summary;
+    String summary;  // Summary 의존성 있으므로 AI 서버에서 처리
 
     @NotNull
     String nickname;

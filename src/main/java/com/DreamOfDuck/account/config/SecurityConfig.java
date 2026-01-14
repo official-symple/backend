@@ -71,8 +71,8 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login/**", "/reissue", "/logout").permitAll()
-                        .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout").hasAnyRole("GUEST", "USER", "PREMIUM", "ADMIN")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/","/login/**", "/reissue", "/logout", "/api/ai/callback/**").permitAll()
+                        .requestMatchers("/api/member/signup", "api/member", "/reissue", "/cancel", "/logout", "api/member/check/**").hasAnyRole("GUEST", "USER", "PREMIUM", "ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().hasAnyRole("USER", "PREMIUM", "ADMIN"))
                 .sessionManagement((session)->session

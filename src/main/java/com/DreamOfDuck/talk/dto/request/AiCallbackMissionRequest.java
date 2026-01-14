@@ -7,27 +7,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdviceRequestF {
-    @Schema(description = "세션 ID (AI 서버 콜백용)")
-    Long sessionId;
-
+public class AiCallbackMissionRequest {
     @NotNull
-    Integer persona;
+    @Schema(description = "세션 ID", example = "123")
+    private Long sessionId;
 
-    String language;
-
-    @NotNull
-    Boolean formal;
-
-    @NotNull
-    List<MessageFormatF> messages;
-
-    @NotNull
-    String nickname;
+    @Schema(description = "미션 내용", example = "오늘 하루 동안 자신에게 칭찬 3가지 말해보기")
+    private String mission;
 }

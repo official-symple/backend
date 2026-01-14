@@ -90,21 +90,21 @@ public class GoodsScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
-    @Transactional
-    public void resetMonthlyDataByMemberLocation() {
-        List<Member> members = memberRepository.findAll();
-
-        for (Member member : members) {
-            if(member.getRole() != Role.ROLE_PREMIUM) continue;
-            try {
-                log.info("====== 매월 1일 00:00 - 월별 데이터 초기화 작업 시작 ======");
-                DiaRequest diaRequest = new DiaRequest();
-                diaRequest.setDia(300);
-                goodsService.plusDia(member, diaRequest);
-            } catch (Exception e) {
-                log.error("Invalid time zone for member {}: {}", member.getId(), member.getLocation(), e);
-            }
-        }
-    }
+//    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+//    @Transactional
+//    public void resetMonthlyDataByMemberLocation() {
+//        List<Member> members = memberRepository.findAll();
+//
+//        for (Member member : members) {
+//            if(member.getRole() != Role.ROLE_PREMIUM) continue;
+//            try {
+//                log.info("====== 매월 1일 00:00 - 월별 데이터 초기화 작업 시작 ======");
+//                DiaRequest diaRequest = new DiaRequest();
+//                diaRequest.setDia(300);
+//                goodsService.plusDia(member, diaRequest);
+//            } catch (Exception e) {
+//                log.error("Invalid time zone for member {}: {}", member.getId(), member.getLocation(), e);
+//            }
+//        }
+//    }
 }

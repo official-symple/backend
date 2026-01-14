@@ -13,21 +13,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdviceRequestF {
-    @Schema(description = "세션 ID (AI 서버 콜백용)")
-    Long sessionId;
-
+public class AiCallbackAdviceRequest {
     @NotNull
-    Integer persona;
+    @Schema(description = "세션 ID", example = "123")
+    private Long sessionId;
 
-    String language;
-
-    @NotNull
-    Boolean formal;
-
-    @NotNull
-    List<MessageFormatF> messages;
-
-    @NotNull
-    String nickname;
+    @Schema(description = "조언 목록")
+    private List<String> advice;
 }
