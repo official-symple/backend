@@ -95,6 +95,7 @@ public class MessageService {
     }
     private MessageResponseF getMessageFromDuck(MessageRequestF request){
         log.info("request: {}", request);
+        log.info("endpoint: {}", endpoint);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
