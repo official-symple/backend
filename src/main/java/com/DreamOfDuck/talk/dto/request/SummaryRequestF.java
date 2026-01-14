@@ -16,6 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "summary create request")
 public class SummaryRequestF {
+    @JsonProperty("sessionId")
+    @Schema(description = "세션 ID (AI 서버 콜백용)")
+    private Long sessionId;
+
     @NotNull
     @JsonProperty("persona")
     private Integer persona;

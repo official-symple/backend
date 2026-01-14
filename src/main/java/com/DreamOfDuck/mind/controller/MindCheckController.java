@@ -1,15 +1,30 @@
 package com.DreamOfDuck.mind.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.account.service.MemberService;
 import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
 import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
-import com.DreamOfDuck.mind.dto.response.*;
+import com.DreamOfDuck.mind.dto.response.MindCheckReport;
+import com.DreamOfDuck.mind.dto.response.MindCheckReportPeriod;
+import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
+import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
+import com.DreamOfDuck.mind.dto.response.PossibleTimeResponse;
 import com.DreamOfDuck.mind.service.MindCheckService;
 import com.DreamOfDuck.mind.service.MindCheckTimeService;
-import com.DreamOfDuck.pang.dto.request.ItemUseRequest;
-import com.DreamOfDuck.pang.dto.response.ItemResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,12 +33,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,8 +59,9 @@ public class MindCheckController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = PossibleTimeResponse.class)
             )})
     })
-    public PossibleTimeResponse isPossibleTime(@Valid @RequestBody MindCheckTimeRequest request){
-        return mindCheckTimeService.isPossibleTime(request);
+    public PossibleTimeResponse isPossibleTime(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        Member member = memberService.findMemberByEmail(customUserDetails.getUsername());
+        return mindCheckTimeService.isPossibleTime(member);
     }
     @GetMapping("/time")
     @Operation(summary = "마음체크 푸시알림 시간 받기", description = "마음체크 푸시알림 시간 받는 API")

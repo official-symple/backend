@@ -1,22 +1,31 @@
 package com.DreamOfDuck.mind.service;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
 import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.dto.response.PossibleTimeResponse;
+import com.DreamOfDuck.mind.dto.response.TimeType;
 import com.DreamOfDuck.mind.entity.MindCheckTime;
 import com.DreamOfDuck.mind.repository.MindCheckTimeRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,17 +37,44 @@ public class MindCheckTimeService {
                 .filter(time->time.getDayOfWeek()==dayOfWeek)
                 .findFirst().orElse(null);
     }
-    public PossibleTimeResponse isPossibleTime(MindCheckTimeRequest request) {
-        PossibleTimeResponse response = PossibleTimeResponse.builder().possibleTime(true).build();
-        if (request.getDayTime().isBefore(LocalTime.of(6, 0)) || request.getDayTime().isAfter(LocalTime.of(13, 0))) {
-            response.setPossibleTime(false);
+    public PossibleTimeResponse isPossibleTime(Member member) {
+        ZoneId userZone = ZoneId.of(member.getLocation());
+        LocalTime now = LocalTime.now(userZone);
+        DayOfWeek currentDay = DayOfWeek.from(java.time.LocalDate.now(userZone));
+        
+        MindCheckTime mindCheckTime = getMindCheckTime(member, currentDay);
+        
+        LocalTime dayTime = mindCheckTime != null ? mindCheckTime.getDayTime() : LocalTime.of(8, 0);
+        LocalTime nightTime = mindCheckTime != null ? mindCheckTime.getNightTime() : LocalTime.of(21, 0);
+        
+        boolean isWithinDayTime = isWithinOneHour(now, dayTime);
+        boolean isWithinNightTime = isWithinOneHour(now, nightTime);
+        
+        boolean possibleTime = isWithinDayTime || isWithinNightTime;
+        TimeType timeType = null;
+        
+        if (possibleTime) {
+            long dayDiff = getMinutesDifference(now, dayTime);
+            long nightDiff = getMinutesDifference(now, nightTime);
+            timeType = dayDiff <= nightDiff ? TimeType.DAY : TimeType.NIGHT;
         }
-        LocalTime night = request.getNightTime();
-        if (!((night.equals(LocalTime.of(18,0)) || night.isAfter(LocalTime.of(18,0)))
-                || (night.isBefore(LocalTime.of(4,0)) || night.equals(LocalTime.of(4,0))))) {
-            response.setPossibleTime(false);
-        }
-        return response;
+        
+        return PossibleTimeResponse.builder()
+                .possibleTime(possibleTime)
+                .timeType(timeType)
+                .build();
+    }
+    
+    private boolean isWithinOneHour(LocalTime current, LocalTime target) {
+        long minutesDiff = getMinutesDifference(current, target);
+        return minutesDiff <= 60;
+    }
+    
+    private long getMinutesDifference(LocalTime current, LocalTime target) {
+        Duration duration = Duration.between(current, target);
+        long minutesDiff = Math.abs(duration.toMinutes());
+        // 자정을 넘어가는 경우도 고려 (예: 23:00과 00:30은 30분 차이)
+        return Math.min(minutesDiff, 1440 - minutesDiff);
     }
     @Transactional
     public List<MindCheckTimeResponse> setMindCheckTime(Member member, MindCheckTimeRequest request) {

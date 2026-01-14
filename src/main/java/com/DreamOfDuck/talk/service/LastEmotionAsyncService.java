@@ -4,9 +4,6 @@ import com.DreamOfDuck.account.entity.Member;
 import com.DreamOfDuck.global.exception.CustomException;
 import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.talk.dto.request.*;
-import com.DreamOfDuck.talk.dto.response.AdviceResponse;
-import com.DreamOfDuck.talk.dto.response.MissionResponse;
-import com.DreamOfDuck.talk.dto.response.SummaryResponseF;
 import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.repository.SessionRepository;
@@ -14,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,13 +30,19 @@ public class LastEmotionAsyncService {
     @Value("${fastApi.advice.endpoint}")
     private String endpoint_advice;
 
-    @Transactional
-    @Async("threadPoolTaskExecutor")
-    public void saveReportAndMission(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId).orElse(null);
+    /**
+     * Summary 요청을 AI 서버에 전송 (즉시 200 응답 확인)
+     * AI 서버가 처리를 완료하면 콜백 API로 결과를 전송함
+     * Summary 콜백 수신 시 Mission 요청이 자동으로 트리거됨
+     */
+    public void requestSummary(Member host, Long sessionId){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
 
-        SummaryRequestF requestF = SummaryRequestF.builder()
-                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
+        // Summary 요청 생성
+        SummaryRequestF summaryRequest = SummaryRequestF.builder()
+                .sessionId(sessionId)  // AI 서버 콜백용
+                .language(host.getLanguage() == null ? "kor" : host.getLanguage().toString().toLowerCase())
                 .messages(MessageFormatF.fromSession(session))
                 .emotionCause(session.getCause().getText())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
@@ -49,86 +50,138 @@ public class LastEmotionAsyncService {
                 .formal(session.getIsFormal())
                 .build();
 
-        SummaryResponseF responseF = getSummary(requestF);
-        session.setProblem(responseF.getProblem());
-        session.setSolutions(responseF.getSolutions());
+        // Summary 요청 전송 (즉시 200 응답)
+        requestSummaryToAiServer(summaryRequest, sessionId);
+        log.info("Summary request sent for session {}", sessionId);
+    }
 
-        MissionRequestF requestF2 = MissionRequestF.builder()
+    /**
+     * Mission 요청을 AI 서버에 전송 (Summary 콜백 수신 후 호출됨)
+     */
+    public void requestMission(Long sessionId, String summary){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
+        Member host = session.getHost();
+
+        // Mission 요청 생성 (summary 포함)
+        MissionRequestF missionRequest = MissionRequestF.builder()
+                .sessionId(sessionId)  // AI 서버 콜백용
                 .persona(session.getDuckType().getValue())
-                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
+                .language(host.getLanguage() == null ? "kor" : host.getLanguage().toString().toLowerCase())
                 .formal(session.getIsFormal())
-                .summary(responseF.getProblem())
-                .nickname(session.getHost().getNickname())
+                .summary(summary)  // Summary 콜백에서 받은 결과 전달
+                .nickname(host.getNickname())
                 .emotion_cause(session.getCause().getText())
                 .emotion(session.getEmotion().stream().map(Emotion::getText).collect(Collectors.toList()))
                 .build();
-        MissionResponse responseF2 = getMission(requestF2);
-        System.out.println("mission 받기 : "+responseF2.getMission());
-        session.setMission(responseF2.getMission());
 
-
-        sessionRepository.save(session);
-        return;
+        // Mission 요청 전송 (즉시 200 응답)
+        requestMissionToAiServer(missionRequest, sessionId);
+        log.info("Mission request sent for session {}", sessionId);
     }
-    private SummaryResponseF getSummary(SummaryRequestF request){
+    /**
+     * Summary 요청을 AI 서버에 전송 (즉시 200 응답만 확인)
+     */
+    private void requestSummaryToAiServer(SummaryRequestF request, Long sessionId){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<SummaryRequestF> requestEntity = new HttpEntity<>(request, headers);
-        try{
-            log.info("try to connect with chat gpt");
-            ResponseEntity<SummaryResponseF> res = restTemplate.exchange(endpoint_summary, HttpMethod.POST, requestEntity, SummaryResponseF.class);
-            if(res.getBody()==null){
-                throw new RuntimeException("fastApi로 부터 응답이 없습니다.");
+
+        try {
+            log.info("Sending summary request to AI server for session {}", sessionId);
+            ResponseEntity<Void> res = restTemplate.exchange(
+                    endpoint_summary,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Void.class
+            );
+
+            if (res.getStatusCode().is2xxSuccessful()) {
+                log.info("Summary request accepted by AI server for session {}", sessionId);
+            } else {
+                log.error("Unexpected response from AI server: {}", res.getStatusCode());
+                throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
             }
-            return res.getBody();
         } catch(RestClientException e) {
+            log.error("Failed to send summary request to AI server: {}", e.getMessage());
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
 
-    private MissionResponse getMission(MissionRequestF request){
+    /**
+     * Mission 요청을 AI 서버에 전송 (즉시 200 응답만 확인)
+     */
+    private void requestMissionToAiServer(MissionRequestF request, Long sessionId){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<MissionRequestF> requestEntity = new HttpEntity<>(request, headers);
 
-        try{
-            ResponseEntity<MissionResponse> res = restTemplate.exchange(endpoint_mission, HttpMethod.POST, requestEntity, MissionResponse.class);
-            if(res.getBody()==null){
-                throw new RuntimeException("fastApi로 부터 응답이 없습니다.");
+        try {
+            log.info("Sending mission request to AI server for session {}", sessionId);
+            ResponseEntity<Void> res = restTemplate.exchange(
+                    endpoint_mission,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Void.class
+            );
+
+            if (res.getStatusCode().is2xxSuccessful()) {
+                log.info("Mission request accepted by AI server for session {}", sessionId);
+            } else {
+                log.error("Unexpected response from AI server: {}", res.getStatusCode());
+                throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
             }
-            return res.getBody();
         } catch(RestClientException e) {
+            log.error("Failed to send mission request to AI server: {}", e.getMessage());
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }
-    @Transactional
-    @Async("threadPoolTaskExecutor")
-    public void saveAdvice(Member host, Long sessionId){
-        Session session = sessionRepository.findById(sessionId).orElse(null);
-        AdviceRequestF requestF3 = AdviceRequestF.builder()
+    /**
+     * Advice 요청을 AI 서버에 전송 (즉시 200 응답 확인)
+     * AI 서버가 처리를 완료하면 콜백 API로 결과를 전송함
+     */
+    public void requestAdvice(Member host, Long sessionId){
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SESSION));
+
+        AdviceRequestF adviceRequest = AdviceRequestF.builder()
+                .sessionId(sessionId)  // AI 서버 콜백용
                 .messages(MessageFormatF.fromSession(session))
-                .language(host.getLanguage()==null?"kor":host.getLanguage().toString().toLowerCase())
+                .language(host.getLanguage() == null ? "kor" : host.getLanguage().toString().toLowerCase())
                 .persona(session.getDuckType().getValue())
                 .formal(session.getIsFormal())
                 .nickname(session.getHost().getNickname())
                 .build();
-        AdviceResponse responseF3 = getAdvice(requestF3);
-        System.out.println("advice 받기 : "+responseF3.getAdvice());
-        session.setAdvice(responseF3.getAdvice());
-        sessionRepository.save(session);
-        return;
+
+        requestAdviceToAiServer(adviceRequest, sessionId);
+        log.info("Advice request sent for session {}", sessionId);
     }
-    private AdviceResponse getAdvice(AdviceRequestF request){
+    /**
+     * Advice 요청을 AI 서버에 전송 (즉시 200 응답만 확인)
+     */
+    private void requestAdviceToAiServer(AdviceRequestF request, Long sessionId){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<AdviceRequestF> requestEntity = new HttpEntity<>(request, headers);
-        try{
-            ResponseEntity<AdviceResponse> res = restTemplate.exchange(endpoint_advice, HttpMethod.POST, requestEntity, AdviceResponse.class);
-            if(res.getBody()==null){
-                throw new RuntimeException("fastApi로 부터 응답이 없습니다.");
+
+        try {
+            log.info("Sending advice request to AI server for session {}", sessionId);
+            ResponseEntity<Void> res = restTemplate.exchange(
+                    endpoint_advice,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Void.class
+            );
+
+            if (res.getStatusCode().is2xxSuccessful()) {
+                log.info("Advice request accepted by AI server for session {}", sessionId);
+            } else {
+                log.error("Unexpected response from AI server: {}", res.getStatusCode());
+                throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
             }
-            return res.getBody();
         } catch(RestClientException e) {
+            log.error("Failed to send advice request to AI server: {}", e.getMessage());
             throw new CustomException(ErrorCode.NOT_FOUND_AI_SERVER);
         }
     }

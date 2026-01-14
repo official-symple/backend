@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "possible time response")
 public class PossibleTimeResponse {
-    @Schema(example="true")
+    @Schema(example="true", requiredMode = Schema.RequiredMode.REQUIRED)
     boolean possibleTime;
+    @Schema(example="DAY", description = "가까운 시간 타입: 'DAY' 또는 'NIGHT'")
+    TimeType timeType;
 }
