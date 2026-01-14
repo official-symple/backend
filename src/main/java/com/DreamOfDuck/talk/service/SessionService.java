@@ -31,7 +31,6 @@ import com.DreamOfDuck.talk.entity.Emotion;
 import com.DreamOfDuck.talk.entity.LastEmotion;
 import com.DreamOfDuck.talk.entity.Session;
 import com.DreamOfDuck.talk.entity.Talker;
-import com.DreamOfDuck.talk.event.LastEmotionCreatedEvent;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionService {
     private final SessionRepository sessionRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final LastEmotionAsyncService lastEmotionAsyncService;
     private final GoodsService goodsService;
     @Transactional
     public SessionResponse save(Member host, SessionCreateRequest request){
@@ -74,8 +73,19 @@ public class SessionService {
         session.setLastEmotion(LastEmotion.fromId(request.getLastEmotion()));
         sessionRepository.save(session);
         host.setHeart(host.getHeart()+2);
-        log.info("create event of last emotion");
-        eventPublisher.publishEvent(new LastEmotionCreatedEvent(session.getId(), host));
+
+        // AI 서버에 Summary, Advice 요청 전송 (즉시 200 응답)
+        // Mission은 Summary 콜백 수신 후 자동으로 요청됨
+        log.info("Requesting AI processing for session {}", session.getId());
+        try {
+            lastEmotionAsyncService.requestSummary(host, session.getId());
+            lastEmotionAsyncService.requestAdvice(host, session.getId());
+        } catch (Exception e) {
+            log.error("Failed to request AI processing for session {}: {}",
+                     session.getId(), e.getMessage(), e);
+            // AI 요청 실패해도 세션 업데이트는 성공으로 처리
+        }
+
         ZoneId userZone = ZoneId.of(host.getLocation()==null?"Asia/Seoul":host.getLocation());
         LocalDate now = LocalDate.now(userZone);
         return SessionResponse.from(session);

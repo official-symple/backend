@@ -8,15 +8,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * @deprecated 더 이상 사용하지 않음
+ * AI 서버 콜백 방식으로 변경되어 이벤트 핸들러 불필요
+ * SessionService에서 직접 AI 서버에 요청을 보내고,
+ * AI 서버가 처리 완료 시 AiCallbackController로 결과를 전송함
+ */
+@Deprecated
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class LastEmotionEventHandler {
     private final LastEmotionAsyncService lastEmotionAsyncService;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleMission(LastEmotionCreatedEvent event) {
-        lastEmotionAsyncService.saveReportAndMission(event.getMember(), event.getSessionId());
-        lastEmotionAsyncService.saveAdvice(event.getMember(), event.getSessionId());
-    }
+    // @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    // public void handleMission(LastEmotionCreatedEvent event) {
+    //     lastEmotionAsyncService.requestSummaryAndMission(event.getMember(), event.getSessionId());
+    //     lastEmotionAsyncService.requestAdvice(event.getMember(), event.getSessionId());
+    // }
 }
