@@ -33,7 +33,9 @@ import com.DreamOfDuck.talk.repository.MessageRepository;
 import com.DreamOfDuck.talk.repository.SessionRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Transactional(readOnly=true)
 @RequiredArgsConstructor
@@ -76,6 +78,7 @@ public class MessageService {
             requestF.setMessages(null);
         }
         MessageResponseF responseF = getMessageFromDuck(requestF);
+        log.info("response: {}", responseF);
         Message duck = Message.builder()
                 .talker(session.getDuckType())
                 .content(responseF.getContent())
@@ -91,6 +94,7 @@ public class MessageService {
         return res;
     }
     private MessageResponseF getMessageFromDuck(MessageRequestF request){
+        log.info("request: {}", request);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<MessageRequestF> requestEntity = new HttpEntity<>(request, headers);
