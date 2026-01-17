@@ -75,6 +75,7 @@ public class AuthService {
     @Transactional
     public void logout(String email){
         jwtProvider.deleteToken(email);
+
     }
 
     @Transactional

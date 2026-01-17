@@ -1,5 +1,6 @@
 package com.DreamOfDuck.account.controller;
 
+import com.DreamOfDuck.account.dto.request.ATRequest;
 import com.DreamOfDuck.account.dto.response.TokenResponse;
 import com.DreamOfDuck.account.entity.CustomUserDetails;
 import com.DreamOfDuck.account.entity.Member;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.smartcardio.ATR;
 import java.util.HashMap;
 
 @Controller
@@ -35,8 +39,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByKakao(HttpServletRequest request){
+    public ResponseEntity<?> loginByKakao(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) {
         String accessToken = jwtUtil.resolveToken(request);
+        if (accessToken == null) {
+            accessToken = atRequest.getAccessToken();
+        }
         TokenResponse response = authService.kakaoLogin(accessToken);
         return ResponseEntity.ok(response);
     }
@@ -46,8 +53,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByGoogle(HttpServletRequest request) throws FirebaseAuthException {
+    public ResponseEntity<?> loginByGoogle(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) throws FirebaseAuthException {
         String accessToken = jwtUtil.resolveToken(request);
+        if (accessToken == null) {
+            accessToken = atRequest.getAccessToken();
+        }
         TokenResponse response = authService.googleLogin(accessToken);
         return ResponseEntity.ok(response);
     }
@@ -57,8 +67,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByApple(HttpServletRequest request) throws FirebaseAuthException {
+    public ResponseEntity<?> loginByApple(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) throws FirebaseAuthException {
         String accessToken = jwtUtil.resolveToken(request);
+        if (accessToken == null) {
+            accessToken = atRequest.getAccessToken();
+        }
         TokenResponse response = authService.appleLogin(accessToken);
         return ResponseEntity.ok(response);
     }
