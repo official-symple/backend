@@ -75,7 +75,9 @@ public enum ErrorCode {
     // Subscription / IAP
     IAP_INVALID_REQUEST(-800, "인앱 결제 요청 값이 올바르지 않습니다.", 422),
     IAP_VERIFICATION_FAILED(-801, "영수증(구매) 검증에 실패했습니다.", 400),
-    IAP_PLAN_NOT_FOUND(-802, "구독 플랜 정보를 찾을 수 없습니다.", 406);
+    IAP_PLAN_NOT_FOUND(-802, "구독 플랜 정보를 찾을 수 없습니다.", 406),
+    IAP_VALUE_NOT_FOUND(-803, "영수증 값이 올바르지 않습니다.", 400),
+    IAP_JWT_FORMAT_ERROR(-804, "영수증 JWT 형식이 올바르지 않습니다.", 400);
     private final int errorCode;
     private final String message;
     private final int httpCode;

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,11 +18,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.subscription.config.IapProperties;
+import com.DreamOfDuck.subscription.dto.request.VerifySubscriptionRequest;
 import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
+import com.DreamOfDuck.subscription.service.verify.dto.appstore.AppStoreServerSubscriptionStatusResponse;
+import com.DreamOfDuck.subscription.service.verify.dto.appstore.AppStoreServerTransactionResponse;
+import com.DreamOfDuck.subscription.service.verify.dto.appstore.AppStoreSignedRenewalInfo;
+import com.DreamOfDuck.subscription.service.verify.dto.appstore.AppStoreSignedTransactionInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
     private static final String APP_STORE_SERVER_API_PRODUCTION = "https://api.storekit.itunes.apple.com/inApps/v1/transactions/";
     private static final String APP_STORE_SERVER_API_SANDBOX = "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions/";
+    private static final String APP_STORE_SERVER_SUBSCRIPTIONS_API_PRODUCTION = "https://api.storekit.itunes.apple.com/inApps/v1/subscriptions/";
+    private static final String APP_STORE_SERVER_SUBSCRIPTIONS_API_SANDBOX = "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/";
 
     private final IapProperties properties;
     private final RestTemplate restTemplate;
@@ -46,54 +53,47 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
     }
 
     @Override
-    public VerificationResult verify(VerificationCommand command) {
-        if (!StringUtils.hasText(command.getReceiptData())) {
-            return VerificationResult.builder().valid(false).rawResponse("missing_receipt").build();
+    public VerificationResult verify(VerifySubscriptionRequest request) {
+        if (!StringUtils.hasText(request.getReceiptData())) {
+            throw new CustomException(ErrorCode.IAP_VALUE_NOT_FOUND);
         }
 
         // JWT receipt from StoreKit 2 - decode and verify with App Store Server API
-        return verifyJwtReceipt(command);
+        return verifyJwtReceipt(request);
     }
 
-    @SuppressWarnings("unchecked")
-    private VerificationResult verifyJwtReceipt(VerificationCommand command) {
+    private VerificationResult verifyJwtReceipt(VerifySubscriptionRequest request) {
         try {
-            // Decode JWT receipt to extract transactionId
-            String[] parts = command.getReceiptData().split("\\.");
+            String[] parts = request.getReceiptData().split("\\.");
             if (parts.length != 3) {
-                return VerificationResult.builder()
-                        .valid(false)
-                        .rawResponse("invalid_jwt_format")
-                        .build();
+                throw new CustomException(ErrorCode.IAP_JWT_FORMAT_ERROR);
             }
             
-            // Decode payload (second part)
             String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
-            Map<String, Object> claimsMap = objectMapper.readValue(payload, Map.class);
-            Claims claims = Jwts.claims(claimsMap);
-
-            log.info("Decoded JWT claims: {}", claims);
+            AppStoreSignedTransactionInfo receiptTxInfo = objectMapper.readValue(payload, AppStoreSignedTransactionInfo.class);
+            log.info("Decoded JWT receipt txInfo: {}", receiptTxInfo);
 
             // Extract transactionId to verify with App Store Server API
-            String transactionId = claims.get("transactionId", String.class);
+            String transactionId = receiptTxInfo != null ? receiptTxInfo.getTransactionId() : null;
             if (!StringUtils.hasText(transactionId)) {
                 log.warn("No transactionId found in JWT receipt");
-                return VerificationResult.builder()
-                        .valid(false)
-                        .rawResponse("no_transaction_id")
-                        .build();
+                throw new CustomException(ErrorCode.IAP_JWT_FORMAT_ERROR);
             }
 
             // Verify transaction with App Store Server API
-            Map<String, Object> serverTransactionInfo = verifyWithAppStoreServer(transactionId);
-            if (serverTransactionInfo == null) {
-                // If API call fails, fall back to local JWT decode
-                log.warn("App Store Server API verification failed, falling back to local JWT decode");
-                return parseJwtClaims(claims, command);
+            AppStoreSignedInfo initialInfo = fetchTransactionAndRenewalInfo(transactionId);
+
+            String originalTransactionId = initialInfo.transactionInfo.getOriginalTransactionId();
+            if (!StringUtils.hasText(originalTransactionId)) {
+                originalTransactionId = transactionId;
             }
 
-            // Parse server response (signedTransactionInfo is also a JWT)
-            return parseServerTransactionInfo(serverTransactionInfo, command);
+            // Fetch latest renewed status using originalTransactionId, and prefer the newest transaction by expiresDate
+            AppStoreSignedInfo latestInfo = fetchLatestSubscriptionStatusByOriginalTransactionId(originalTransactionId);
+            AppStoreSignedInfo effectiveInfo = (latestInfo != null && latestInfo.transactionInfo != null) ? latestInfo : initialInfo;
+
+            // Parse server response (signedTransactionInfo/signedRenewalInfo are JWTs)
+            return parseServerTransactionInfo(effectiveInfo.transactionInfo, effectiveInfo.renewalInfo, request);
 
         } catch (Exception e) {
             log.error("Error verifying JWT receipt", e);
@@ -104,8 +104,7 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> verifyWithAppStoreServer(String transactionId) {
+    private AppStoreSignedInfo fetchTransactionAndRenewalInfo(String transactionId) {
         try {
             String baseUrl = properties.getApple().isSandbox() 
                     ? APP_STORE_SERVER_API_SANDBOX 
@@ -116,6 +115,7 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
             
             // Generate JWT token for App Store Server API authentication
             String jwtToken = generateAppStoreConnectJWT();
+            log.info("JWT Token: {}", jwtToken);
             if (StringUtils.hasText(jwtToken)) {
                 headers.setBearerAuth(jwtToken);
             } else {
@@ -131,14 +131,18 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                 return null;
             }
 
-            // Decode signedTransactionInfo (it's also a JWT)
-            String[] parts = serverResponse.getSignedTransactionInfo().split("\\.");
-            if (parts.length != 3) {
+            log.info("Server Response: {}", serverResponse);
+
+            AppStoreSignedTransactionInfo transactionInfo = decodeSignedPayload(serverResponse.getSignedTransactionInfo(), AppStoreSignedTransactionInfo.class);
+            AppStoreSignedRenewalInfo renewalInfo = StringUtils.hasText(serverResponse.getSignedRenewalInfo())
+                    ? decodeSignedPayload(serverResponse.getSignedRenewalInfo(), AppStoreSignedRenewalInfo.class)
+                    : null;
+
+            if (transactionInfo == null) {
                 return null;
             }
 
-            String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
-            return objectMapper.readValue(payload, Map.class);
+            return new AppStoreSignedInfo(transactionInfo, renewalInfo);
 
         } catch (RestClientException e) {
             log.warn("App Store Server API call failed: {}", e.getMessage());
@@ -149,15 +153,123 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private VerificationResult parseServerTransactionInfo(Map<String, Object> transactionInfo, VerificationCommand command) {
+    private AppStoreSignedInfo fetchLatestSubscriptionStatusByOriginalTransactionId(String originalTransactionId) {
         try {
-            String transactionId = (String) transactionInfo.get("transactionId");
-            String originalTransactionId = (String) transactionInfo.get("originalTransactionId");
+            String baseUrl = properties.getApple().isSandbox()
+                    ? APP_STORE_SERVER_SUBSCRIPTIONS_API_SANDBOX
+                    : APP_STORE_SERVER_SUBSCRIPTIONS_API_PRODUCTION;
+            String url = baseUrl + originalTransactionId;
+
+            HttpHeaders headers = new HttpHeaders();
+            String jwtToken = generateAppStoreConnectJWT();
+            if (StringUtils.hasText(jwtToken)) {
+                headers.setBearerAuth(jwtToken);
+            } else {
+                log.warn("Failed to generate JWT token, subscriptions API call may fail");
+            }
+
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            ResponseEntity<AppStoreServerSubscriptionStatusResponse> response =
+                    restTemplate.exchange(url, HttpMethod.GET, entity, AppStoreServerSubscriptionStatusResponse.class);
+            AppStoreServerSubscriptionStatusResponse body = response.getBody();
+            if (body == null || body.getData() == null) {
+                return null;
+            }
+            log.info("App Store subscriptions API response: environment={}, bundleId={}, dataSize={}",
+                    body.getEnvironment(), body.getBundleId(), body.getData().size());
+
+            AppStoreSignedInfo best = null;
+            Long bestExpires = null;
+
+            for (AppStoreServerSubscriptionStatusResponse.DataItem dataItem : body.getData()) {
+                if (dataItem == null || dataItem.getLastTransactions() == null) {
+                    continue;
+                }
+
+                for (AppStoreServerSubscriptionStatusResponse.LastTransaction lastTxItem : dataItem.getLastTransactions()) {
+                    if (lastTxItem == null) {
+                        continue;
+                    }
+                    String signedTransactionInfo = lastTxItem.getSignedTransactionInfo();
+                    if (!StringUtils.hasText(signedTransactionInfo)) {
+                        continue;
+                    }
+
+                    AppStoreSignedTransactionInfo txInfo = decodeSignedPayload(signedTransactionInfo, AppStoreSignedTransactionInfo.class);
+                    if (txInfo == null) {
+                        continue;
+                    }
+                    enrichTransactionInfo(txInfo, body, dataItem, lastTxItem);
+                    log.info("Tx Info: {}", txInfo);
+
+                    Long expiresDate = txInfo.getExpiresDate();
+                    if (expiresDate == null) {
+                        continue;
+                    }
+
+                    if (bestExpires == null || expiresDate > bestExpires) {
+                        String signedRenewalInfo = lastTxItem.getSignedRenewalInfo();
+                        AppStoreSignedRenewalInfo renewalInfo = StringUtils.hasText(signedRenewalInfo)
+                                ? decodeSignedPayload(signedRenewalInfo, AppStoreSignedRenewalInfo.class)
+                                : null;
+                        best = new AppStoreSignedInfo(txInfo, renewalInfo);
+                        bestExpires = expiresDate;
+                    }
+                }
+            }
+
+            return best;
+
+        } catch (RestClientException e) {
+            log.warn("App Store Server subscriptions API call failed: {}", e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.warn("Error calling App Store Server subscriptions API: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private void enrichTransactionInfo(
+            AppStoreSignedTransactionInfo txInfo,
+            AppStoreServerSubscriptionStatusResponse response,
+            AppStoreServerSubscriptionStatusResponse.DataItem dataItem,
+            AppStoreServerSubscriptionStatusResponse.LastTransaction lastTxItem
+    ) {
+        // assume non-null for given response format
+        txInfo.setEnvironment(response.getEnvironment());
+        txInfo.setBundleId(response.getBundleId());
+        txInfo.setSubscriptionGroupIdentifier(dataItem.getSubscriptionGroupIdentifier());
+        txInfo.setOriginalTransactionId(lastTxItem.getOriginalTransactionId());
+    }
+
+    private <T> T decodeSignedPayload(String signedJwt, Class<T> clazz) {
+        try {
+            String[] parts = signedJwt.split("\\.");
+            if (parts.length != 3) {
+                return null;
+            }
+            String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
+            return objectMapper.readValue(payload, clazz);
+        } catch (Exception e) {
+            log.warn("Failed to decode signed JWT payload: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private VerificationResult parseServerTransactionInfo(
+            AppStoreSignedTransactionInfo transactionInfo,
+            AppStoreSignedRenewalInfo renewalInfo,
+            VerifySubscriptionRequest request
+    ) {
+        try {
+            String transactionId = transactionInfo.getTransactionId();
+            String originalTransactionId = transactionInfo.getOriginalTransactionId();
             
-            Long purchaseDate = getTimestampFromMap(transactionInfo, "purchaseDate");
-            Long expiresDate = getTimestampFromMap(transactionInfo, "expiresDate");
-            
+            Long purchaseDate = transactionInfo.getPurchaseDate();
+            Long expiresDate = transactionInfo.getExpiresDate();
+            log.info("Purchase Date: {}", purchaseDate);
+            log.info("Expires Date: {}", expiresDate);
+
             if (expiresDate == null) {
                 log.warn("No expiration date found in server transaction info");
                 return VerificationResult.builder()
@@ -171,21 +283,20 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                     : null;
             LocalDateTime expiresAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(expiresDate), ZoneId.systemDefault());
 
-            Boolean isTrialPeriod = (Boolean) transactionInfo.get("isTrialPeriod");
-            Boolean isInIntroOfferPeriod = (Boolean) transactionInfo.get("isInIntroOfferPeriod");
+            Boolean isTrialPeriod = transactionInfo.getIsTrialPeriod();
+            Boolean isInIntroOfferPeriod = transactionInfo.getIsInIntroOfferPeriod();
             boolean isTrial = Boolean.TRUE.equals(isTrialPeriod) || Boolean.TRUE.equals(isInIntroOfferPeriod);
 
-            // Check renewal info
-            Map<String, Object> renewalInfo = (Map<String, Object>) transactionInfo.get("renewalInfo");
+            // Check renewal info (comes from signedRenewalInfo, not signedTransactionInfo)
+            log.info("Renewal Info: {}", renewalInfo);
             boolean autoRenewing = false;
             if (renewalInfo != null) {
-                String autoRenewStatus = (String) renewalInfo.get("autoRenewStatus");
-                autoRenewing = "1".equals(autoRenewStatus);
+                autoRenewing = "1".equals(renewalInfo.getAutoRenewStatus());
             }
 
             String finalTransactionId = StringUtils.hasText(transactionId) 
                     ? transactionId 
-                    : command.getStoreTransactionId();
+                    : request.getStoreTransactionId();
             String finalOriginalTransactionId = StringUtils.hasText(originalTransactionId)
                     ? originalTransactionId
                     : finalTransactionId;
@@ -210,13 +321,29 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
         }
     }
 
-    private VerificationResult parseJwtClaims(Claims claims, VerificationCommand command) {
+    private static class AppStoreSignedInfo {
+        private final AppStoreSignedTransactionInfo transactionInfo;
+        private final AppStoreSignedRenewalInfo renewalInfo;
+
+        private AppStoreSignedInfo(AppStoreSignedTransactionInfo transactionInfo, AppStoreSignedRenewalInfo renewalInfo) {
+            this.transactionInfo = transactionInfo;
+            this.renewalInfo = renewalInfo;
+        }
+    }
+
+    private VerificationResult parseJwtPayload(AppStoreSignedTransactionInfo txInfo, VerificationCommand command) {
         try {
-            String transactionId = claims.get("transactionId", String.class);
-            String originalTransactionId = claims.get("originalTransactionId", String.class);
+            if (txInfo == null) {
+                return VerificationResult.builder()
+                        .valid(false)
+                        .rawResponse("invalid_jwt_payload")
+                        .build();
+            }
+            String transactionId = txInfo.getTransactionId();
+            String originalTransactionId = txInfo.getOriginalTransactionId();
             
-            Long purchaseDate = getTimestamp(claims, "purchaseDate");
-            Long expiresDate = getTimestamp(claims, "expiresDate");
+            Long purchaseDate = txInfo.getPurchaseDate();
+            Long expiresDate = txInfo.getExpiresDate();
             
             if (expiresDate == null) {
                 log.warn("No expiration date found in JWT receipt");
@@ -231,12 +358,11 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                     : null;
             LocalDateTime expiresAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(expiresDate), ZoneId.systemDefault());
 
-            Boolean isTrialPeriod = claims.get("isTrialPeriod", Boolean.class);
-            Boolean isInIntroOfferPeriod = claims.get("isInIntroOfferPeriod", Boolean.class);
+            Boolean isTrialPeriod = txInfo.getIsTrialPeriod();
+            Boolean isInIntroOfferPeriod = txInfo.getIsInIntroOfferPeriod();
             boolean isTrial = Boolean.TRUE.equals(isTrialPeriod) || Boolean.TRUE.equals(isInIntroOfferPeriod);
 
-            String renewalInfo = claims.get("renewalInfo", String.class);
-            boolean autoRenewing = renewalInfo != null;
+            boolean autoRenewing = false;
 
             String finalTransactionId = StringUtils.hasText(transactionId) 
                     ? transactionId 
@@ -253,7 +379,7 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                     .isTrialPeriod(isTrial)
                     .storeTransactionId(finalTransactionId)
                     .originalTransactionId(finalOriginalTransactionId)
-                    .rawResponse(objectMapper.writeValueAsString(claims))
+                    .rawResponse(objectMapper.writeValueAsString(txInfo))
                     .build();
 
         } catch (Exception e) {
@@ -263,62 +389,6 @@ public class AppleSubscriptionVerifier implements StoreSubscriptionVerifier {
                     .rawResponse("parse_error: " + e.getMessage())
                     .build();
         }
-    }
-
-    private Long getTimestampFromMap(Map<String, Object> map, String key) {
-        Object value = map.get(key);
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            long timestamp = ((Number) value).longValue();
-            if (timestamp < 10000000000L) {
-                timestamp *= 1000;
-            }
-            return timestamp;
-        }
-        if (value instanceof String) {
-            try {
-                long timestamp = Long.parseLong((String) value);
-                if (timestamp < 10000000000L) {
-                    timestamp *= 1000;
-                }
-                return timestamp;
-            } catch (NumberFormatException e) {
-                log.warn("Invalid timestamp format for {}: {}", key, value);
-                return null;
-            }
-        }
-        return null;
-    }
-
-    private Long getTimestamp(Claims claims, String key) {
-        Object value = claims.get(key);
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof Number) {
-            long timestamp = ((Number) value).longValue();
-            // Apple timestamps can be in seconds or milliseconds
-            // If less than 10^10, it's in seconds, convert to milliseconds
-            if (timestamp < 10000000000L) {
-                timestamp *= 1000;
-            }
-            return timestamp;
-        }
-        if (value instanceof String) {
-            try {
-                long timestamp = Long.parseLong((String) value);
-                if (timestamp < 10000000000L) {
-                    timestamp *= 1000;
-                }
-                return timestamp;
-            } catch (NumberFormatException e) {
-                log.warn("Invalid timestamp format for {}: {}", key, value);
-                return null;
-            }
-        }
-        return null;
     }
 
     private String generateAppStoreConnectJWT() {
