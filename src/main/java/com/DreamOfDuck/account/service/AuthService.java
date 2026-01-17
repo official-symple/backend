@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly=true)
 public class AuthService {
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTProvider jwtProvider;
     private final KakaoApiClient kakaoApiClient;
@@ -74,8 +75,9 @@ public class AuthService {
 
     @Transactional
     public void logout(String email){
+        Member member = memberService.findMemberByEmail(email);
+        member.setDeviceToken(null);
         jwtProvider.deleteToken(email);
-
     }
 
     @Transactional
