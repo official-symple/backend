@@ -17,7 +17,6 @@ import com.DreamOfDuck.subscription.dto.response.VerifySubscriptionResponse;
 import com.DreamOfDuck.subscription.entity.IapTransaction;
 import com.DreamOfDuck.subscription.entity.VerificationStatusEnum;
 import com.DreamOfDuck.subscription.repository.IapTransactionRepository;
-import com.DreamOfDuck.subscription.service.verify.VerificationCommand;
 import com.DreamOfDuck.subscription.service.verify.VerificationResult;
 import com.DreamOfDuck.subscription.service.verify.VerifierResolver;
 
@@ -41,15 +40,7 @@ public class SubscriptionService {
             throw new CustomException(ErrorCode.IAP_INVALID_REQUEST);
         }
 
-        VerificationCommand command = VerificationCommand.builder()
-                .platform(request.getPlatform())
-                .productId(request.getProductId())
-                .receiptData(request.getReceiptData())
-                .purchaseToken(request.getPurchaseToken())
-                .storeTransactionId(request.getStoreTransactionId())
-                .build();
-
-        VerificationResult result = verifier.verify(command);
+        VerificationResult result = verifier.verify(request);
         LocalDateTime now = LocalDateTime.now();
 
         if (!result.isValid() || result.getExpiresAt() == null) {
@@ -90,13 +81,18 @@ public class SubscriptionService {
         // Update member role to PREMIUM - reload member to ensure it's in persistence context
         Member managedMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
-        managedMember.setRole(Role.ROLE_PREMIUM);
+        if (result.getExpiresAt().isAfter(now)) {
+            managedMember.setRole(Role.ROLE_PREMIUM);
+        } else {
+            managedMember.setRole(Role.ROLE_USER);
+        }
         memberRepository.save(managedMember);
 
         return VerifySubscriptionResponse.builder()
                 .success(true)
                 .startedAt(transaction.getStartedAt())
                 .expiresAt(result.getExpiresAt())
+                .role(managedMember.getRole())
                 .isTrialPeriod(result.getIsTrialPeriod())
                 .build();
     }

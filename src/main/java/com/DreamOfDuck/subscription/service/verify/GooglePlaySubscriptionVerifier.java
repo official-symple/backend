@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.DreamOfDuck.subscription.config.IapProperties;
+import com.DreamOfDuck.subscription.dto.request.VerifySubscriptionRequest;
 import com.DreamOfDuck.subscription.entity.StorePlatformEnum;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
     }
 
     @Override
-    public VerificationResult verify(VerificationCommand command) {
-        if (!StringUtils.hasText(command.getPurchaseToken()) || !StringUtils.hasText(command.getProductId())) {
+    public VerificationResult verify(VerifySubscriptionRequest request) {
+        if (!StringUtils.hasText(request.getPurchaseToken()) || !StringUtils.hasText(request.getProductId())) {
             return VerificationResult.builder().valid(false).rawResponse("missing_token_or_product").build();
         }
 
@@ -34,9 +35,9 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
         // Use purchaseToken to verify with Google, extract subscription info
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiresAt = now.plusDays(30);
-        String txId = StringUtils.hasText(command.getStoreTransactionId())
-                ? command.getStoreTransactionId()
-                : safeKey("google_tx", command.getPurchaseToken());
+        String txId = StringUtils.hasText(request.getStoreTransactionId())
+                ? request.getStoreTransactionId()
+                : safeKey("google_tx", request.getPurchaseToken());
         String origTxId = txId; // In real implementation, extract from Google response
 
         return VerificationResult.builder()
