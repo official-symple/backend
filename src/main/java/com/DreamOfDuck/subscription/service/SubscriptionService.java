@@ -81,7 +81,11 @@ public class SubscriptionService {
         // Update member role to PREMIUM - reload member to ensure it's in persistence context
         Member managedMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
-        managedMember.setRole(Role.ROLE_PREMIUM);
+        if (result.getExpiresAt().isAfter(now)) {
+            managedMember.setRole(Role.ROLE_PREMIUM);
+        } else {
+            managedMember.setRole(Role.ROLE_USER);
+        }
         memberRepository.save(managedMember);
 
         return VerifySubscriptionResponse.builder()
