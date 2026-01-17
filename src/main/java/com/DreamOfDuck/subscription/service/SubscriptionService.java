@@ -92,6 +92,7 @@ public class SubscriptionService {
                 .success(true)
                 .startedAt(transaction.getStartedAt())
                 .expiresAt(result.getExpiresAt())
+                .role(managedMember.getRole())
                 .isTrialPeriod(result.getIsTrialPeriod())
                 .build();
     }
