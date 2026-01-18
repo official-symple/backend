@@ -22,7 +22,7 @@ public class GoodsScheduler {
     private final MemberRepository memberRepository;
     private final GoodsService goodsService;
 
-    @Scheduled(cron = "0 0 * * * *") // 매 시간마다 체크
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     public void resetHeartByMemberLocation() {
         List<Member> members = memberRepository.findAll();

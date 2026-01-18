@@ -86,8 +86,8 @@ public class ScoreService {
                 .orElse(0L);
         res.setMyBestScore(myBestScore);
 
-        Long goePlayer = scoreRepositoryCustom.countByScoreGreaterThanEqual(myBestScore);
-        res.setMyBestRank(goePlayer == 0 ? -1 : goePlayer);
+        Long betterPlayersCount = scoreRepositoryCustom.countDistinctHostByScoreGreaterThan(myBestScore);
+        res.setMyBestRank(betterPlayersCount + 1);
 
         return res;
     }

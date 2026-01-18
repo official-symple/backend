@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface ScoreRepository extends JpaRepository<Score, Long> {
     List<Score> findAllByOrderByScoreDesc();
     Optional<Score> findTopByHostOrderByScoreDesc(Member host);
+
+
 }

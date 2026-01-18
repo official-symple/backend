@@ -4,4 +4,5 @@ import com.DreamOfDuck.pang.entity.Score;
 
 public interface ScoreRepositoryCustom {
     Long countByScoreGreaterThanEqual(Long curScore);
+    Long countDistinctHostByScoreGreaterThan(Long curScore);
 }

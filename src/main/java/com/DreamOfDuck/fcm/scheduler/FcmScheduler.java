@@ -102,7 +102,6 @@ public class FcmScheduler {
                     List<Member> zoneMembers = memberRepository.findByLocation(zoneId);
 
                     if (!zoneMembers.isEmpty()) {
-                        log.info("Zone {}: 22시 정각입니다. {}명에게 발송합니다.", zoneId, zoneMembers.size());
                         sendBatch(zoneMembers, NotificationType.STREAK_REWARD);
                     }
                 }
