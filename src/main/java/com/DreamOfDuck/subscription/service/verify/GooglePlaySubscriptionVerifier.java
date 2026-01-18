@@ -1,15 +1,20 @@
 package com.DreamOfDuck.subscription.service.verify;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
 import com.DreamOfDuck.subscription.config.IapProperties;
 import com.DreamOfDuck.subscription.config.IapProperties.Google;
 import com.DreamOfDuck.subscription.dto.request.VerifySubscriptionRequest;
@@ -51,15 +56,12 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
     @Override
     public VerificationResult verify(VerifySubscriptionRequest request) {
         if (!StringUtils.hasText(request.getPurchaseToken()) || !StringUtils.hasText(request.getProductId())) {
-            return VerificationResult.builder().valid(false).rawResponse("missing_token_or_product").build();
+            throw new CustomException(ErrorCode.IAP_INVALID_REQUEST);
         }
 
         Google google = properties.getGoogle();
-        if (google == null || !StringUtils.hasText(google.getServiceAccountJson()) || !StringUtils.hasText(google.getPackageName())) {
-            return VerificationResult.builder()
-                    .valid(false)
-                    .rawResponse("missing_google_config(serviceAccountJson/packageName)")
-                    .build();
+        if (google == null || !StringUtils.hasText(google.getPackageName())) {
+            throw new RuntimeException("구글 설정 오류");
         }
 
         try {
@@ -147,9 +149,9 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
             if (androidPublisher != null) {
                 return androidPublisher;
             }
-            String json = google.getServiceAccountJson();
+            InputStream credentialsStream = getServiceAccountInputStream(google);
             GoogleCredentials credentials = GoogleCredentials
-                    .fromStream(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))
+                    .fromStream(credentialsStream)
                     .createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
 
             NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
@@ -201,5 +203,14 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
 
     private String nullToEmpty(String s) {
         return s == null ? "" : s;
+    }
+
+    private InputStream getServiceAccountInputStream(Google google) throws IOException {
+        if (StringUtils.hasText(google.getServiceAccountJson())) {
+            return new ByteArrayInputStream(google.getServiceAccountJson().getBytes(StandardCharsets.UTF_8));
+        }
+        
+        ClassPathResource resource = new ClassPathResource("firebase.json");
+        return resource.getInputStream();
     }
 }

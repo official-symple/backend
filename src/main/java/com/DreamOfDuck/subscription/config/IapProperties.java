@@ -47,7 +47,7 @@ public class IapProperties {
     public static class Google {
         /**
          * Google Play Developer API credentials/service-account config.
-         * Keep it in `application-secret.properties`.
+         * If not set, will read from resources/firebase.json file.
          */
         private String serviceAccountJson;
         private String packageName;
