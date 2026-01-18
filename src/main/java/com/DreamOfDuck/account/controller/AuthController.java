@@ -41,9 +41,9 @@ public class AuthController {
             )})
     })
     public ResponseEntity<?> loginByKakao(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) {
-        String accessToken = jwtUtil.resolveToken(request);
+        String accessToken = atRequest.getAccessToken();
         if (accessToken == null) {
-            accessToken = atRequest.getAccessToken();
+            accessToken = jwtUtil.resolveToken(request);
         }
         TokenResponse response = authService.kakaoLogin(accessToken);
         return ResponseEntity.ok(response);
@@ -69,9 +69,9 @@ public class AuthController {
             )})
     })
     public ResponseEntity<?> loginByApple(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) throws FirebaseAuthException {
-        String accessToken = jwtUtil.resolveToken(request);
+        String accessToken = atRequest.getAccessToken();
         if (accessToken == null) {
-            accessToken = atRequest.getAccessToken();
+            accessToken = jwtUtil.resolveToken(request);
         }
         TokenResponse response = authService.appleLogin(accessToken);
         return ResponseEntity.ok(response);
