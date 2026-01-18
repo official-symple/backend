@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -59,25 +61,34 @@ public class ScoreService {
         res.setWorldRecord(worldRecord);
         return res;
     }
-    public RankingResponse getRanking(Member host){
-        RankingResponse res=new RankingResponse();
+    public RankingResponse getRanking(Member host) {
+        RankingResponse res = new RankingResponse();
         res.setCntPlaying(host.getCntPlaying());
+
         List<Score> scores = scoreRepository.findAllByOrderByScoreDesc();
+        Set<String> seenNicknames = new HashSet<>();
 
         List<PersonalRecord> rankingList = scores.stream()
-                .map(score->{
-                    PersonalRecord personalRecord=new PersonalRecord();
+                .filter(score -> seenNicknames.add(score.getHost().getNickname()))
+                .map(score -> {
+                    PersonalRecord personalRecord = new PersonalRecord();
                     personalRecord.setScore(score.getScore());
                     personalRecord.setNickname(score.getHost().getNickname());
                     return personalRecord;
                 })
                 .limit(5)
                 .toList();
+
         res.setRankingList(rankingList);
-        Long myBestScore=scoreRepository.findTopByHostOrderByScoreDesc(host).map(Score::getScore).orElse(0L);
+
+        Long myBestScore = scoreRepository.findTopByHostOrderByScoreDesc(host)
+                .map(Score::getScore)
+                .orElse(0L);
         res.setMyBestScore(myBestScore);
-        Long goePlayer=scoreRepositoryCustom.countByScoreGreaterThanEqual(myBestScore);
-        res.setMyBestRank(goePlayer==0?-1:goePlayer);
+
+        Long goePlayer = scoreRepositoryCustom.countByScoreGreaterThanEqual(myBestScore);
+        res.setMyBestRank(goePlayer == 0 ? -1 : goePlayer);
+
         return res;
     }
 
