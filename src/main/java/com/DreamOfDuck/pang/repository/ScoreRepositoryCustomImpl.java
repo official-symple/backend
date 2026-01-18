@@ -21,4 +21,16 @@ public class ScoreRepositoryCustomImpl implements ScoreRepositoryCustom {
                     scores.score.goe(curScore)
                 ).fetchOne();
     }
+    @Override
+    public Long countDistinctHostByScoreGreaterThan(Long curScore) {
+        QScore scores = QScore.score1;
+
+        return queryFactory
+                .select(scores.host.countDistinct())
+                .from(scores)
+                .where(
+                        scores.score.gt(curScore)
+                )
+                .fetchOne();
+    }
 }
