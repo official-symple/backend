@@ -1,9 +1,11 @@
 package com.DreamOfDuck.mind.service;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +25,9 @@ import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
 import com.DreamOfDuck.mind.dto.response.PossibleTimeResponse;
 import com.DreamOfDuck.mind.dto.response.TimeType;
 import com.DreamOfDuck.mind.entity.MindCheckTime;
+import com.DreamOfDuck.mind.entity.MindChecks;
 import com.DreamOfDuck.mind.repository.MindCheckTimeRepository;
+import com.DreamOfDuck.mind.repository.MindChecksRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MindCheckTimeService {
     private final MindCheckTimeRepository mindCheckTimeRepository;
+    private final MindChecksRepository mindChecksRepository;
     public MindCheckTime getMindCheckTime(Member member, DayOfWeek dayOfWeek) {
         return member.getMindCheckTimes().stream()
                 .filter(time->time.getDayOfWeek()==dayOfWeek)
@@ -39,24 +44,36 @@ public class MindCheckTimeService {
     }
     public PossibleTimeResponse isPossibleTime(Member member) {
         ZoneId userZone = ZoneId.of(member.getLocation());
-        LocalTime now = LocalTime.now(userZone);
-        DayOfWeek currentDay = DayOfWeek.from(java.time.LocalDate.now(userZone));
+        LocalDateTime now = LocalDateTime.now(userZone);
         
-        MindCheckTime mindCheckTime = getMindCheckTime(member, currentDay);
-        
-        LocalTime dayTime = mindCheckTime != null ? mindCheckTime.getDayTime() : LocalTime.of(8, 0);
-        LocalTime nightTime = mindCheckTime != null ? mindCheckTime.getNightTime() : LocalTime.of(21, 0);
-        
-        boolean isWithinDayTime = isWithinOneHour(now, dayTime);
-        boolean isWithinNightTime = isWithinOneHour(now, nightTime);
+        boolean isWithinDayTime = checkTime(member, userZone, now, TimePeriod.DAY);
+        boolean isWithinNightTime = checkTime(member, userZone, now, TimePeriod.NIGHT);
         
         boolean possibleTime = isWithinDayTime || isWithinNightTime;
         TimeType timeType = null;
         
         if (possibleTime) {
-            long dayDiff = getMinutesDifference(now, dayTime);
-            long nightDiff = getMinutesDifference(now, nightTime);
-            timeType = dayDiff <= nightDiff ? TimeType.DAY : TimeType.NIGHT;
+            // 가까운 시간 타입 결정 (간단히 DAY 우선)
+            timeType = isWithinDayTime ? TimeType.DAY : TimeType.NIGHT;
+            
+            // 이미 체크했는지 확인
+            LocalDate checkDate = now.toLocalDate();
+            if (now.toLocalTime().isBefore(LocalTime.of(6, 0))) {
+                checkDate = checkDate.minusDays(1);
+            }
+            
+            MindChecks mindChecks = mindChecksRepository.findByHostAndDate(member, checkDate)
+                    .stream().findFirst().orElse(null);
+            
+            if (mindChecks != null) {
+                if (isWithinDayTime && mindChecks.getDayMindCheck() != null) {
+                    possibleTime = false;
+                    timeType = null;
+                } else if (isWithinNightTime && mindChecks.getNightMindCheck() != null) {
+                    possibleTime = false;
+                    timeType = null;
+                }
+            }
         }
         
         return PossibleTimeResponse.builder()
@@ -65,16 +82,29 @@ public class MindCheckTimeService {
                 .build();
     }
     
-    private boolean isWithinOneHour(LocalTime current, LocalTime target) {
-        long minutesDiff = getMinutesDifference(current, target);
-        return minutesDiff <= 60;
-    }
-    
-    private long getMinutesDifference(LocalTime current, LocalTime target) {
-        Duration duration = Duration.between(current, target);
-        long minutesDiff = Math.abs(duration.toMinutes());
-        // 자정을 넘어가는 경우도 고려 (예: 23:00과 00:30은 30분 차이)
-        return Math.min(minutesDiff, 1440 - minutesDiff);
+    public boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
+        MindCheckTime mindCheckTime = getMindCheckTime(member, now.getDayOfWeek());
+        LocalTime dayTime, nightTime;
+        if(mindCheckTime==null) {
+            dayTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(8,0),userZone).toLocalTime();
+            nightTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(23,0),userZone).toLocalTime();
+        }else{
+            dayTime = mindCheckTime.getDayTime();
+            nightTime = mindCheckTime.getNightTime();
+        }
+        if(timePeriod==TimePeriod.DAY){
+            return !now.toLocalTime().isBefore(dayTime) && !now.toLocalTime().isAfter(dayTime.plusHours(1));
+        }else{
+            LocalDateTime nightDateTime = LocalDateTime.of(now.toLocalDate(), nightTime);
+            if(now.toLocalTime().isAfter(LocalTime.MIDNIGHT) && now.toLocalTime().isBefore(LocalTime.of(6, 0))) {
+                if(!(nightTime.isAfter(LocalTime.MIDNIGHT) && nightTime.isBefore(LocalTime.of(6, 0)))) {
+                    nightDateTime = nightDateTime.minusDays(1);
+                }
+            }
+            LocalDateTime start = nightDateTime.minusHours(1);
+            LocalDateTime end = nightDateTime.plusHours(1);
+            return !now.isBefore(start) && !now.isAfter(end);
+        }
     }
     @Transactional
     public List<MindCheckTimeResponse> setMindCheckTime(Member member, MindCheckTimeRequest request) {

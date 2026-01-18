@@ -1,31 +1,40 @@
 package com.DreamOfDuck.mind.service;
 
-import com.DreamOfDuck.account.entity.Language;
-import com.DreamOfDuck.account.entity.Role;
-import com.DreamOfDuck.goods.dto.request.FeatherRequest;
-import com.DreamOfDuck.account.entity.Member;
-import com.DreamOfDuck.global.exception.CustomException;
-import com.DreamOfDuck.global.exception.ErrorCode;
-import com.DreamOfDuck.goods.service.GoodsService;
-import com.DreamOfDuck.mind.dto.response.MindCheckReport;
-import com.DreamOfDuck.mind.dto.response.MindCheckReportPeriod;
-import com.DreamOfDuck.mind.dto.response.MindCheckTimeResponse;
-import com.DreamOfDuck.mind.repository.MindCheckRepository;
-import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
-import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
-import com.DreamOfDuck.mind.dto.request.MindCheckTimeRequest;
-import com.DreamOfDuck.mind.entity.*;
-import com.DreamOfDuck.mind.repository.MindCheckTimeRepository;
-import com.DreamOfDuck.mind.repository.MindChecksRepository;
-import com.DreamOfDuck.talk.entity.Emotion;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.DreamOfDuck.account.entity.Language;
+import com.DreamOfDuck.account.entity.Member;
+import com.DreamOfDuck.account.entity.Role;
+import com.DreamOfDuck.global.exception.CustomException;
+import com.DreamOfDuck.global.exception.ErrorCode;
+import com.DreamOfDuck.goods.dto.request.FeatherRequest;
+import com.DreamOfDuck.goods.service.GoodsService;
+import com.DreamOfDuck.mind.dto.request.MindCheckRequest;
+import com.DreamOfDuck.mind.dto.response.MindCheckReport;
+import com.DreamOfDuck.mind.dto.response.MindCheckReportPeriod;
+import com.DreamOfDuck.mind.dto.response.MindCheckResponse;
+import com.DreamOfDuck.mind.entity.MindCheck;
+import com.DreamOfDuck.mind.entity.MindChecks;
+import com.DreamOfDuck.mind.repository.MindCheckRepository;
+import com.DreamOfDuck.mind.repository.MindCheckTimeRepository;
+import com.DreamOfDuck.mind.repository.MindChecksRepository;
+import com.DreamOfDuck.talk.entity.Emotion;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -45,7 +54,7 @@ public class MindCheckService {
         LocalDateTime now = LocalDateTime.now(userZone);
         TimePeriod timePeriod = TimePeriod.of(now);
         //접근 가능한 시간 이후면 에러처리
-        if(checkTime(member, userZone, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
+        if(!checkTime(member, userZone, now, timePeriod)) throw new CustomException(ErrorCode.NOT_PERMISSION_ACCESS);
         //6 to 6
         if(now.toLocalTime().isBefore(LocalTime.of(6,0))){
             now=now.minusDays(1);
@@ -88,34 +97,8 @@ public class MindCheckService {
         goodsService.updateFeather(member, featherRequest); //깃털 보상
         return MindCheckResponse.fromMindCheck(mindCheck);
     }
-    private boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
-        MindCheckTime mindCheckTime = mindCheckTimeService.getMindCheckTime(member, now.getDayOfWeek());
-        LocalTime dayTime, nightTime;
-        //푸시알림 시간 확인
-        if(mindCheckTime==null) {
-            dayTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(8,0),userZone).toLocalTime();
-            nightTime = ZonedDateTime.of(now.toLocalDate(), LocalTime.of(23,0),userZone).toLocalTime();
-        }else{
-            dayTime = mindCheckTime.getDayTime();
-            nightTime = mindCheckTime.getNightTime();
-        }
-        log.info(dayTime.toString());
-        log.info(nightTime.toString());
-        log.info(timePeriod.toString());
-        log.info(now.toString());
-        if(timePeriod==TimePeriod.DAY){
-            return now.toLocalTime().isBefore(dayTime) || now.toLocalTime().isAfter(dayTime.plusHours(1));
-        }else{
-            LocalDateTime nightDateTime = LocalDateTime.of(now.toLocalDate(), nightTime);
-            if(now.toLocalTime().isAfter(LocalTime.MIDNIGHT) && now.toLocalTime().isBefore(LocalTime.of(6, 0))) nightDateTime=nightDateTime.minusDays(1);
-            log.info(nightDateTime.toString());
-            LocalDateTime start = nightDateTime.minusHours(1);
-            LocalDateTime end = nightDateTime.plusHours(1);
-            log.info(start.toString());
-            log.info(end.toString());
-            log.info(now.toString());
-            return now.isBefore(start) || now.isAfter(end);
-        }
+    public boolean checkTime(Member member, ZoneId userZone, LocalDateTime now, TimePeriod timePeriod) {
+        return mindCheckTimeService.checkTime(member, userZone, now, timePeriod);
     }
 
 
