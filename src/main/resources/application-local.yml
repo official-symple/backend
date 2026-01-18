@@ -30,3 +30,6 @@ iap:
     issuerId: ${APPLE_ISSUER_ID}  # UUID format Issuer ID from App Store Connect
     bundleId: ${APPLE_BUNDLE_ID}  # Your app's bundle ID
     sandbox: true
+  google:
+    serviceAccountJson: ${GOOGLE_SERVICE_ACCOUNT_JSON}
+    packageName: ${GOOGLE_PACKAGE_NAME}
