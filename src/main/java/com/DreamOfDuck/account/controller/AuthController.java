@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -40,8 +39,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByKakao(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) {
-        String accessToken = atRequest.getAccessToken();
+    public ResponseEntity<?> loginByKakao(HttpServletRequest request, @RequestBody(required = false) ATRequest atRequest) {
+        String accessToken = null;
+        if (atRequest != null) {
+            accessToken = atRequest.getAccessToken();
+        }
         if (accessToken == null) {
             accessToken = jwtUtil.resolveToken(request);
         }
@@ -54,8 +56,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByGoogle(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) throws FirebaseAuthException {
-        String accessToken = atRequest.getAccessToken(); 
+    public ResponseEntity<?> loginByGoogle(HttpServletRequest request, @RequestBody(required = false) ATRequest atRequest) throws FirebaseAuthException {
+        String accessToken = null;
+        if (atRequest != null) {
+            accessToken = atRequest.getAccessToken();
+        }
         if (accessToken == null) {
             accessToken = jwtUtil.resolveToken(request);
         }
@@ -68,8 +73,11 @@ public class AuthController {
             @ApiResponse(responseCode="200", content = {@Content(schema= @Schema(implementation = TokenResponse.class)
             )})
     })
-    public ResponseEntity<?> loginByApple(HttpServletRequest request, @RequestBody @Valid ATRequest atRequest) throws FirebaseAuthException {
-        String accessToken = atRequest.getAccessToken();
+    public ResponseEntity<?> loginByApple(HttpServletRequest request, @RequestBody(required = false) ATRequest atRequest) throws FirebaseAuthException {
+        String accessToken = null;
+        if (atRequest != null) {
+            accessToken = atRequest.getAccessToken();
+        }
         if (accessToken == null) {
             accessToken = jwtUtil.resolveToken(request);
         }

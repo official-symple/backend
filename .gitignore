@@ -41,5 +41,6 @@ out/
 .env
 .env.dev
 firebase.json
+iap-verifier.json
 logs
 **/apple/*.p8

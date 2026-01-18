@@ -1,9 +1,7 @@
 package com.DreamOfDuck.subscription.service.verify;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -153,12 +151,13 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
             GoogleCredentials credentials = GoogleCredentials
                     .fromStream(credentialsStream)
                     .createScoped(AndroidPublisherScopes.ANDROIDPUBLISHER);
+            log.info("credential: {}" , credentials);
 
             NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
             androidPublisher = new AndroidPublisher.Builder(transport, jsonFactory, new HttpCredentialsAdapter(credentials))
-                    .setApplicationName("duck-be")
+                    .setApplicationName("DreamOfDuck-Backend")
                     .build();
             return androidPublisher;
         }
@@ -206,11 +205,7 @@ public class GooglePlaySubscriptionVerifier implements StoreSubscriptionVerifier
     }
 
     private InputStream getServiceAccountInputStream(Google google) throws IOException {
-        if (StringUtils.hasText(google.getServiceAccountJson())) {
-            return new ByteArrayInputStream(google.getServiceAccountJson().getBytes(StandardCharsets.UTF_8));
-        }
-        
-        ClassPathResource resource = new ClassPathResource("firebase.json");
+        ClassPathResource resource = new ClassPathResource("iap-verifier.json");
         return resource.getInputStream();
     }
 }
